@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration - AB MOTORS</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7f6; margin: 0; padding: 20px; }
+        .admin-container { max-width: 1000px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { color: #004b87; margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .nav { display: flex; gap: 10px; margin-bottom: 20px; }
+        .nav-btn { padding: 10px 20px; background: #e0e0e0; cursor: pointer; border-radius: 6px; font-weight: bold; }
+        .nav-btn.active { background: #004b87; color: white; }
+        
+        .calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; max-width: 400px; }
+        .cal-day { padding: 15px 5px; text-align: center; border-radius: 4px; font-size: 14px; cursor: pointer; color: white; font-weight: bold; position: relative; background: #a0aab5; }
+        .cal-day.available { background-color: #28a745; }
+        .time-mark { position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); font-size: 9px; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
+        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #eee; }
+        th { color: #004b87; }
+        .badge { padding: 4px 8px; border-radius: 12px; font-size: 11px; text-transform: uppercase; font-weight: bold; }
+        .badge.attente { background: #fff8f0; color: #b7791f; border: 1px solid #fbd38d; }
+        .badge.confirmee { background: #f0fff4; color: #276749; border: 1px solid #9ae6b4; }
+        button { cursor: pointer; padding: 5px 10px; border: none; border-radius: 4px; color: white; font-weight: bold; }
+        .btn-valider { background: #f6ad55; }
+        .btn-suppr { background: #e53e3e; }
+        .btn-valider:disabled { opacity: 0.5; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <h1>Dashboard Admin</h1>
+        <div class="nav">
+            <div class="nav-btn active" id="btn-dates" onclick="setView('dates')">Gérer les Dates</div>
+            <div class="nav-btn" id="btn-res" onclick="setView('res')">Voir les Réservations</div>
+        </div>
+        <div id="content"></div>
+    </div>
+
+    <script>
+        // --- CONFIGURATION APP SCRIPT ---
+        const GOOGLE_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzzBsE4E1yLuSYDkRRgiSPToD7cxUfItP9D2nangZBtyQFVPhM6WWDnt62FWicEPpb7/exec'; // <--- REMPLACEZ CECI
+
+        const getDates = () => JSON.parse(localStorage.getItem('abmotors_dates')) || {};
+        const getBookings = () => JSON.parse(localStorage.getItem('abmotors_bookings')) || [];
+        const saveDates = (d) => localStorage.setItem('abmotors_dates', JSON.stringify(d));
+        const saveBookings = (b) => localStorage.setItem('abmotors_bookings', JSON.stringify(b));
+
+        window.addEventListener('storage', () => render());
+        let currentView = 'dates';
+
+        const setView = (v) => { 
+            currentView = v; 
+            document.getElementById('btn-dates').className = `nav-btn ${v==='dates'?'active':''}`;
+            document.getElementById('btn-res').className = `nav-btn ${v==='res'?'active':''}`;
+            render(); 
+        };
+
+        const editDispo = (dateStr) => {
+            const db = getDates();
+            const res = prompt(`Gérer le ${dateStr} (M, A, MA, ou 0):`);
+            if(!res) return;
+            const v = res.trim().toUpperCase();
+            if(v === 'M') db[dateStr] = {m:true, a:false};
+            else if(v === 'A') db[dateStr] = {m:false, a:true};
+            else if(v === 'MA') db[dateStr] = {m:true, a:true};
+            else if(v === '0') delete db[dateStr];
+            saveDates(db); render();
+        };
+
+        // Fonction qui génère le PDF et demande au serveur d'envoyer l'email
+        window.validerRes = async (id) => {
+            const db = getBookings();
+            const booking = db.find(b => b.id === id);
+            if(!booking) return;
+
+            const btn = document.getElementById('btn-valider-' + id);
+            btn.disabled = true;
+            btn.innerText = "Envoi...";
+
+            // 1. Génération du PDF avec jsPDF
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            doc.setFontSize(22);
+            doc.setTextColor(0, 75, 135);
+            doc.text("AB MOTORS", 105, 20, null, null, "center");
+            
+            doc.setFontSize(16);
+            doc.setTextColor(0, 0, 0);
+            doc.text("Confirmation de Réservation", 105, 30, null, null, "center");
+
+            doc.setFontSize(12);
+            doc.text(`Numéro de réservation : #${booking.id}`, 20, 50);
+            doc.text(`Nom : ${booking.contact}`, 20, 60);
+            doc.text(`Email : ${booking.email}`, 20, 70);
+            doc.text(`Téléphone : ${booking.phone}`, 20, 80);
+            
+            doc.text(`Détails du Trajet :`, 20, 100);
+            doc.text(booking.details, 20, 110);
+            
+            doc.text(`Total Passagers : ${booking.pax}`, 20, 130);
+            doc.setFontSize(14);
+            doc.text(`MONTANT PAYÉ / TOTAL : ${booking.total} EUR`, 20, 150);
+
+            // Convertir le PDF en Base64
+            const pdfBase64 = doc.output('datauristring').split(',')[1];
+
+            // 2. Envoi de la requête au serveur Google
+            const payload = {
+                action: 'validate_booking',
+                id: booking.id,
+                email: booking.email,
+                contact: booking.contact,
+                pdfBase64: pdfBase64
+            };
+
+            try {
+                await fetch(GOOGLE_WEB_APP_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+
+                // Mettre à jour l'affichage local
+                booking.status = "confirmée";
+                saveBookings(db);
+                alert("Réservation validée et PDF envoyé au client !");
+                render();
+            } catch (err) {
+                alert("Erreur lors de l'envoi de l'email.");
+                btn.disabled = false;
+                btn.innerText = "Valider";
+            }
+        };
+
+        const supprRes = (id) => {
+            if(confirm('Supprimer ?')) {
+                const db = getBookings(); saveBookings(db.filter(b => b.id !== id)); render();
+            }
+        };
+
+        const render = () => {
+            const content = document.getElementById('content');
+            if (currentView === 'dates') {
+                const today = new Date(); const dbDates = getDates();
+                let html = `<p>Cliquez sur un jour pour ouvrir ou fermer les traversées.</p><div class="calendar">`;
+                for (let i = 0; i < 28; i++) {
+                    const d = new Date(today); d.setDate(today.getDate() + i);
+                    const dateStr = d.toISOString().split('T')[0];
+                    const dispo = dbDates[dateStr];
+                    const isAvail = dispo && (dispo.m || dispo.a);
+                    let timeHTML = '';
+                    if(isAvail) {
+                        if(dispo.m && dispo.a) timeHTML = '<div class="time-mark">M/A</div>';
+                        else if(dispo.m) timeHTML = '<div class="time-mark">Matin</div>';
+                        else if(dispo.a) timeHTML = '<div class="time-mark">Aprem</div>';
+                    }
+                    html += `<div class="cal-day ${isAvail ? 'available' : ''}" onclick="editDispo('${dateStr}')">${d.getDate()}${timeHTML}</div>`;
+                }
+                content.innerHTML = html + `</div>`;
+            } else {
+                const db = getBookings();
+                let html = `<table><tr><th>ID</th><th>Client</th><th>Trajet & Date</th><th>Pax</th><th>Total</th><th>Statut</th><th>Action</th></tr>`;
+                db.forEach(b => {
+                    html += `<tr><td>#${b.id}</td><td>${b.contact}<br><small>${b.phone}<br>${b.email}</small></td><td style="font-size:11px;">${b.details}</td><td>${b.pax}</td><td>${b.total}€</td>
+                    <td><span class="badge ${b.status === 'confirmée' ? 'confirmee' : 'attente'}">${b.status}</span></td>
+                    <td>${b.status === 'en attente' ? `<button id="btn-valider-${b.id}" class="btn-valider" onclick="validerRes(${b.id})">Valider & Envoyer PDF</button>` : ''} <button class="btn-suppr" onclick="supprRes(${b.id})">X</button></td></tr>`;
+                });
+                content.innerHTML = html + `</table>`;
+            }
+        };
+        render();
+    </script>
+</body>
+</html>

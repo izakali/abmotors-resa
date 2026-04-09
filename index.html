@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AB MOTORS - Réservation Maritime</title>
+    <style>
+        :root { --primary: #004b87; --secondary: #00a8cc; --success: #28a745; --disabled: #a0aab5; --bg: #f4f7f6; --surface: #ffffff; --text: #333333; --error: #dc3545; --font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        * { box-sizing: border-box; font-family: var(--font); }
+        body { margin: 0; padding: 0; display: flex; justify-content: center; min-height: 100vh; position: relative; overflow-x: hidden; }
+        
+        .background-slideshow { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; list-style: none; margin: 0; padding: 0; }
+        .background-slideshow li { position: absolute; width: 100%; height: 100%; background-position: center; background-size: cover; opacity: 0; z-index: 0; animation: imageAnimation 36s linear infinite; }
+        .background-slideshow li:nth-child(1) { background-image: url('https://images.unsplash.com/photo-1596395819057-cb37331d279d?q=80&w=1920&auto=format&fit=crop'); animation-delay: 0s; } 
+        .background-slideshow li:nth-child(2) { background-image: url('https://images.unsplash.com/photo-1544551763-46a013bb70d5?q=80&w=1920&auto=format&fit=crop'); animation-delay: 6s; } 
+        .background-slideshow li:nth-child(3) { background-image: url('https://images.unsplash.com/photo-1582967788606-a171c1080cb0?q=80&w=1920&auto=format&fit=crop'); animation-delay: 12s; } 
+        @keyframes imageAnimation { 0% { opacity: 0; } 16% { opacity: 1; } 33% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 0; } }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: -1; }
+
+        #app-container { background: var(--surface); width: 100%; max-width: 650px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); margin: 40px 20px; z-index: 10; position: relative; }
+        .header { background: var(--primary); color: white; padding: 30px 20px 20px; text-align: center; border-radius: 12px 12px 0 0; position: relative; }
+        .header h1 { margin: 10px 0 0 0; font-size: 26px; }
+        .header p { margin: 5px 0 0 0; font-size: 14px; opacity: 0.9; }
+        #app-logo { position: absolute; top: -40px; left: 50%; transform: translateX(-50%); width: 80px; height: 80px; background: white; border-radius: 50%; padding: 5px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); border: 3px solid var(--primary); display: flex; align-items: center; justify-content: center; }
+        #app-logo img { width: 100%; height: auto; border-radius: 50%; }
+        
+        .content { padding: 30px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-weight: bold; margin-bottom: 8px; color: var(--primary); }
+        .form-control { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; }
+        .form-control:focus { outline: none; border-color: var(--secondary); box-shadow: 0 0 0 3px rgba(0, 168, 204, 0.2); }
+        .row { display: flex; gap: 15px; } .col { flex: 1; }
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        .btn-primary { background: var(--secondary); color: white; }
+        .btn-secondary { background: #e0e0e0; color: var(--text); margin-bottom: 10px; }
+        .calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 10px; }
+        .cal-day { padding: 10px 5px; text-align: center; border-radius: 4px; font-size: 14px; cursor: pointer; color: white; font-weight: bold; position: relative; }
+        .cal-day.available { background-color: var(--success); }
+        .cal-day.unavailable { background-color: var(--disabled); cursor: not-allowed; }
+        .cal-day.selected { border: 3px solid #000; transform: scale(1.05); }
+        .time-mark { position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); font-size: 9px; }
+        .time-select-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .time-btn { padding: 10px; text-align: center; border: 2px solid #eee; border-radius: 6px; cursor: pointer; font-weight: bold; color: var(--text); }
+        .time-btn.selected { border-color: var(--success); background-color: #f0fff4; color: var(--success); }
+        .time-btn.disabled { opacity: 0.4; cursor: not-allowed; }
+        .passenger-box { background: #fff; border: 1px solid #e0e0e0; padding: 20px; margin-bottom: 20px; border-radius: 8px; }
+        .counter-group { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
+        .counter-btn { width: 35px; height: 35px; border-radius: 50%; border: 1px solid var(--primary); background: transparent; color: var(--primary); font-size: 20px; cursor: pointer; }
+        .phone-input { display: flex; gap: 10px; } .phone-input select { width: 190px; }
+        .recap-box { background: #f9f9f9; border-left: 4px solid var(--secondary); padding: 15px; margin-bottom: 20px; }
+        .total-price { font-size: 24px; font-weight: bold; color: var(--primary); text-align: center; margin: 20px 0; padding: 15px; border-top: 2px dashed #ccc; border-bottom: 2px dashed #ccc; }
+        .error { color: var(--error); font-size: 14px; display: none; margin-bottom: 15px; text-align: center; font-weight: bold; padding: 10px; border: 1px solid var(--error); border-radius: 6px; background: #fff8f8; }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--secondary); border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-left: 10px; display: none; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @media (max-width: 600px) { body { padding: 0; } #app-container { margin: 0; border-radius: 0; min-height: 100vh; } .header { padding-top: 40px; border-radius: 0; } #app-logo { top: 10px; left: 20px; transform: none; width: 50px; height: 50px; } .row { flex-direction: column; gap: 0; } .phone-input { flex-direction: column; } .phone-input select { width: 100%; } }
+    </style>
+</head>
+<body>
+    <ul class="background-slideshow"><li></li><li></li><li></li></ul>
+    <div class="overlay"></div>
+
+    <div id="app-container">
+        <div class="header">
+            <div id="app-logo"><img src="https://via.placeholder.com/150/ffffff/004b87?text=AB" alt="Logo"></div>
+            <h1>AB MOTORS</h1>
+            <p>Réservation Maritime</p>
+        </div>
+        <div class="content" id="app-content"></div>
+    </div>
+
+    <script>
+        // --- CONFIGURATION APP SCRIPT ---
+        const GOOGLE_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzzBsE4E1yLuSYDkRRgiSPToD7cxUfItP9D2nangZBtyQFVPhM6WWDnt62FWicEPpb7/exec'; // <--- REMPLACEZ CECI
+
+        const countriesData = [{ c: "COMORES", p: "+269", ex: "333 44 55" }, { c: "FRANCE", p: "+33", ex: "6 12 34 56 78" }, { c: "MAYOTTE", p: "+262", ex: "639 12 34 56" }];
+        
+        const getDates = () => JSON.parse(localStorage.getItem('abmotors_dates')) || {};
+        const getBookings = () => JSON.parse(localStorage.getItem('abmotors_bookings')) || [];
+
+        const state = {
+            step: 1, tripType: 'aller', departure: 'Anjouan', arrival: 'Moheli',
+            dateAller: null, timeAller: '', dateRetour: null, timeRetour: '',
+            adults: 1, children: 0, passengers: [],
+            user: { phoneCodeValue: "+269", phoneExample: "333 44 55", phone: '', email: '' }
+        };
+
+        window.addEventListener('storage', () => { if(state.step === 1) renderApp(); });
+
+        const createCalendar = (type) => {
+            const today = new Date(); const dbDates = getDates();
+            let html = `<div class="calendar">`;
+            for (let i = 0; i < 28; i++) {
+                const d = new Date(today); d.setDate(today.getDate() + i);
+                const dateStr = d.toISOString().split('T')[0];
+                const dispo = dbDates[dateStr];
+                const isAvail = dispo && (dispo.m || dispo.a);
+                const cssClass = isAvail ? 'cal-day available' : 'cal-day unavailable';
+                const selClass = state[type === 'aller' ? 'dateAller' : 'dateRetour'] === dateStr ? ' selected' : '';
+                let timeHTML = '';
+                if(isAvail) {
+                    if(dispo.m && dispo.a) timeHTML = '<div class="time-mark">M/A</div>';
+                    else if(dispo.m) timeHTML = '<div class="time-mark">Matin</div>';
+                    else if(dispo.a) timeHTML = '<div class="time-mark">Aprem</div>';
+                }
+                html += `<div class="${cssClass}${selClass}" ${isAvail ? `onclick="selectDate('${type}', '${dateStr}')"` : ''}>${d.getDate()}${timeHTML}</div>`;
+            }
+            return html + `</div>`;
+        };
+
+        window.selectDate = (type, date) => { state[type === 'aller' ? 'dateAller' : 'dateRetour'] = date; state[type === 'aller' ? 'timeAller' : 'timeRetour'] = ''; renderApp(); };
+        window.selectTime = (type, time) => { state[type === 'aller' ? 'timeAller' : 'timeRetour'] = time; renderApp(); };
+        window.updateCounter = (type, action) => { if(type === 'adults') { if(action === 'plus') state.adults++; else if(state.adults > 1) state.adults--; } else { if(action === 'plus') state.children++; else if(state.children > 0) state.children--; } renderApp(); };
+
+        const saveInputs = () => {
+            state.passengers.forEach((p, i) => { const n = document.getElementById(`nom_${i}`); const pr = document.getElementById(`prenom_${i}`); if(n) p.nom = n.value; if(pr) p.prenom = pr.value; });
+            const ph = document.getElementById('phone'); if(ph) state.user.phone = ph.value;
+            const em = document.getElementById('email'); if(em) state.user.email = em.value;
+        };
+
+        window.navStep1 = () => { saveInputs(); state.step = 1; renderApp(); };
+        window.navStep2 = () => {
+            if (!state.dateAller || !state.timeAller || (state.tripType === 'aller-retour' && (!state.dateRetour || !state.timeRetour))) { document.getElementById('err-s1').style.display = 'block'; return; }
+            state.passengers = [];
+            for(let i=0; i<state.adults; i++) state.passengers.push({ type: 'Adulte', nom: '', prenom: '' });
+            for(let i=0; i<state.children; i++) state.passengers.push({ type: 'Enfant', nom: '', prenom: '' });
+            state.step = 2; renderApp();
+        };
+        window.navStep3 = () => {
+            saveInputs(); let isValid = true;
+            state.passengers.forEach(p => { if (!p.nom.trim() || !p.prenom.trim()) isValid = false; });
+            if (!state.user.phone.trim() || !state.user.email.trim()) isValid = false;
+            if (!isValid) { document.getElementById('err-s2').style.display = 'block'; return; }
+            state.step = 3; renderApp();
+        };
+
+        window.submitBooking = async () => {
+            const btn = document.getElementById('submit-btn');
+            const loader = document.getElementById('loader');
+            btn.disabled = true; loader.style.display = 'inline-block';
+
+            const totalCost = (state.adults * 30 + state.children * 15) * (state.tripType === 'aller-retour' ? 2 : 1);
+            const bookingId = Math.floor(Math.random() * 90000) + 10000;
+            const detailsStr = `${state.departure} -> ${state.arrival} | Aller: ${state.dateAller} (${state.timeAller})` + (state.tripType === 'aller-retour' ? ` | Retour: ${state.dateRetour} (${state.timeRetour})` : '');
+
+            const payload = {
+                action: 'new_booking',
+                id: bookingId,
+                contact: state.passengers[0].nom + " " + state.passengers[0].prenom,
+                phone: state.user.phoneCodeValue + " " + state.user.phone,
+                email: state.user.email,
+                details: detailsStr,
+                total: totalCost
+            };
+
+            // Envoi à Google Apps Script
+            try {
+                await fetch(GOOGLE_WEB_APP_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                
+                // Sauvegarde locale pour l'admin (Optionnel si l'admin utilise uniquement Google Sheets, mais garde la fluidité UI)
+                const bookings = getBookings();
+                bookings.unshift({ ...payload, pax: state.adults + state.children, status: "en attente" });
+                localStorage.setItem('abmotors_bookings', JSON.stringify(bookings));
+
+                alert('Réservation envoyée avec succès ! Un e-mail récapitulatif a été envoyé. AB MOTORS vous contactera pour validation.');
+                location.reload();
+            } catch (error) {
+                alert("Une erreur est survenue lors de l'envoi. Veuillez réessayer.");
+                btn.disabled = false; loader.style.display = 'none';
+            }
+        };
+
+        const renderApp = () => {
+            const dbDates = getDates();
+            let html = '';
+            if (state.step === 1) {
+                const getTimes = (dStr, tType, tVal) => {
+                    if(!dStr || !dbDates[dStr]) return '';
+                    const dispo = dbDates[dStr];
+                    return `<div class="time-select-group">
+                        <div class="time-btn ${dispo.m?'':'disabled'} ${tVal==='matin'?'selected':''}" onclick="${dispo.m?`selectTime('${tType}', 'matin')`:''}">Matin</div>
+                        <div class="time-btn ${dispo.a?'':'disabled'} ${tVal==='aprem'?'selected':''}" onclick="${dispo.a?`selectTime('${tType}', 'aprem')`:''}">Après-midi</div>
+                    </div>`;
+                };
+                html += `
+                    <select class="form-control" style="margin-bottom:15px;" onchange="state.tripType=this.value; renderApp();">
+                        <option value="aller">Aller simple</option><option value="aller-retour">Aller-Retour</option>
+                    </select>
+                    <label>Aller</label>
+                    ${createCalendar('aller')}${getTimes(state.dateAller, 'aller', state.timeAller)}
+                    ${state.tripType === 'aller-retour' ? `<label style="margin-top:20px;">Retour</label>${createCalendar('retour')}${getTimes(state.dateRetour, 'retour', state.timeRetour)}` : ''}
+                    <div class="counter-group" style="margin-top:20px;"><span>Adultes</span><div class="counter-controls"><button class="counter-btn" onclick="updateCounter('adults','minus')">-</button><strong>${state.adults}</strong><button class="counter-btn" onclick="updateCounter('adults','plus')">+</button></div></div>
+                    <div class="counter-group"><span>Enfants</span><div class="counter-controls"><button class="counter-btn" onclick="updateCounter('children','minus')">-</button><strong>${state.children}</strong><button class="counter-btn" onclick="updateCounter('children','plus')">+</button></div></div>
+                    <div id="err-s1" class="error">Sélectionnez les dates/heures.</div>
+                    <button class="btn btn-primary" onclick="navStep2()">Suivant</button>
+                `;
+            }
+            if (state.step === 2) {
+                state.passengers.forEach((p, i) => {
+                    html += `<div class="passenger-box"><h4>Passager ${i+1}</h4><div class="row"><div class="col"><input type="text" class="form-control" id="nom_${i}" value="${p.nom}" placeholder="Nom"></div><div class="col"><input type="text" class="form-control" id="prenom_${i}" value="${p.prenom}" placeholder="Prénom"></div></div>`;
+                    if(i===0) html += `<div class="phone-input" style="margin-top:10px;"><select class="form-control" onchange="state.user.phoneCodeValue=this.value;"><option value="+269">+269 COMORES</option><option value="+33">+33 FRANCE</option></select><input type="tel" class="form-control" id="phone" value="${state.user.phone}" placeholder="Tél"></div><input type="email" style="margin-top:10px;" class="form-control" id="email" value="${state.user.email}" placeholder="Email">`;
+                    html += `</div>`;
+                });
+                html += `<div id="err-s2" class="error">Remplissez tous les champs.</div><button class="btn btn-secondary" onclick="navStep1()">Retour</button><button class="btn btn-primary" onclick="navStep3()">Récapitulatif</button>`;
+            }
+            if (state.step === 3) {
+                html += `<div class="recap-box"><p>Total à payer: <strong>${(state.adults * 30 + state.children * 15) * (state.tripType === 'aller-retour' ? 2 : 1)} €</strong></p></div><button class="btn btn-secondary" onclick="navStep2()">Modifier</button>
+                <button id="submit-btn" class="btn btn-primary" onclick="submitBooking()">Confirmer<span id="loader" class="loader"></span></button>`;
+            }
+            document.getElementById('app-content').innerHTML = html;
+        };
+        renderApp();
+    </script>
+</body>
+</html>
