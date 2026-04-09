@@ -41,8 +41,7 @@
     </div>
 
     <script>
-        // --- CONFIGURATION APP SCRIPT ---
-        const GOOGLE_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzzBsE4E1yLuSYDkRRgiSPToD7cxUfItP9D2nangZBtyQFVPhM6WWDnt62FWicEPpb7/exec'; // <--- REMPLACEZ CECI
+        const GOOGLE_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzzBsE4E1yLuSYDkRRgiSPToD7cxUfItP9D2nangZBtyQFVPhM6WWDnt62FWicEPpb7/exec';
 
         const getDates = () => JSON.parse(localStorage.getItem('abmotors_dates')) || {};
         const getBookings = () => JSON.parse(localStorage.getItem('abmotors_bookings')) || [];
@@ -71,7 +70,6 @@
             saveDates(db); render();
         };
 
-        // Fonction qui génère le PDF et demande au serveur d'envoyer l'email
         window.validerRes = async (id) => {
             const db = getBookings();
             const booking = db.find(b => b.id === id);
@@ -81,7 +79,6 @@
             btn.disabled = true;
             btn.innerText = "Envoi...";
 
-            // 1. Génération du PDF avec jsPDF
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             
@@ -106,10 +103,8 @@
             doc.setFontSize(14);
             doc.text(`MONTANT PAYÉ / TOTAL : ${booking.total} EUR`, 20, 150);
 
-            // Convertir le PDF en Base64
             const pdfBase64 = doc.output('datauristring').split(',')[1];
 
-            // 2. Envoi de la requête au serveur Google
             const payload = {
                 action: 'validate_booking',
                 id: booking.id,
@@ -119,12 +114,16 @@
             };
 
             try {
+                // SOLUTION CORS ICI AUSSI
                 await fetch(GOOGLE_WEB_APP_URL, {
                     method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        "Content-Type": "text/plain;charset=utf-8",
+                    },
                     body: JSON.stringify(payload)
                 });
 
-                // Mettre à jour l'affichage local
                 booking.status = "confirmée";
                 saveBookings(db);
                 alert("Réservation validée et PDF envoyé au client !");
