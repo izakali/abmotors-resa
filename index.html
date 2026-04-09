@@ -69,8 +69,7 @@
     </div>
 
     <script>
-        // --- CONFIGURATION APP SCRIPT ---
-        const GOOGLE_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzzBsE4E1yLuSYDkRRgiSPToD7cxUfItP9D2nangZBtyQFVPhM6WWDnt62FWicEPpb7/exec'; // <--- REMPLACEZ CECI PAR L'URL DE VOTRE SCRIPT GOOGLE
+        const GOOGLE_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzzBsE4E1yLuSYDkRRgiSPToD7cxUfItP9D2nangZBtyQFVPhM6WWDnt62FWicEPpb7/exec';
 
         const countriesData = [{ c: "COMORES", p: "+269", ex: "333 44 55" }, { c: "FRANCE", p: "+33", ex: "6 12 34 56 78" }, { c: "MAYOTTE", p: "+262", ex: "639 12 34 56" }];
         
@@ -152,18 +151,17 @@
                 total: totalCost
             };
 
-            // Envoi à Google Apps Script avec les headers pour éviter l'erreur CORS
             try {
-                const response = await fetch(GOOGLE_WEB_APP_URL, {
+                // SOLUTION CORS ICI : mode: 'no-cors'
+                await fetch(GOOGLE_WEB_APP_URL, {
                     method: 'POST',
+                    mode: 'no-cors',
                     headers: {
                         "Content-Type": "text/plain;charset=utf-8",
                     },
-                    body: JSON.stringify(payload),
-                    redirect: "follow"
+                    body: JSON.stringify(payload)
                 });
                 
-                // Sauvegarde locale pour l'admin
                 const bookings = getBookings();
                 bookings.unshift({ ...payload, pax: state.adults + state.children, status: "en attente" });
                 localStorage.setItem('abmotors_bookings', JSON.stringify(bookings));
