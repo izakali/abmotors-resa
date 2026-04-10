@@ -53,6 +53,9 @@
         .btn-action:disabled { opacity: 0.5; cursor: not-allowed; }
         .refresh-btn { background: #00a8cc; color:white; border:none; border-radius:4px; font-size: 14px; padding: 8px 15px; cursor:pointer;}
         .loader { display: none; margin-left: 10px; font-size: 14px; color: #666; font-weight: normal; }
+        
+        /* CHAMP DE RECHERCHE */
+        .search-box { margin-bottom: 15px; width: 100%; max-width: 300px; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -134,13 +137,8 @@
             const { jsPDF } = window.jspdf; 
             const doc = new jsPDF();
             
-            // DESSIN DU DRAPEAU (Style AB MOTORS)
-            doc.setFillColor(252, 210, 28); // Jaune
-            doc.rect(15, 15, 180, 8, 'F');
-            doc.setFillColor(255, 255, 255); // Blanc
-            doc.rect(15, 23, 180, 14, 'F');
-            doc.setFillColor(206, 17, 38); // Rouge
-            doc.rect(15, 37, 180, 8, 'F');
+            // LOGO DRAPEAU (Haut gauche)
+            doc.addImage('unnammmed.png', 'PNG', 15, 15, 40, 25);
             
             doc.setFontSize(22);
             doc.setTextColor(0, 0, 0);
@@ -153,52 +151,59 @@
 
             doc.setFontSize(10);
             doc.setFont("helvetica", "normal");
-            doc.text(`Numéro de réservation / Booking Ref : ${booking.id}`, 15, 70);
+            doc.text(`Numéro de réservation / Booking Ref : # ${booking.id}`, 15, 70);
             doc.text(`Passager / Passenger : ${booking.contact}`, 15, 76);
             doc.text(`Téléphone : ${booking.phone}`, 15, 82);
-            doc.text(`Agence émettrice / Issuing office : AB MOTORS WEB`, 100, 70);
-            doc.text(`Date d'émission / Date of Issuance : ${new Date().toLocaleDateString('fr-FR')}`, 100, 76);
+            doc.text(`Agence émettrice / Issuing office : AB MOTORS`, 100, 70);
+            doc.text(`(+269) 3315118`, 100, 76);
+            doc.text(`(+269) 4350423`, 100, 82);
+            doc.text(`Date d'émission / Date of Issuance : ${new Date().toLocaleDateString('fr-FR')}`, 100, 88);
 
             // TABLEAU DES SERVICES
             doc.setFillColor(240, 240, 240);
-            doc.rect(15, 95, 180, 10, 'F');
+            doc.rect(15, 105, 180, 10, 'F');
             doc.setFont("helvetica", "bold");
-            doc.text("Trajet / Route", 20, 101);
-            doc.text("Dates / Horaires", 80, 101);
-            doc.text("Statut", 140, 101);
-            doc.text("Passagers", 170, 101);
+            doc.text("Trajet / Route", 20, 111);
+            doc.text("Dates / Horaires", 80, 111);
+            doc.text("Statut", 140, 111);
+            doc.text("Passagers", 170, 111);
 
             doc.setFont("helvetica", "normal");
             let route = booking.details.split('|')[0].trim();
             let depDate = booking.details.split('|')[1] ? booking.details.split('|')[1].trim() : "";
-            doc.text(route, 20, 112);
-            doc.text(depDate, 80, 112);
-            doc.text("Confirmé", 140, 112);
-            doc.text(booking.pax.split(' ')[0], 170, 112); // Nombre total uniquement
+            doc.text(route, 20, 122);
+            doc.text(depDate, 80, 122);
+            doc.text("Confirmé", 140, 122);
+            doc.text(booking.pax.split(' ')[0], 170, 122); 
 
             // DETAILS PAIEMENT
             doc.setFont("helvetica", "bold");
-            doc.text("Détails paiement / Payment Details", 15, 135);
+            doc.text("Détails paiement / Payment Details", 15, 145);
             doc.setFont("helvetica", "normal");
-            doc.text(`Tarif total / Total Fare : ${booking.total} EUR`, 15, 143);
+            doc.text(`Tarif total / Total Fare : ${booking.total} EUR`, 15, 153);
 
             if(statusPayment === 'payé') {
                 doc.setTextColor(40, 167, 69);
                 doc.setFont("helvetica", "bold");
-                doc.text("Statut du paiement : PAYÉ", 15, 151);
+                doc.text("Statut du paiement : PAYÉ", 15, 161);
             } else {
                 doc.setTextColor(220, 53, 69);
                 doc.setFont("helvetica", "bold");
-                doc.text("Statut du paiement : RESTE À PAYER SUR PLACE", 15, 151);
+                doc.text("Statut du paiement : RESTE À PAYER SUR PLACE", 15, 161);
             }
 
-            // MENTIONS LEGALES
+            // LOGO CIRCULAIRE (Bas Droite)
+            doc.addImage('Gemini_Generabbted_Image_.png', 'PNG', 160, 170, 30, 30);
+
+            // MENTIONS LEGALES (CENtrées et plus grandes)
             doc.setTextColor(100, 100, 100);
             doc.setFont("helvetica", "normal");
-            doc.setFontSize(8);
-            doc.text("Mentions légales / Notice", 15, 175);
-            let notice = "Lorsque ce document est délivré pour le transport, des conditions particulières peuvent s'appliquer.\nCes termes et conditions peuvent être obtenues auprès de l'agent émetteur AB MOTORS.\nCe document est un reçu de paiement et de réservation.\nMerci d'avoir choisi AB MOTORS pour votre traversée.";
-            doc.text(notice, 15, 180);
+            doc.setFontSize(10);
+            doc.text("Mentions légales / Notice", 105, 215, null, null, "center");
+            
+            doc.setFontSize(9);
+            let notice = "Lorsque ce document est délivré pour le transport, des conditions particulières peuvent s'appliquer. Ces termes et conditions peuvent être obtenues auprès de l'agent émetteur AB MOTORS.\nCe document est un reçu de paiement et de réservation.\nMerci d'avoir choisi AB MOTORS pour votre traversée.";
+            doc.text(notice, 105, 222, { maxWidth: 160, align: "center" });
 
             const pdfBase64 = doc.output('datauristring').split(',')[1];
             
@@ -273,7 +278,6 @@
                 if(nextM > 11) { nextM = 0; nextY++; }
                 html += renderMonthAdmin(nextY, nextM) + `</div>`;
                 
-                // PANEL INLINE D'EDITION DE DATE
                 if (selectedAdminDate) {
                     let dispo = serverDates[selectedAdminDate] || {m:false, a:false};
                     html += `
@@ -286,8 +290,23 @@
 
                 content.innerHTML = html;
             } else {
-                let html = `<table><tr><th>ID</th><th>Client</th><th>Trajet & Date</th><th>Pax</th><th>Total</th><th>Statut</th><th>Action</th></tr>`;
-                serverBookings.forEach(b => {
+                // FONCTION DE RECHERCHE
+                let html = `
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <input type="text" id="search-input" class="search-box" placeholder="Rechercher # Numéro de résa..." onkeyup="render()">
+                </div>
+                `;
+                
+                let searchVal = document.getElementById('search-input') ? document.getElementById('search-input').value.trim().toLowerCase() : "";
+
+                html += `<table><tr><th>ID</th><th>Client</th><th>Trajet & Date</th><th>Pax</th><th>Total</th><th>Statut</th><th>Action</th></tr>`;
+                
+                let filteredBookings = serverBookings.filter(b => {
+                    if (searchVal === "") return true;
+                    return String(b.id).toLowerCase().includes(searchVal) || `# ${b.id}`.toLowerCase().includes(searchVal);
+                });
+
+                filteredBookings.forEach(b => {
                     let actionsHTML = '';
                     let statusLower = b.status ? b.status.toLowerCase() : '';
                     
@@ -307,7 +326,9 @@
                     <td><span class="badge ${badgeClass}">${b.status}</span></td>
                     <td style="width:140px;">${actionsHTML}</td></tr>`;
                 });
-                if(serverBookings.length === 0) html += `<tr><td colspan="7" style="text-align:center">Aucune réservation pour le moment.</td></tr>`;
+                
+                if(filteredBookings.length === 0) html += `<tr><td colspan="7" style="text-align:center">Aucune réservation trouvée.</td></tr>`;
+                
                 content.innerHTML = html + `</table>`;
             }
         };
