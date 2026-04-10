@@ -5,15 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AB MOTORS - Réservation Maritime</title>
     <style>
-        :root { --primary: #004b87; --secondary: #00a8cc; --success: #28a745; --disabled: #a0aab5; --bg: #f4f7f6; --surface: #ffffff; --text: #333333; --error: #dc3545; --font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        :root { --primary: #002157; --secondary: #00a8cc; --success: #28a745; --bg: #f4f7f6; --surface: #ffffff; --text: #333333; --error: #dc3545; --font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         * { box-sizing: border-box; font-family: var(--font); }
         body { margin: 0; padding: 0; display: flex; justify-content: center; min-height: 100vh; position: relative; overflow-x: hidden; }
         
         .background-slideshow { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; list-style: none; margin: 0; padding: 0; }
-        .background-slideshow li { position: absolute; width: 100%; height: 100%; background-position: center; background-size: cover; opacity: 0; z-index: 0; animation: imageAnimation 36s linear infinite; }
+        .background-slideshow li { position: absolute; width: 100%; height: 100%; background-position: center; background-size: cover; opacity: 0; animation: imageAnimation 36s linear infinite; }
         .background-slideshow li:nth-child(1) { background-image: url('https://images.unsplash.com/photo-1596395819057-cb37331d279d?q=80&w=1920&auto=format&fit=crop'); animation-delay: 0s; } 
         .background-slideshow li:nth-child(2) { background-image: url('https://images.unsplash.com/photo-1544551763-46a013bb70d5?q=80&w=1920&auto=format&fit=crop'); animation-delay: 6s; } 
-        .background-slideshow li:nth-child(3) { background-image: url('https://images.unsplash.com/photo-1582967788606-a171c1080cb0?q=80&w=1920&auto=format&fit=crop'); animation-delay: 12s; } 
         @keyframes imageAnimation { 0% { opacity: 0; } 16% { opacity: 1; } 33% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 0; } }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: -1; }
 
@@ -25,25 +24,39 @@
         #app-logo img { width: 100%; height: auto; border-radius: 50%; }
         
         .content { padding: 30px; }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; font-weight: bold; margin-bottom: 8px; color: var(--primary); }
-        .form-control { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; }
-        .form-control:focus { outline: none; border-color: var(--secondary); box-shadow: 0 0 0 3px rgba(0, 168, 204, 0.2); }
-        .row { display: flex; gap: 15px; } .col { flex: 1; }
+        .form-control { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; margin-bottom: 15px; }
+        .row { display: flex; gap: 15px; margin-bottom: 15px; } .col { flex: 1; }
+        .col label { display: block; font-weight: bold; margin-bottom: 8px; color: var(--primary); font-size: 14px; }
         .btn { width: 100%; padding: 15px; border: none; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
         .btn-primary { background: var(--secondary); color: white; }
         .btn-secondary { background: #e0e0e0; color: var(--text); margin-bottom: 10px; }
-        .calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 10px; }
-        .cal-day { padding: 10px 5px; text-align: center; border-radius: 4px; font-size: 14px; cursor: pointer; color: white; font-weight: bold; position: relative; }
-        .cal-day.available { background-color: var(--success); }
-        .cal-day.unavailable { background-color: var(--disabled); cursor: not-allowed; }
-        .cal-day.selected { border: 3px solid #000; transform: scale(1.05); }
-        .time-mark { position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); font-size: 9px; }
-        .time-select-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        .time-btn { padding: 10px; text-align: center; border: 2px solid #eee; border-radius: 6px; cursor: pointer; font-weight: bold; color: var(--text); }
-        .time-btn.selected { border-color: var(--success); background-color: #f0fff4; color: var(--success); }
+        
+        /* CALENDRIER STYLE AIR FRANCE */
+        .calendar-section { margin-bottom: 25px; }
+        .calendar-section > label { display: block; font-weight: bold; color: var(--primary); font-size: 18px; margin-bottom: 10px; border-bottom: 2px solid #eee; padding-bottom: 5px; }
+        .calendar-wrapper { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 10px; }
+        .month-container { flex: 1; min-width: 260px; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .month-header { text-align: center; font-weight: bold; color: var(--primary); margin-bottom: 15px; text-transform: uppercase; font-size: 15px; }
+        .weekdays { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-weight: bold; font-size: 12px; color: #888; margin-bottom: 10px; }
+        .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+        .cal-day { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 14px; border-radius: 4px; cursor: pointer; position: relative; border: 1px solid transparent; transition: all 0.2s; }
+        .cal-day.available { background-color: #f0f8ff; color: var(--primary); font-weight: bold; }
+        .cal-day.available:hover { border-color: var(--primary); }
+        .cal-day.unavailable, .cal-day.past { background-color: transparent; color: #ccc; cursor: not-allowed; }
+        .cal-day.selected { background-color: var(--primary); color: white; transform: scale(1.05); box-shadow: 0 4px 8px rgba(0,33,87,0.3); border-radius: 6px; }
+        .empty-day { aspect-ratio: 1; }
+        
+        .time-dot-container { display: flex; gap: 3px; position: absolute; bottom: 3px; }
+        .time-dot { width: 5px; height: 5px; border-radius: 50%; }
+        .time-dot.matin { background-color: #f6ad55; }
+        .time-dot.aprem { background-color: #4fd1c5; }
+        .cal-day.selected .time-dot { background-color: #fff; }
+
+        .time-select-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; background: #f9f9f9; padding: 15px; border-radius: 8px; }
+        .time-btn { padding: 10px; text-align: center; border: 2px solid #ddd; border-radius: 6px; cursor: pointer; font-weight: bold; color: var(--text); background: white; }
+        .time-btn.selected { border-color: var(--primary); background-color: #e6f0fa; color: var(--primary); }
         .time-btn.disabled { opacity: 0.4; cursor: not-allowed; }
-        .passenger-box { background: #fff; border: 1px solid #e0e0e0; padding: 20px; margin-bottom: 20px; border-radius: 8px; }
+        
         .counter-group { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
         .counter-btn { width: 35px; height: 35px; border-radius: 50%; border: 1px solid var(--primary); background: transparent; color: var(--primary); font-size: 20px; cursor: pointer; }
         .phone-input { display: flex; gap: 10px; } .phone-input select { width: 190px; }
@@ -53,11 +66,11 @@
         .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--secondary); border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-left: 10px; display: none; }
         .loading-data { text-align: center; padding: 40px; font-size: 18px; color: var(--primary); font-weight: bold; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @media (max-width: 600px) { body { padding: 0; } #app-container { margin: 0; border-radius: 0; min-height: 100vh; } .header { padding-top: 40px; border-radius: 0; } #app-logo { top: 10px; left: 20px; transform: none; width: 50px; height: 50px; } .row { flex-direction: column; gap: 0; } .phone-input { flex-direction: column; } .phone-input select { width: 100%; } }
+        @media (max-width: 600px) { body { padding: 0; } #app-container { margin: 0; border-radius: 0; min-height: 100vh; } .header { padding-top: 40px; border-radius: 0; } .row { flex-direction: column; gap: 0; } .phone-input { flex-direction: column; } .phone-input select { width: 100%; } .calendar-wrapper { flex-direction: column; } }
     </style>
 </head>
 <body>
-    <ul class="background-slideshow"><li></li><li></li><li></li></ul>
+    <ul class="background-slideshow"><li></li><li></li></ul>
     <div class="overlay"></div>
 
     <div id="app-container">
@@ -75,6 +88,7 @@
         const GOOGLE_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxv_TQQ-HLA7jMStWDIEpDNlIlUpN44GRbhVQIbYlxxiyQKRVvLRiJOLSB_i4Yz4OKn/exec';
 
         let serverDates = {};
+        const monthsNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
 
         const state = {
             step: 1, tripType: 'aller', departure: 'Anjouan', arrival: 'Moheli',
@@ -83,56 +97,70 @@
             user: { phoneCodeValue: "+269", phoneExample: "333 44 55", phone: '', email: '' }
         };
 
-        // Chargement des dates depuis le Cloud au démarrage
         async function fetchDates() {
             try {
-                const response = await fetch(GOOGLE_WEB_APP_URL, {
-                    method: 'GET',
-                    redirect: 'follow'
-                });
-                
+                const response = await fetch(GOOGLE_WEB_APP_URL, { method: 'GET', redirect: 'follow' });
                 if (!response.ok) throw new Error("Erreur HTTP");
-                
                 const data = await response.json();
-                
-                // Si Google renvoie une erreur (par exemple onglet manquant)
-                if (data.error) {
-                    console.error("Erreur du script:", data.error);
-                    throw new Error("Erreur de script");
-                }
-                
+                if (data.error) throw new Error("Erreur de script");
                 serverDates = data.dates || {};
                 renderApp();
             } catch (error) {
-                console.error(error);
-                document.getElementById('app-content').innerHTML = `<div class="error" style="display:block">Erreur de connexion au serveur. Rafraîchissez la page. (Vérifiez votre déploiement Google)</div>`;
+                document.getElementById('app-content').innerHTML = `<div class="error" style="display:block">Erreur de connexion au serveur. Rafraîchissez la page.</div>`;
             }
         }
 
-        const createCalendar = (type) => {
-            const today = new Date(); 
-            let html = `<div class="calendar">`;
-            for (let i = 0; i < 28; i++) {
-                const d = new Date(today); d.setDate(today.getDate() + i);
-                const dateStr = d.toISOString().split('T')[0];
-                const dispo = serverDates[dateStr];
-                const isAvail = dispo && (dispo.m || dispo.a);
-                const cssClass = isAvail ? 'cal-day available' : 'cal-day unavailable';
-                const selClass = state[type === 'aller' ? 'dateAller' : 'dateRetour'] === dateStr ? ' selected' : '';
-                let timeHTML = '';
-                if(isAvail) {
-                    if(dispo.m && dispo.a) timeHTML = '<div class="time-mark">M/A</div>';
-                    else if(dispo.m) timeHTML = '<div class="time-mark">Matin</div>';
-                    else if(dispo.a) timeHTML = '<div class="time-mark">Aprem</div>';
+        const renderMonth = (year, month, type) => {
+            let html = `<div class="month-container"><div class="month-header">${monthsNames[month]} ${year}</div>`;
+            html += `<div class="weekdays"><div>L</div><div>M</div><div>M</div><div>J</div><div>V</div><div>S</div><div>D</div></div><div class="days-grid">`;
+
+            let firstDay = new Date(year, month, 1).getDay();
+            firstDay = firstDay === 0 ? 6 : firstDay - 1;
+            let daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            for(let i=0; i<firstDay; i++) html += `<div class="empty-day"></div>`;
+
+            const todayStr = new Date().toISOString().split('T')[0];
+
+            for(let d=1; d<=daysInMonth; d++) {
+                let dStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+                
+                if (dStr < todayStr) {
+                    html += `<div class="cal-day past">${d}</div>`;
+                    continue;
                 }
-                html += `<div class="${cssClass}${selClass}" ${isAvail ? `onclick="selectDate('${type}', '${dateStr}')"` : ''}>${d.getDate()}${timeHTML}</div>`;
+
+                let dispo = serverDates[dStr];
+                let isAvail = dispo && (dispo.m || dispo.a);
+                let cssClass = isAvail ? 'available' : 'unavailable';
+                if (state[type === 'aller' ? 'dateAller' : 'dateRetour'] === dStr) cssClass += ' selected';
+
+                let dotsHTML = '';
+                if(isAvail) {
+                    dotsHTML = `<div class="time-dot-container">`;
+                    if(dispo.m) dotsHTML += `<div class="time-dot matin"></div>`;
+                    if(dispo.a) dotsHTML += `<div class="time-dot aprem"></div>`;
+                    dotsHTML += `</div>`;
+                }
+
+                html += `<div class="cal-day ${cssClass}" ${isAvail ? `onclick="selectDate('${type}', '${dStr}')"` : ''}>${d}${dotsHTML}</div>`;
             }
-            return html + `</div>`;
+            return html + `</div></div>`;
+        };
+
+        const createCalendar = (type) => {
+            const d = new Date();
+            let html = `<div class="calendar-wrapper">` + renderMonth(d.getFullYear(), d.getMonth(), type);
+            let nextM = d.getMonth() + 1, nextY = d.getFullYear();
+            if(nextM > 11) { nextM = 0; nextY++; }
+            html += renderMonth(nextY, nextM, type) + `</div>`;
+            return html;
         };
 
         window.selectDate = (type, date) => { state[type === 'aller' ? 'dateAller' : 'dateRetour'] = date; state[type === 'aller' ? 'timeAller' : 'timeRetour'] = ''; renderApp(); };
         window.selectTime = (type, time) => { state[type === 'aller' ? 'timeAller' : 'timeRetour'] = time; renderApp(); };
         window.updateCounter = (type, action) => { if(type === 'adults') { if(action === 'plus') state.adults++; else if(state.adults > 1) state.adults--; } else { if(action === 'plus') state.children++; else if(state.children > 0) state.children--; } renderApp(); };
+        window.switchDest = (dep) => { state.departure = dep; state.arrival = (dep === 'Anjouan' ? 'Moheli' : 'Anjouan'); renderApp(); };
 
         const saveInputs = () => {
             state.passengers.forEach((p, i) => { const n = document.getElementById(`nom_${i}`); const pr = document.getElementById(`prenom_${i}`); if(n) p.nom = n.value; if(pr) p.prenom = pr.value; });
@@ -166,28 +194,17 @@
             const detailsStr = `${state.departure} -> ${state.arrival} | Aller: ${state.dateAller} (${state.timeAller})` + (state.tripType === 'aller-retour' ? ` | Retour: ${state.dateRetour} (${state.timeRetour})` : '');
 
             const payload = {
-                action: 'new_booking',
-                id: bookingId,
-                contact: state.passengers[0].nom + " " + state.passengers[0].prenom,
-                phone: state.user.phoneCodeValue + " " + state.user.phone,
-                email: state.user.email,
-                details: detailsStr,
-                total: totalCost,
-                pax: state.adults + state.children
+                action: 'new_booking', id: bookingId, contact: state.passengers[0].nom + " " + state.passengers[0].prenom,
+                phone: state.user.phoneCodeValue + " " + state.user.phone, email: state.user.email,
+                details: detailsStr, total: totalCost, pax: state.adults + state.children
             };
 
             try {
-                await fetch(GOOGLE_WEB_APP_URL, {
-                    method: 'POST',
-                    redirect: 'follow',
-                    body: JSON.stringify(payload)
-                });
-                
-                alert('Réservation envoyée avec succès ! Un e-mail récapitulatif a été envoyé. AB MOTORS vous contactera pour validation.');
+                await fetch(GOOGLE_WEB_APP_URL, { method: 'POST', redirect: 'follow', body: JSON.stringify(payload) });
+                alert('Réservation envoyée avec succès ! AB MOTORS vous contactera pour validation.');
                 location.reload();
             } catch (error) {
-                alert("Une erreur est survenue lors de l'envoi. Veuillez réessayer.");
-                btn.disabled = false; loader.style.display = 'none';
+                alert("Erreur lors de l'envoi."); btn.disabled = false; loader.style.display = 'none';
             }
         };
 
@@ -198,27 +215,58 @@
                     if(!dStr || !serverDates[dStr]) return '';
                     const dispo = serverDates[dStr];
                     return `<div class="time-select-group">
-                        <div class="time-btn ${dispo.m?'':'disabled'} ${tVal==='matin'?'selected':''}" onclick="${dispo.m?`selectTime('${tType}', 'matin')`:''}">Matin</div>
-                        <div class="time-btn ${dispo.a?'':'disabled'} ${tVal==='aprem'?'selected':''}" onclick="${dispo.a?`selectTime('${tType}', 'aprem')`:''}">Après-midi</div>
+                        <div class="time-btn ${dispo.m?'':'disabled'} ${tVal==='matin'?'selected':''}" onclick="${dispo.m?`selectTime('${tType}', 'matin')`:''}">Matin (8h00)</div>
+                        <div class="time-btn ${dispo.a?'':'disabled'} ${tVal==='aprem'?'selected':''}" onclick="${dispo.a?`selectTime('${tType}', 'aprem')`:''}">Après-midi (14h00)</div>
                     </div>`;
                 };
+                
                 html += `
-                    <select class="form-control" style="margin-bottom:15px;" onchange="state.tripType=this.value; renderApp();">
-                        <option value="aller">Aller simple</option><option value="aller-retour">Aller-Retour</option>
+                    <select class="form-control" onchange="state.tripType=this.value; renderApp();">
+                        <option value="aller" ${state.tripType === 'aller' ? 'selected' : ''}>Aller simple</option>
+                        <option value="aller-retour" ${state.tripType === 'aller-retour' ? 'selected' : ''}>Aller-Retour</option>
                     </select>
-                    <label>Aller</label>
-                    ${createCalendar('aller')}${getTimes(state.dateAller, 'aller', state.timeAller)}
-                    ${state.tripType === 'aller-retour' ? `<label style="margin-top:20px;">Retour</label>${createCalendar('retour')}${getTimes(state.dateRetour, 'retour', state.timeRetour)}` : ''}
-                    <div class="counter-group" style="margin-top:20px;"><span>Adultes</span><div class="counter-controls"><button class="counter-btn" onclick="updateCounter('adults','minus')">-</button><strong>${state.adults}</strong><button class="counter-btn" onclick="updateCounter('adults','plus')">+</button></div></div>
-                    <div class="counter-group"><span>Enfants</span><div class="counter-controls"><button class="counter-btn" onclick="updateCounter('children','minus')">-</button><strong>${state.children}</strong><button class="counter-btn" onclick="updateCounter('children','plus')">+</button></div></div>
-                    <div id="err-s1" class="error">Sélectionnez les dates/heures.</div>
+                    
+                    <div class="row">
+                        <div class="col"><label>Départ</label><select class="form-control" onchange="switchDest(this.value)">
+                            <option value="Anjouan" ${state.departure==='Anjouan'?'selected':''}>Anjouan</option>
+                            <option value="Moheli" ${state.departure==='Moheli'?'selected':''}>Moheli</option>
+                        </select></div>
+                        <div class="col"><label>Arrivée</label><select class="form-control" disabled>
+                            <option value="Moheli" ${state.arrival==='Moheli'?'selected':''}>Moheli</option>
+                            <option value="Anjouan" ${state.arrival==='Anjouan'?'selected':''}>Anjouan</option>
+                        </select></div>
+                    </div>
+
+                    <div class="calendar-section">
+                        <label>Sélectionnez votre date d'Aller</label>
+                        ${createCalendar('aller')}
+                        ${getTimes(state.dateAller, 'aller', state.timeAller)}
+                    </div>
+                `;
+
+                if (state.tripType === 'aller-retour') {
+                    html += `
+                    <div class="calendar-section">
+                        <label>Sélectionnez votre date de Retour</label>
+                        ${createCalendar('retour')}
+                        ${getTimes(state.dateRetour, 'retour', state.timeRetour)}
+                    </div>`;
+                }
+
+                html += `
+                    <div class="counter-group"><span>Adultes</span><div class="counter-controls"><button class="counter-btn" onclick="updateCounter('adults','minus')">-</button><strong style="margin:0 15px;">${state.adults}</strong><button class="counter-btn" onclick="updateCounter('adults','plus')">+</button></div></div>
+                    <div class="counter-group">
+                        <span>Enfants <small style="display:block; color:#888; font-size:12px;">(Moins de 13 ans)</small></span>
+                        <div class="counter-controls"><button class="counter-btn" onclick="updateCounter('children','minus')">-</button><strong style="margin:0 15px;">${state.children}</strong><button class="counter-btn" onclick="updateCounter('children','plus')">+</button></div>
+                    </div>
+                    <div id="err-s1" class="error">Sélectionnez vos dates et heures de traversée.</div>
                     <button class="btn btn-primary" onclick="navStep2()">Suivant</button>
                 `;
             }
             if (state.step === 2) {
                 state.passengers.forEach((p, i) => {
-                    html += `<div class="passenger-box"><h4>Passager ${i+1}</h4><div class="row"><div class="col"><input type="text" class="form-control" id="nom_${i}" value="${p.nom}" placeholder="Nom"></div><div class="col"><input type="text" class="form-control" id="prenom_${i}" value="${p.prenom}" placeholder="Prénom"></div></div>`;
-                    if(i===0) html += `<div class="phone-input" style="margin-top:10px;"><select class="form-control" onchange="state.user.phoneCodeValue=this.value;"><option value="+269">+269 COMORES</option><option value="+33">+33 FRANCE</option></select><input type="tel" class="form-control" id="phone" value="${state.user.phone}" placeholder="Tél"></div><input type="email" style="margin-top:10px;" class="form-control" id="email" value="${state.user.email}" placeholder="Email">`;
+                    html += `<div class="passenger-box"><h4>Passager ${i+1} (${p.type})</h4><div class="row"><div class="col"><input type="text" class="form-control" id="nom_${i}" value="${p.nom}" placeholder="Nom"></div><div class="col"><input type="text" class="form-control" id="prenom_${i}" value="${p.prenom}" placeholder="Prénom"></div></div>`;
+                    if(i===0) html += `<div class="phone-input"><select class="form-control" onchange="state.user.phoneCodeValue=this.value;"><option value="+269">+269 COMORES</option><option value="+33">+33 FRANCE</option></select><input type="tel" class="form-control" id="phone" value="${state.user.phone}" placeholder="Tél"></div><input type="email" class="form-control" id="email" value="${state.user.email}" placeholder="Email">`;
                     html += `</div>`;
                 });
                 html += `<div id="err-s2" class="error">Remplissez tous les champs.</div><button class="btn btn-secondary" onclick="navStep1()">Retour</button><button class="btn btn-primary" onclick="navStep3()">Récapitulatif</button>`;
@@ -229,8 +277,6 @@
             }
             document.getElementById('app-content').innerHTML = html;
         };
-
-        // Lancer la récupération au démarrage
         fetchDates();
     </script>
 </body>
