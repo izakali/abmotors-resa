@@ -86,12 +86,26 @@
         // Chargement des dates depuis le Cloud au démarrage
         async function fetchDates() {
             try {
-                const response = await fetch(GOOGLE_WEB_APP_URL);
+                const response = await fetch(GOOGLE_WEB_APP_URL, {
+                    method: 'GET',
+                    redirect: 'follow'
+                });
+                
+                if (!response.ok) throw new Error("Erreur HTTP");
+                
                 const data = await response.json();
+                
+                // Si Google renvoie une erreur (par exemple onglet manquant)
+                if (data.error) {
+                    console.error("Erreur du script:", data.error);
+                    throw new Error("Erreur de script");
+                }
+                
                 serverDates = data.dates || {};
                 renderApp();
             } catch (error) {
-                document.getElementById('app-content').innerHTML = `<div class="error" style="display:block">Erreur de connexion au serveur. Rafraîchissez la page.</div>`;
+                console.error(error);
+                document.getElementById('app-content').innerHTML = `<div class="error" style="display:block">Erreur de connexion au serveur. Rafraîchissez la page. (Vérifiez votre déploiement Google)</div>`;
             }
         }
 
@@ -163,9 +177,9 @@
             };
 
             try {
-                // IMPORTANT: Plus de "mode: 'no-cors'", on envoie du texte pur
                 await fetch(GOOGLE_WEB_APP_URL, {
                     method: 'POST',
+                    redirect: 'follow',
                     body: JSON.stringify(payload)
                 });
                 
