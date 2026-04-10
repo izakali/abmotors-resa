@@ -12,7 +12,6 @@
         .nav { display: flex; gap: 10px; margin-bottom: 20px; }
         .nav-btn { padding: 10px 20px; background: #e0e0e0; cursor: pointer; border-radius: 6px; font-weight: bold; }
         .nav-btn.active { background: #002157; color: white; }
-        
         .calendar-wrapper { display: flex; gap: 20px; flex-wrap: wrap; }
         .month-container { flex: 1; min-width: 300px; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; }
         .month-header { text-align: center; font-weight: bold; color: #002157; margin-bottom: 15px; text-transform: uppercase; }
@@ -24,28 +23,24 @@
         .cal-day.selected-admin { background-color: #002157; color: white; transform: scale(1.05); }
         .cal-day:hover:not(.past) { border-color: #002157; }
         .empty-day { aspect-ratio: 1; }
-        
         .time-dot-container { display: flex; gap: 3px; position: absolute; bottom: 3px; }
         .time-dot { width: 6px; height: 6px; border-radius: 50%; }
         .time-dot.matin { background-color: #f6ad55; }
         .time-dot.aprem { background-color: #4fd1c5; }
         .cal-day.selected-admin .time-dot { background-color: #fff; }
-        
         .legend { margin-top: 15px; font-size: 13px; color: #666; display: flex; gap: 15px; }
         .legend div { display: flex; align-items: center; gap: 5px; }
-        
         .inline-editor { background: #f0f8ff; border: 1px solid #cce5ff; padding: 15px; border-radius: 8px; margin-top: 15px; display: flex; gap: 20px; align-items: center; }
         .inline-editor h3 { margin: 0; color: #002157; font-size: 16px; }
         .inline-editor label { cursor: pointer; font-weight: bold; color: #333; display:flex; align-items:center; gap:5px;}
         .inline-editor input { width: 18px; height: 18px; cursor:pointer;}
-
         table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
         th, td { text-align: left; padding: 12px; border-bottom: 1px solid #eee; }
         th { color: #002157; }
-        .badge { padding: 4px 8px; border-radius: 12px; font-size: 11px; text-transform: uppercase; font-weight: bold; }
+        /* FIX badge coupé */
+        .badge { display: inline-block; white-space: nowrap; padding: 6px 10px; border-radius: 12px; font-size: 10px; text-transform: uppercase; font-weight: bold; }
         .badge.attente { background: #fff8f0; color: #b7791f; border: 1px solid #fbd38d; }
         .badge.confirmee { background: #f0fff4; color: #276749; border: 1px solid #9ae6b4; }
-        
         .btn-action { cursor: pointer; padding: 6px 12px; border: none; border-radius: 4px; color: white; font-weight: bold; margin-bottom:4px; display:block; width:100%; font-size:12px; }
         .btn-paye { background: #28a745; }
         .btn-non-paye { background: #f6ad55; }
@@ -53,8 +48,6 @@
         .btn-action:disabled { opacity: 0.5; cursor: not-allowed; }
         .refresh-btn { background: #00a8cc; color:white; border:none; border-radius:4px; font-size: 14px; padding: 8px 15px; cursor:pointer;}
         .loader { display: none; margin-left: 10px; font-size: 14px; color: #666; font-weight: normal; }
-        
-        /* CHAMP DE RECHERCHE */
         .search-box { margin-bottom: 15px; width: 100%; max-width: 300px; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; }
     </style>
 </head>
@@ -79,7 +72,6 @@
         
         const monthsNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
 
-        // Helper pour précharger les images du PDF et éviter un fichier blanc
         const loadImage = (url) => new Promise((resolve) => {
             const img = new Image();
             img.onload = () => resolve(img);
@@ -110,122 +102,78 @@
         };
 
         window.changeAdminMonth = (dir) => { adminMonthOffset += dir; render(); };
-
-        window.selectAdminDate = (dStr) => {
-            selectedAdminDate = dStr;
-            render();
-        };
+        window.selectAdminDate = (dStr) => { selectedAdminDate = dStr; render(); };
 
         window.updateDispoInline = async () => {
             if(!selectedAdminDate) return;
             let isM = document.getElementById('toggle-matin').checked;
             let isA = document.getElementById('toggle-aprem').checked;
             let newDispo = (isM || isA) ? {m: isM, a: isA} : null;
-
             document.getElementById('main-loader').style.display = 'inline-block';
             try {
                 await fetch(GOOGLE_WEB_APP_URL, { method: 'POST', redirect: 'follow', body: JSON.stringify({ action: 'update_dates', dateStr: selectedAdminDate, dispo: newDispo }) });
                 if(newDispo) serverDates[selectedAdminDate] = newDispo; else delete serverDates[selectedAdminDate];
                 render(); 
-            } catch (e) {
-                alert("Erreur lors de la sauvegarde."); 
-            }
+            } catch (e) { alert("Erreur lors de la sauvegarde."); }
             document.getElementById('main-loader').style.display = 'none';
         };
 
         window.validerRes = async (id, statusPayment) => {
             const booking = serverBookings.find(b => b.id == id);
             if(!booking) return;
-            
             const fullStatus = statusPayment === 'payé' ? 'Confirmée et payée' : 'Confirmée et non payée';
-            
             const btn = document.getElementById('btn-valider-' + id);
             if(btn) { btn.disabled = true; btn.innerText = "Génération PDF..."; }
-
             const { jsPDF } = window.jspdf; 
             const doc = new jsPDF();
-            
-            // 1. BANNIÈRE HAUT (unnammmed.png)
             const imgHaut = await loadImage('unnammmed.png');
             if (imgHaut) {
-                // S'étale de la marge gauche à la marge droite (x=15, largeur=180, hauteur=50)
                 doc.addImage(imgHaut, 'PNG', 15, 15, 180, 50);
             } else {
-                // Sécurité : Dessin manuel si l'image échoue à charger
                 doc.setFillColor(252, 210, 28); doc.rect(15, 15, 180, 8, 'F');
                 doc.setFillColor(255, 255, 255); doc.rect(15, 23, 180, 14, 'F');
                 doc.setFillColor(206, 17, 38); doc.rect(15, 37, 180, 8, 'F');
                 doc.setFontSize(22); doc.setTextColor(0, 0, 0); doc.setFont("helvetica", "bold");
                 doc.text("AB MOTORS", 105, 33, null, null, "center");
             }
-
-            // STYLE AIR AUSTRAL
-            doc.setFontSize(14);
-            doc.setFont("helvetica", "bold");
+            doc.setFontSize(14); doc.setFont("helvetica", "bold");
             doc.text("Votre reçu d'achat de services / Booking Receipt", 105, 80, null, null, "center");
-
-            doc.setFontSize(10);
-            doc.setFont("helvetica", "normal");
+            doc.setFontSize(10); doc.setFont("helvetica", "normal");
             doc.text(`Numéro de réservation / Booking Ref : # ${booking.id}`, 15, 95);
             doc.text(`Passager / Passenger : ${booking.contact}`, 15, 101);
             doc.text(`Téléphone : ${booking.phone}`, 15, 107);
-            
             doc.text(`Agence émettrice / Issuing office : AB MOTORS`, 100, 95);
             doc.text(`(+269) 3315118`, 100, 101);
             doc.text(`(+269) 4350423`, 100, 107);
             doc.text(`Date d'émission / Date of Issuance : ${new Date().toLocaleDateString('fr-FR')}`, 100, 113);
-
-            // TABLEAU DES SERVICES
-            doc.setFillColor(240, 240, 240);
-            doc.rect(15, 125, 180, 10, 'F');
+            doc.setFillColor(240, 240, 240); doc.rect(15, 125, 180, 10, 'F');
             doc.setFont("helvetica", "bold");
-            doc.text("Trajet / Route", 20, 131);
-            doc.text("Dates / Horaires", 80, 131);
-            doc.text("Statut", 140, 131);
-            doc.text("Passagers", 170, 131);
-
+            doc.text("Trajet / Route", 20, 131); doc.text("Dates / Horaires", 80, 131);
+            doc.text("Statut", 140, 131); doc.text("Passagers", 170, 131);
             doc.setFont("helvetica", "normal");
             let route = booking.details.split('|')[0].trim();
             let depDate = booking.details.split('|')[1] ? booking.details.split('|')[1].trim() : "";
-            doc.text(route, 20, 142);
-            doc.text(depDate, 80, 142);
-            doc.text("Confirmé", 140, 142);
-            doc.text(booking.pax.split(' ')[0], 170, 142); 
-
-            // DETAILS PAIEMENT
+            doc.text(route, 20, 142); doc.text(depDate, 80, 142);
+            doc.text("Confirmé", 140, 142); doc.text(booking.pax.split(' ')[0], 170, 142);
             doc.setFont("helvetica", "bold");
             doc.text("Détails paiement / Payment Details", 15, 165);
             doc.setFont("helvetica", "normal");
             doc.text(`Tarif total / Total Fare : ${booking.total} EUR`, 15, 173);
-
             if(statusPayment === 'payé') {
-                doc.setTextColor(40, 167, 69);
-                doc.setFont("helvetica", "bold");
+                doc.setTextColor(40, 167, 69); doc.setFont("helvetica", "bold");
                 doc.text("Statut du paiement : PAYÉ", 15, 181);
             } else {
-                doc.setTextColor(220, 53, 69);
-                doc.setFont("helvetica", "bold");
+                doc.setTextColor(220, 53, 69); doc.setFont("helvetica", "bold");
                 doc.text("Statut du paiement : RESTE À PAYER SUR PLACE", 15, 181);
             }
-
-            // LOGO CIRCULAIRE (Bas Droite)
             const imgBas = await loadImage('Gemini_Generabbted_Image_.png');
-            if (imgBas) {
-                doc.addImage(imgBas, 'PNG', 150, 185, 40, 40);
-            }
-
-            // MENTIONS LEGALES (Centrées et plus grandes)
-            doc.setTextColor(100, 100, 100);
-            doc.setFont("helvetica", "normal");
-            doc.setFontSize(11);
+            if (imgBas) { doc.addImage(imgBas, 'PNG', 150, 185, 40, 40); }
+            doc.setTextColor(100, 100, 100); doc.setFont("helvetica", "normal"); doc.setFontSize(11);
             doc.text("Mentions légales / Notice", 105, 245, null, null, "center");
-            
             doc.setFontSize(10);
             let notice = "Lorsque ce document est délivré pour le transport, des conditions particulières peuvent s'appliquer.\nCes termes et conditions peuvent être obtenues auprès de l'agent émetteur AB MOTORS.\nCe document est un reçu de paiement et de réservation.\nMerci d'avoir choisi AB MOTORS pour votre traversée.";
             doc.text(notice, 105, 252, { maxWidth: 180, align: "center" });
-
             const pdfBase64 = doc.output('datauristring').split(',')[1];
-            
             try {
                 await fetch(GOOGLE_WEB_APP_URL, { method: 'POST', redirect: 'follow', body: JSON.stringify({ action: 'validate_booking', id: booking.id, email: booking.email, contact: booking.contact, pdfBase64: pdfBase64, newStatus: fullStatus }) });
                 alert("Statut mis à jour et PDF officiel envoyé !"); 
@@ -247,22 +195,14 @@
             let firstDay = new Date(year, month, 1).getDay(); firstDay = firstDay === 0 ? 6 : firstDay - 1;
             let daysInMonth = new Date(year, month + 1, 0).getDate();
             for(let i=0; i<firstDay; i++) html += `<div class="empty-day"></div>`;
-            
             const todayStr = new Date().toISOString().split('T')[0];
-            
             for(let d=1; d<=daysInMonth; d++) {
                 let dStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-                
-                if (dStr < todayStr) {
-                    html += `<div class="cal-day past" style="opacity:0.3; cursor:not-allowed;">${d}</div>`;
-                    continue;
-                }
-
+                if (dStr < todayStr) { html += `<div class="cal-day past" style="opacity:0.3; cursor:not-allowed;">${d}</div>`; continue; }
                 let dispo = serverDates[dStr];
                 let isAvail = dispo && (dispo.m || dispo.a);
                 let cssClass = isAvail ? 'available' : '';
                 if(selectedAdminDate === dStr) cssClass += ' selected-admin';
-                
                 let dotsHTML = '';
                 if(isAvail) {
                     dotsHTML = `<div class="time-dot-container">`;
@@ -270,10 +210,47 @@
                     if(dispo.a) dotsHTML += `<div class="time-dot aprem"></div>`;
                     dotsHTML += `</div>`;
                 }
-
                 html += `<div class="cal-day ${cssClass}" onclick="selectAdminDate('${dStr}')">${d}${dotsHTML}</div>`;
             }
             return html + `</div></div>`;
+        };
+
+        // FIX RECHERCHE : ne met à jour QUE le tableau, sans toucher le champ input
+        window.updateTable = () => {
+            const tableContainer = document.getElementById('table-container');
+            if (!tableContainer) return;
+            const searchVal = document.getElementById('search-input')
+                ? document.getElementById('search-input').value.trim().toLowerCase() : "";
+
+            let html = `<table><tr><th>ID</th><th>Client</th><th>Trajet & Date</th><th>Pax</th><th>Total</th><th>Statut</th><th>Action</th></tr>`;
+            const filtered = serverBookings.filter(b => {
+                if (searchVal === "") return true;
+                return String(b.id).toLowerCase().includes(searchVal) || `# ${b.id}`.toLowerCase().includes(searchVal);
+            });
+
+            filtered.forEach(b => {
+                let actionsHTML = '';
+                const sl = b.status ? b.status.toLowerCase() : '';
+                if (sl === 'en attente') {
+                    actionsHTML += `<button id="btn-valider-${b.id}" class="btn-action btn-paye" onclick="validerRes(${b.id}, 'payé')">Valider (PAYÉ)</button>`;
+                    actionsHTML += `<button class="btn-action btn-non-paye" onclick="validerRes(${b.id}, 'non payé')">Valider (NON PAYÉ)</button>`;
+                } else if (sl === 'confirmée et non payée') {
+                    actionsHTML += `<button id="btn-valider-${b.id}" class="btn-action btn-paye" onclick="validerRes(${b.id}, 'payé')">Marquer comme PAYÉ</button>`;
+                }
+                actionsHTML += `<button class="btn-action btn-suppr" onclick="supprRes(${b.id})">Supprimer</button>`;
+                const badgeClass = sl === 'confirmée et payée' ? 'confirmee' : 'attente';
+                html += `<tr>
+                    <td>#${b.id}</td>
+                    <td>${b.contact}<br><small>${b.phone}<br>${b.email}</small></td>
+                    <td style="font-size:11px;">${b.details}</td>
+                    <td>${b.pax}</td><td>${b.total}€</td>
+                    <td><span class="badge ${badgeClass}">${b.status}</span></td>
+                    <td style="width:140px;">${actionsHTML}</td>
+                </tr>`;
+            });
+
+            if (filtered.length === 0) html += `<tr><td colspan="7" style="text-align:center">Aucune réservation trouvée.</td></tr>`;
+            tableContainer.innerHTML = html + `</table>`;
         };
 
         const render = () => {
@@ -281,75 +258,38 @@
             if (currentView === 'dates') {
                 const d = new Date();
                 d.setMonth(d.getMonth() + adminMonthOffset);
-                
-                let html = `
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                let html = `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                     <p style="margin:0;">Cliquez sur un jour pour ouvrir/fermer les traversées ci-dessous.</p>
                     <div>
                         <button class="refresh-btn" onclick="changeAdminMonth(-1)">← Mois Précédent</button>
                         <button class="refresh-btn" onclick="changeAdminMonth(1)">Mois Suivant →</button>
                     </div>
                 </div>`;
-                
                 html += `<div class="legend"><div><span class="time-dot matin"></span> Matin</div><div><span class="time-dot aprem"></span> Après-midi</div></div><br>`;
                 html += `<div class="calendar-wrapper">` + renderMonthAdmin(d.getFullYear(), d.getMonth());
                 let nextM = d.getMonth() + 1, nextY = d.getFullYear();
                 if(nextM > 11) { nextM = 0; nextY++; }
                 html += renderMonthAdmin(nextY, nextM) + `</div>`;
-                
                 if (selectedAdminDate) {
                     let dispo = serverDates[selectedAdminDate] || {m:false, a:false};
-                    html += `
-                    <div class="inline-editor">
+                    html += `<div class="inline-editor">
                         <h3>Configuration du ${selectedAdminDate.split('-').reverse().join('/')} :</h3>
                         <label><input type="checkbox" id="toggle-matin" ${dispo.m ? 'checked':''} onchange="updateDispoInline()"> Ouvrir Matin</label>
                         <label><input type="checkbox" id="toggle-aprem" ${dispo.a ? 'checked':''} onchange="updateDispoInline()"> Ouvrir Après-midi</label>
                     </div>`;
                 }
-
                 content.innerHTML = html;
             } else {
-                // FONCTION DE RECHERCHE
-                let html = `
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <input type="text" id="search-input" class="search-box" placeholder="Rechercher # Numéro de résa..." onkeyup="render()">
-                </div>
-                `;
-                
-                let searchVal = document.getElementById('search-input') ? document.getElementById('search-input').value.trim().toLowerCase() : "";
-
-                html += `<table><tr><th>ID</th><th>Client</th><th>Trajet & Date</th><th>Pax</th><th>Total</th><th>Statut</th><th>Action</th></tr>`;
-                
-                // Filtre les réservations selon la barre de recherche
-                let filteredBookings = serverBookings.filter(b => {
-                    if (searchVal === "") return true;
-                    return String(b.id).toLowerCase().includes(searchVal) || `# ${b.id}`.toLowerCase().includes(searchVal);
-                });
-
-                filteredBookings.forEach(b => {
-                    let actionsHTML = '';
-                    let statusLower = b.status ? b.status.toLowerCase() : '';
-                    
-                    if (statusLower === 'en attente') {
-                        actionsHTML += `<button id="btn-valider-${b.id}" class="btn-action btn-paye" onclick="validerRes(${b.id}, 'payé')">Valider (PAYÉ)</button>`;
-                        actionsHTML += `<button class="btn-action btn-non-paye" onclick="validerRes(${b.id}, 'non payé')">Valider (NON PAYÉ)</button>`;
-                    } else if (statusLower === 'confirmée et non payée') {
-                        actionsHTML += `<button id="btn-valider-${b.id}" class="btn-action btn-paye" onclick="validerRes(${b.id}, 'payé')">Marquer comme PAYÉ</button>`;
-                    }
-                    actionsHTML += `<button class="btn-action btn-suppr" onclick="supprRes(${b.id})">Supprimer</button>`;
-
-                    let badgeClass = 'attente';
-                    if(statusLower === 'confirmée et payée') badgeClass = 'confirmee';
-                    if(statusLower === 'confirmée et non payée') badgeClass = 'attente';
-
-                    html += `<tr><td>#${b.id}</td><td>${b.contact}<br><small>${b.phone}<br>${b.email}</small></td><td style="font-size:11px;">${b.details}</td><td>${b.pax}</td><td>${b.total}€</td>
-                    <td><span class="badge ${badgeClass}">${b.status}</span></td>
-                    <td style="width:140px;">${actionsHTML}</td></tr>`;
-                });
-                
-                if(filteredBookings.length === 0) html += `<tr><td colspan="7" style="text-align:center">Aucune réservation trouvée.</td></tr>`;
-                
-                content.innerHTML = html + `</table>`;
+                // Le champ input est créé UNE SEULE FOIS ici.
+                // updateTable() ne le touche jamais → plus de perte de focus.
+                content.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <input type="text" id="search-input" class="search-box"
+                               placeholder="Rechercher # Numéro de résa..."
+                               oninput="updateTable()">
+                    </div>
+                    <div id="table-container"></div>`;
+                updateTable();
             }
         };
 
