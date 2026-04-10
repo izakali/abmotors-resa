@@ -34,10 +34,12 @@
         .inline-editor h3 { margin: 0; color: #002157; font-size: 16px; }
         .inline-editor label { cursor: pointer; font-weight: bold; color: #333; display:flex; align-items:center; gap:5px;}
         .inline-editor input { width: 18px; height: 18px; cursor:pointer;}
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
+        
+        .table-responsive { width: 100%; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; min-width: 700px; }
         th, td { text-align: left; padding: 12px; border-bottom: 1px solid #eee; }
         th { color: #002157; }
-        /* FIX badge coupé */
+        
         .badge { display: inline-block; white-space: nowrap; padding: 6px 10px; border-radius: 12px; font-size: 10px; text-transform: uppercase; font-weight: bold; }
         .badge.attente { background: #fff8f0; color: #b7791f; border: 1px solid #fbd38d; }
         .badge.confirmee { background: #f0fff4; color: #276749; border: 1px solid #9ae6b4; }
@@ -49,6 +51,19 @@
         .refresh-btn { background: #00a8cc; color:white; border:none; border-radius:4px; font-size: 14px; padding: 8px 15px; cursor:pointer;}
         .loader { display: none; margin-left: 10px; font-size: 14px; color: #666; font-weight: normal; }
         .search-box { margin-bottom: 15px; width: 100%; max-width: 300px; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; }
+        
+        /* RESPONSIVE MOBILE */
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .admin-container { padding: 15px; }
+            h1 { flex-direction: column; align-items: flex-start; gap: 10px; font-size: 20px; }
+            .nav { flex-wrap: wrap; }
+            .nav-btn { flex: 1; text-align: center; }
+            .calendar-wrapper { flex-direction: column; }
+            .month-container { min-width: 100%; }
+            .inline-editor { flex-direction: column; align-items: flex-start; }
+            .search-box { max-width: 100%; }
+        }
     </style>
 </head>
 <body>
@@ -68,7 +83,7 @@
         let serverBookings = [];
         let currentView = 'dates';
         let adminMonthOffset = 0;
-        let selectedDates = new Set(); // multi-sélection
+        let selectedDates = new Set();
         
         const monthsNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
 
@@ -103,17 +118,14 @@
 
         window.changeAdminMonth = (dir) => { adminMonthOffset += dir; render(); };
 
-        // Clic sur un jour : ajoute ou retire de la sélection
         window.toggleDate = (dStr) => {
             if (selectedDates.has(dStr)) selectedDates.delete(dStr);
             else selectedDates.add(dStr);
             renderCalendarOnly();
         };
 
-        // Tout désélectionner
         window.clearSelection = () => { selectedDates.clear(); renderCalendarOnly(); };
 
-        // Applique matin/aprem à TOUTES les dates sélectionnées
         window.applyBulkDispo = async () => {
             if (selectedDates.size === 0) return;
             const isM = document.getElementById('bulk-matin').checked;
@@ -151,7 +163,6 @@
             const doc = new jsPDF();
             const imgHaut = await loadImage('unnammmed.png');
             if (imgHaut) {
-                // Logo haut-gauche, taille naturelle sans étirement
                 const logoW = 42;
                 const ratio = imgHaut.naturalHeight / imgHaut.naturalWidth;
                 const logoH = logoW * ratio;
@@ -216,7 +227,6 @@
             }
         };
 
-        // Redessine uniquement les calendriers sans recréer tout le DOM
         const renderCalendarOnly = () => {
             const d = new Date();
             d.setMonth(d.getMonth() + adminMonthOffset);
@@ -245,10 +255,10 @@
                     <label><input type="checkbox" id="bulk-matin" checked> Ouvrir Matin</label>
                     <label><input type="checkbox" id="bulk-aprem"> Ouvrir Après-midi</label>
                     <button id="bulk-btn" class="refresh-btn" onclick="applyBulkDispo()" style="background:#28a745;">
-                        ✓ Appliquer à ${selectedDates.size} jour(s)
+                        ✓ Appliquer
                     </button>
                     <button class="refresh-btn" onclick="clearSelection()" style="background:#e53e3e;">
-                        ✗ Désélectionner tout
+                        ✗ Annuler
                     </button>
                 </div>`;
         };
@@ -280,14 +290,13 @@
             return html + `</div></div>`;
         };
 
-        // FIX RECHERCHE : ne met à jour QUE le tableau, sans toucher le champ input
         window.updateTable = () => {
             const tableContainer = document.getElementById('table-container');
             if (!tableContainer) return;
             const searchVal = document.getElementById('search-input')
                 ? document.getElementById('search-input').value.trim().toLowerCase() : "";
 
-            let html = `<table><tr><th>ID</th><th>Client</th><th>Trajet & Date</th><th>Pax</th><th>Total</th><th>Statut</th><th>Action</th></tr>`;
+            let html = `<div class="table-responsive"><table><tr><th>ID</th><th>Client</th><th>Trajet & Date</th><th>Pax</th><th>Total</th><th>Statut</th><th>Action</th></tr>`;
             const filtered = serverBookings.filter(b => {
                 if (searchVal === "") return true;
                 return String(b.id).toLowerCase().includes(searchVal) || `# ${b.id}`.toLowerCase().includes(searchVal);
@@ -300,7 +309,7 @@
                     actionsHTML += `<button id="btn-valider-${b.id}" class="btn-action btn-paye" onclick="validerRes(${b.id}, 'payé')">Valider (PAYÉ)</button>`;
                     actionsHTML += `<button class="btn-action btn-non-paye" onclick="validerRes(${b.id}, 'non payé')">Valider (NON PAYÉ)</button>`;
                 } else if (sl === 'confirmée et non payée') {
-                    actionsHTML += `<button id="btn-valider-${b.id}" class="btn-action btn-paye" onclick="validerRes(${b.id}, 'payé')">Marquer comme PAYÉ</button>`;
+                    actionsHTML += `<button id="btn-valider-${b.id}" class="btn-action btn-paye" onclick="validerRes(${b.id}, 'payé')">Marquer PAYÉ</button>`;
                 }
                 actionsHTML += `<button class="btn-action btn-suppr" onclick="supprRes(${b.id})">Supprimer</button>`;
                 const badgeClass = sl === 'confirmée et payée' ? 'confirmee' : 'attente';
@@ -310,12 +319,12 @@
                     <td style="font-size:11px;">${b.details}</td>
                     <td>${b.pax}</td><td>${b.total}€</td>
                     <td><span class="badge ${badgeClass}">${b.status}</span></td>
-                    <td style="width:140px;">${actionsHTML}</td>
+                    <td style="width:140px; min-width:140px;">${actionsHTML}</td>
                 </tr>`;
             });
 
             if (filtered.length === 0) html += `<tr><td colspan="7" style="text-align:center">Aucune réservation trouvée.</td></tr>`;
-            tableContainer.innerHTML = html + `</table>`;
+            tableContainer.innerHTML = html + `</table></div>`;
         };
 
         const render = () => {
@@ -327,9 +336,9 @@
                 if(nextM > 11) { nextM = 0; nextY++; }
 
                 content.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                    <p style="margin:0;">Cliquez sur un ou <b>plusieurs jours</b> pour les sélectionner, puis appliquez les disponibilités.</p>
-                    <div>
+                <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; margin-bottom:15px; gap:10px;">
+                    <p style="margin:0;">Cliquez sur un ou <b>plusieurs jours</b> pour les sélectionner.</p>
+                    <div style="display:flex; gap:10px;">
                         <button class="refresh-btn" onclick="changeAdminMonth(-1)">← Mois Précédent</button>
                         <button class="refresh-btn" onclick="changeAdminMonth(1)">Mois Suivant →</button>
                     </div>
@@ -347,8 +356,6 @@
                     <p style="margin:0;color:#888;font-size:13px;">Cliquez sur un ou plusieurs jours pour les sélectionner.</p>
                 </div>`;
             } else {
-                // Le champ input est créé UNE SEULE FOIS ici.
-                // updateTable() ne le touche jamais → plus de perte de focus.
                 content.innerHTML = `
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <input type="text" id="search-input" class="search-box"
