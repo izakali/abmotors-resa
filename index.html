@@ -222,7 +222,6 @@
 
             try {
                 await fetch(GOOGLE_WEB_APP_URL, { method: 'POST', redirect: 'follow', body: JSON.stringify(payload) });
-                // Afficher l'écran de succès sans pop-up
                 state.step = 4;
                 renderApp();
             } catch (error) {
