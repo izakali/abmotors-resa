@@ -43,7 +43,6 @@
         th, td { text-align: left; padding: 12px; border-bottom: 1px solid #eee; }
         th { color: #002157; }
         
-        /* Correction de la classe Badge : pas de coupure de texte ! */
         .badge { display: inline-block; white-space: nowrap; padding: 6px 10px; border-radius: 12px; font-size: 10px; text-transform: uppercase; font-weight: bold; text-align: center; }
         .badge.attente { background: #fff8f0; color: #b7791f; border: 1px solid #fbd38d; }
         .badge.confirmee { background: #f0fff4; color: #276749; border: 1px solid #9ae6b4; }
@@ -56,7 +55,6 @@
         .refresh-btn { background: #00a8cc; color:white; border:none; border-radius:4px; font-size: 14px; padding: 8px 15px; cursor:pointer;}
         .loader { display: none; margin-left: 10px; font-size: 14px; color: #666; font-weight: normal; }
         
-        /* CHAMP DE RECHERCHE */
         .search-box { margin-bottom: 15px; width: 100%; max-width: 300px; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; }
     </style>
 </head>
@@ -82,13 +80,27 @@
         
         const monthsNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
 
-        // Helper pour précharger les images du PDF
         const loadImage = (url) => new Promise((resolve) => {
             const img = new Image();
+            img.crossOrigin = "anonymous";
             img.onload = () => resolve(img);
             img.onerror = () => resolve(null);
-            img.src = url;
+            img.src = url + '?t=' + Date.now();
         });
+
+        // Convertit une Image en base64 via canvas
+        const imgToBase64 = (img) => {
+            try {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.naturalWidth;
+                canvas.height = img.naturalHeight;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                return canvas.toDataURL('image/png');
+            } catch(e) {
+                return null;
+            }
+        };
 
         async function fetchData() {
             document.getElementById('main-loader').style.display = 'inline-block';
@@ -113,11 +125,7 @@
         };
 
         window.changeAdminMonth = (dir) => { adminMonthOffset += dir; render(); };
-
-        window.selectAdminDate = (dStr) => {
-            selectedAdminDate = dStr;
-            render();
-        };
+        window.selectAdminDate = (dStr) => { selectedAdminDate = dStr; render(); };
 
         window.updateDispoInline = async () => {
             if(!selectedAdminDate) return;
@@ -130,118 +138,198 @@
                 await fetch(GOOGLE_WEB_APP_URL, { method: 'POST', redirect: 'follow', body: JSON.stringify({ action: 'update_dates', dateStr: selectedAdminDate, dispo: newDispo }) });
                 if(newDispo) serverDates[selectedAdminDate] = newDispo; else delete serverDates[selectedAdminDate];
                 render(); 
-            } catch (e) {
-                alert("Erreur lors de la sauvegarde."); 
-            }
+            } catch (e) { alert("Erreur lors de la sauvegarde."); }
             document.getElementById('main-loader').style.display = 'none';
         };
 
+        // ─────────────────────────────────────────────────────────────
+        //  GÉNÉRATION PDF — Design fidèle au modèle Canva AB MOTORS
+        // ─────────────────────────────────────────────────────────────
         window.validerRes = async (id, statusPayment) => {
             const booking = serverBookings.find(b => b.id == id);
             if(!booking) return;
-            
+
             const fullStatus = statusPayment === 'payé' ? 'Confirmée et payée' : 'Confirmée et non payée';
-            
+
             const btn = document.getElementById('btn-valider-' + id);
             if(btn) { btn.disabled = true; btn.innerText = "Génération PDF..."; }
 
-            const { jsPDF } = window.jspdf; 
-            const doc = new jsPDF();
-            
-            // 1. BANNIÈRE HAUT (Pleine largeur)
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+
+            const PAGE_W = 210;
+            const MARGIN = 14;
+            const CONTENT_W = PAGE_W - MARGIN * 2;
+
+            // ── 1. BANNIÈRE DRAPEAU (haut de page, pleine largeur) ──
             const imgHaut = await loadImage('unnammmed.png');
             if (imgHaut) {
-                // S'étale de la marge gauche à la marge droite (x=0, y=0, largeur=210, hauteur=45)
-                doc.addImage(imgHaut, 'PNG', 0, 0, 210, 45);
+                const b64 = imgToBase64(imgHaut);
+                if (b64) {
+                    doc.addImage(b64, 'PNG', 0, 0, PAGE_W, 38);
+                }
             } else {
-                // Sécurité : Dessin manuel si l'image échoue
-                doc.setFillColor(252, 210, 28); doc.rect(0, 0, 210, 15, 'F');
-                doc.setFillColor(255, 255, 255); doc.rect(0, 15, 210, 15, 'F');
-                doc.setFillColor(206, 17, 38); doc.rect(0, 30, 210, 15, 'F');
-                doc.setFontSize(22); doc.setTextColor(0, 0, 0); doc.setFont("helvetica", "bold");
-                doc.text("AB MOTORS", 105, 25, null, null, "center");
+                // Fallback manuel : couleurs drapeau Comores
+                doc.setFillColor(252, 210, 28); doc.rect(0, 0, PAGE_W, 12, 'F');   // Jaune
+                doc.setFillColor(255, 255, 255); doc.rect(0, 12, PAGE_W, 14, 'F'); // Blanc
+                doc.setFillColor(206, 17, 38);   doc.rect(0, 26, PAGE_W, 12, 'F'); // Rouge
+                doc.setFontSize(16); doc.setFont("helvetica", "bold");
+                doc.setTextColor(0,33,87);
+                doc.text("AB MOTORS", PAGE_W / 2, 22, { align: "center" });
             }
 
-            // TITRE
-            doc.setFontSize(14);
+            // ── 2. TITRE PRINCIPAL ──
+            doc.setFontSize(13);
             doc.setFont("helvetica", "bold");
-            doc.setTextColor(0, 0, 0);
-            doc.text("Votre reçu d'achat de services / Booking Receipt", 105, 58, null, null, "center");
+            doc.setTextColor(30, 30, 30);
+            doc.text("Votre reçu d'achat de services / Booking Receipt", PAGE_W / 2, 50, { align: "center" });
 
-            // INFOS PASSAGER ET AGENCE
-            doc.setFontSize(9);
-            doc.setFont("helvetica", "normal");
-            doc.text(`Numéro de réservation / Booking Ref : ${booking.id}`, 15, 75);
-            doc.text(`Passager / Passenger : ${booking.contact}`, 15, 81);
-            doc.text(`Téléphone : ${booking.phone}`, 15, 87);
-            
-            doc.text(`Agence émettrice / Issuing office : AB MOTORS`, 110, 75);
-            doc.text(`(+269) 3315118`, 110, 81);
-            doc.text(`(+269) 4350423`, 110, 87);
-            doc.text(`Date d'émission / Date of Issuance : ${new Date().toLocaleDateString('fr-FR')}`, 110, 93);
+            // Ligne séparatrice sous le titre
+            doc.setDrawColor(220, 220, 220);
+            doc.setLineWidth(0.4);
+            doc.line(MARGIN, 54, PAGE_W - MARGIN, 54);
 
-            // TABLEAU DES SERVICES
-            doc.setFillColor(240, 240, 240);
-            doc.rect(15, 105, 180, 8, 'F');
-            doc.setFontSize(9);
-            doc.setFont("helvetica", "bold");
-            doc.text("Trajet / Route", 18, 110);
-            doc.text("Dates / Horaires", 80, 110);
-            doc.text("Statut", 145, 110);
-            doc.text("Passagers", 170, 110);
+            // ── 3. DEUX COLONNES D'INFOS ──
+            const colLeft = MARGIN;
+            const colRight = PAGE_W / 2 + 4;
+            let yInfo = 62;
 
-            doc.setFont("helvetica", "normal");
-            let route = booking.details.split('|')[0].trim();
-            let depDate = booking.details.split('|')[1] ? booking.details.split('|')[1].trim() : "";
-            doc.text(route, 18, 120);
-            doc.text(depDate, 80, 120);
-            doc.text("Confirmé", 145, 120);
-            doc.text(booking.pax.split(' ')[0], 170, 120); 
+            // Colonne gauche
+            doc.setFont("helvetica", "bold"); doc.setFontSize(8.5); doc.setTextColor(100,100,100);
+            doc.text("PASSAGER / PASSENGER", colLeft, yInfo);
+            doc.setFont("helvetica", "normal"); doc.setFontSize(9.5); doc.setTextColor(20,20,20);
+            doc.text(`Numéro de réservation : ${booking.id}`, colLeft, yInfo + 6);
+            doc.text(`Nom : ${booking.contact}`, colLeft, yInfo + 12);
+            doc.text(`Téléphone : ${booking.phone}`, colLeft, yInfo + 18);
+            doc.text(`Email : ${booking.email || '-'}`, colLeft, yInfo + 24);
 
-            // Séparateur
-            doc.setDrawColor(200, 200, 200);
-            doc.line(15, 125, 195, 125);
+            // Colonne droite
+            doc.setFont("helvetica", "bold"); doc.setFontSize(8.5); doc.setTextColor(100,100,100);
+            doc.text("AGENCE / ISSUING OFFICE", colRight, yInfo);
+            doc.setFont("helvetica", "normal"); doc.setFontSize(9.5); doc.setTextColor(20,20,20);
+            doc.text("AB MOTORS", colRight, yInfo + 6);
+            doc.text("(+269) 3315118  |  (+269) 4350423", colRight, yInfo + 12);
+            doc.text(`Date d'émission : ${new Date().toLocaleDateString('fr-FR')}`, colRight, yInfo + 18);
 
-            // DETAILS PAIEMENT
-            doc.setFontSize(10);
-            doc.setFont("helvetica", "bold");
-            doc.text("Détails paiement / Payment Details", 15, 140);
-            doc.setFont("helvetica", "normal");
-            doc.setFontSize(9);
-            doc.text(`Tarif total / Total Fare : ${booking.total} EUR`, 15, 147);
+            // ── 4. TABLEAU DES SERVICES ──
+            const tableY = yInfo + 36;
+            const colWidths = [68, 60, 32, 22]; // Trajet | Dates | Statut | Pax
+            const headers = ["Trajet / Route", "Dates / Horaires", "Statut", "Pax"];
+            const ROW_H = 9;
+            const TABLE_W = colWidths.reduce((a,b)=>a+b,0); // = 182
+
+            // En-tête tableau
+            doc.setFillColor(0, 33, 87); // Bleu marine AB MOTORS
+            doc.rect(MARGIN, tableY, TABLE_W, ROW_H, 'F');
+            doc.setFont("helvetica", "bold"); doc.setFontSize(8.5); doc.setTextColor(255,255,255);
+            let xCol = MARGIN;
+            headers.forEach((h, i) => {
+                doc.text(h, xCol + 3, tableY + 6);
+                xCol += colWidths[i];
+            });
+
+            // Ligne de données
+            const dataY = tableY + ROW_H;
+            doc.setFillColor(245, 250, 255);
+            doc.rect(MARGIN, dataY, TABLE_W, ROW_H + 2, 'F');
+
+            let route = (booking.details.split('|')[0] || '').trim();
+            let depDate = (booking.details.split('|')[1] || '').trim();
+            let paxCount = (booking.pax || '1').split(' ')[0];
+
+            doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(20,20,20);
+            xCol = MARGIN;
+            const rowData = [route, depDate, "Confirmé", paxCount];
+            rowData.forEach((val, i) => {
+                doc.text(val, xCol + 3, dataY + 7);
+                xCol += colWidths[i];
+            });
+
+            // Bordures tableau
+            doc.setDrawColor(200, 210, 230);
+            doc.setLineWidth(0.3);
+            doc.rect(MARGIN, tableY, TABLE_W, ROW_H + ROW_H + 2);
+            xCol = MARGIN;
+            colWidths.slice(0,-1).forEach(w => {
+                xCol += w;
+                doc.line(xCol, tableY, xCol, tableY + ROW_H + ROW_H + 2);
+            });
+            doc.line(MARGIN, tableY + ROW_H, MARGIN + TABLE_W, tableY + ROW_H);
+
+            // ── 5. SECTION PAIEMENT ──
+            const payY = dataY + ROW_H + 2 + 14;
+
+            doc.setFillColor(248, 248, 248);
+            doc.roundedRect(MARGIN, payY, TABLE_W, 26, 3, 3, 'F');
+            doc.setDrawColor(220,220,220); doc.setLineWidth(0.3);
+            doc.roundedRect(MARGIN, payY, TABLE_W, 26, 3, 3, 'S');
+
+            doc.setFont("helvetica", "bold"); doc.setFontSize(9); doc.setTextColor(0, 33, 87);
+            doc.text("Détails paiement / Payment Details", MARGIN + 5, payY + 8);
+
+            doc.setFont("helvetica", "normal"); doc.setFontSize(9.5); doc.setTextColor(30,30,30);
+            doc.text(`Tarif total / Total Fare : ${booking.total} EUR`, MARGIN + 5, payY + 16);
 
             if(statusPayment === 'payé') {
-                doc.setTextColor(40, 167, 69);
-                doc.setFont("helvetica", "bold");
-                doc.text("Statut du paiement : PAYÉ", 15, 155);
+                doc.setFont("helvetica", "bold"); doc.setFontSize(10);
+                doc.setTextColor(39, 103, 73);
+                doc.text("✓ Statut du paiement : PAYÉ", MARGIN + 5, payY + 23);
             } else {
-                doc.setTextColor(220, 53, 69);
-                doc.setFont("helvetica", "bold");
-                doc.text("Statut du paiement : RESTE À PAYER SUR PLACE", 15, 155);
+                doc.setFont("helvetica", "bold"); doc.setFontSize(10);
+                doc.setTextColor(190, 50, 40);
+                doc.text("⚠ Statut du paiement : RESTE À PAYER SUR PLACE", MARGIN + 5, payY + 23);
             }
 
-            // LOGO CIRCULAIRE (Bas Droite)
+            // ── 6. LOGO CIRCULAIRE (bas droite) ──
             const imgBas = await loadImage('Gemini_Generabbted_Image_.png');
             if (imgBas) {
-                doc.addImage(imgBas, 'PNG', 150, 220, 45, 45);
+                const b64Bas = imgToBase64(imgBas);
+                if (b64Bas) {
+                    doc.addImage(b64Bas, 'PNG', PAGE_W - MARGIN - 44, 220, 44, 44);
+                }
             }
 
-            // MENTIONS LEGALES (Centrées bas de page)
-            doc.setTextColor(100, 100, 100);
-            doc.setFont("helvetica", "normal");
-            doc.setFontSize(8);
-            let notice = "Mentions légales / Notice\nLorsque ce document est délivré pour le transport, des conditions particulières peuvent s'appliquer.\nCes termes et conditions peuvent être obtenues auprès de l'agent émetteur AB MOTORS.\nCe document est un reçu de paiement et de réservation.\nMerci d'avoir choisi AB MOTORS pour votre traversée.";
-            
-            // Centrage parfait grâce à l'option align:"center" de jsPDF
-            doc.text(notice, 105, 245, { align: "center", lineHeightFactor: 1.5 });
+            // ── 7. MENTIONS LÉGALES (bas de page centré) ──
+            doc.setFont("helvetica", "normal"); doc.setFontSize(7.5); doc.setTextColor(130,130,130);
+            const notice = [
+                "Mentions légales / Legal Notice",
+                "Lorsque ce document est délivré pour le transport, des conditions particulières peuvent s'appliquer.",
+                "Ces termes et conditions peuvent être obtenus auprès de l'agent émetteur AB MOTORS.",
+                "Ce document est un reçu de paiement et de réservation. Merci d'avoir choisi AB MOTORS."
+            ];
+            let noticeY = 233;
+            notice.forEach(line => {
+                doc.text(line, PAGE_W / 2, noticeY, { align: "center" });
+                noticeY += 5;
+            });
 
+            // ── 8. PIED DE PAGE coloré ──
+            doc.setFillColor(206, 17, 38);
+            doc.rect(0, 284, PAGE_W, 4, 'F');
+            doc.setFillColor(252, 210, 28);
+            doc.rect(0, 280, PAGE_W, 4, 'F');
+
+            // ── 9. ENVOI ──
             const pdfBase64 = doc.output('datauristring').split(',')[1];
-            
+
             try {
-                await fetch(GOOGLE_WEB_APP_URL, { method: 'POST', redirect: 'follow', body: JSON.stringify({ action: 'validate_booking', id: booking.id, email: booking.email, contact: booking.contact, pdfBase64: pdfBase64, newStatus: fullStatus }) });
-                alert("Statut mis à jour et PDF officiel envoyé !"); 
+                await fetch(GOOGLE_WEB_APP_URL, {
+                    method: 'POST', redirect: 'follow',
+                    body: JSON.stringify({
+                        action: 'validate_booking',
+                        id: booking.id,
+                        email: booking.email,
+                        contact: booking.contact,
+                        pdfBase64: pdfBase64,
+                        newStatus: fullStatus
+                    })
+                });
+                alert("Statut mis à jour et PDF officiel envoyé !");
                 await fetchData();
-            } catch (err) { alert("Erreur d'envoi."); if(btn) { btn.disabled = false; btn.innerText = "Valider"; } }
+            } catch (err) {
+                alert("Erreur d'envoi.");
+                if(btn) { btn.disabled = false; btn.innerText = "Valider"; }
+            }
         };
 
         window.supprRes = async (id) => {
@@ -287,7 +375,6 @@
             return html + `</div></div>`;
         };
 
-        // FONCTION QUI MET A JOUR UNIQUEMENT LE TABLEAU (Pour éviter le bug de la barre de recherche)
         window.updateTable = () => {
             let searchVal = document.getElementById('search-input') ? document.getElementById('search-input').value.trim().toLowerCase() : "";
             let tableContainer = document.getElementById('table-container');
@@ -314,16 +401,20 @@
 
                 let badgeClass = 'attente';
                 if(statusLower === 'confirmée et payée') badgeClass = 'confirmee';
-                if(statusLower === 'confirmée et non payée') badgeClass = 'attente';
 
-                html += `<tr><td>#${b.id}</td><td>${b.contact}<br><small>${b.phone}<br>${b.email}</small></td><td style="font-size:11px;">${b.details}</td><td>${b.pax}</td><td>${b.total}€</td>
-                <td><span class="badge ${badgeClass}">${b.status}</span></td>
-                <td style="width:140px;">${actionsHTML}</td></tr>`;
+                html += `<tr>
+                    <td>#${b.id}</td>
+                    <td>${b.contact}<br><small>${b.phone}<br>${b.email}</small></td>
+                    <td style="font-size:11px;">${b.details}</td>
+                    <td>${b.pax}</td>
+                    <td>${b.total}€</td>
+                    <td><span class="badge ${badgeClass}">${b.status}</span></td>
+                    <td style="width:140px;">${actionsHTML}</td>
+                </tr>`;
             });
             
             if(filteredBookings.length === 0) html += `<tr><td colspan="7" style="text-align:center">Aucune réservation trouvée.</td></tr>`;
             html += `</table>`;
-            
             tableContainer.innerHTML = html;
         };
 
@@ -361,15 +452,13 @@
 
                 content.innerHTML = html;
             } else {
-                // Vue réservations : Le champ input ne sera plus rechargé à chaque fois que l'utilisateur tape
                 let html = `
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <input type="text" id="search-input" class="search-box" placeholder="Rechercher # Numéro de résa..." oninput="updateTable()">
                 </div>
-                <div id="table-container"></div>
-                `;
+                <div id="table-container"></div>`;
                 content.innerHTML = html;
-                updateTable(); // On lance l'affichage du tableau
+                updateTable();
             }
         };
 
