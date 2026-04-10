@@ -13,7 +13,6 @@
         .nav-btn { padding: 10px 20px; background: #e0e0e0; cursor: pointer; border-radius: 6px; font-weight: bold; }
         .nav-btn.active { background: #002157; color: white; }
         
-        /* CALENDRIER ADMIN */
         .calendar-wrapper { display: flex; gap: 20px; flex-wrap: wrap; }
         .month-container { flex: 1; min-width: 300px; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; }
         .month-header { text-align: center; font-weight: bold; color: #002157; margin-bottom: 15px; text-transform: uppercase; }
@@ -22,6 +21,7 @@
         .cal-day { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 14px; border-radius: 4px; cursor: pointer; position: relative; background: #f9f9f9; color: #ccc; border: 1px solid transparent; transition: 0.2s; }
         .cal-day.available { background-color: #f0f8ff; color: #002157; font-weight: bold; border-color: #cce5ff; }
         .cal-day.available:hover { border-color: #002157; }
+        .cal-day.selected-admin { background-color: #002157; color: white; transform: scale(1.05); }
         .cal-day:hover:not(.past) { border-color: #002157; }
         .empty-day { aspect-ratio: 1; }
         
@@ -29,21 +29,29 @@
         .time-dot { width: 6px; height: 6px; border-radius: 50%; }
         .time-dot.matin { background-color: #f6ad55; }
         .time-dot.aprem { background-color: #4fd1c5; }
+        .cal-day.selected-admin .time-dot { background-color: #fff; }
         
         .legend { margin-top: 15px; font-size: 13px; color: #666; display: flex; gap: 15px; }
         .legend div { display: flex; align-items: center; gap: 5px; }
         
+        .inline-editor { background: #f0f8ff; border: 1px solid #cce5ff; padding: 15px; border-radius: 8px; margin-top: 15px; display: flex; gap: 20px; align-items: center; }
+        .inline-editor h3 { margin: 0; color: #002157; font-size: 16px; }
+        .inline-editor label { cursor: pointer; font-weight: bold; color: #333; display:flex; align-items:center; gap:5px;}
+        .inline-editor input { width: 18px; height: 18px; cursor:pointer;}
+
         table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
         th, td { text-align: left; padding: 12px; border-bottom: 1px solid #eee; }
         th { color: #002157; }
         .badge { padding: 4px 8px; border-radius: 12px; font-size: 11px; text-transform: uppercase; font-weight: bold; }
         .badge.attente { background: #fff8f0; color: #b7791f; border: 1px solid #fbd38d; }
         .badge.confirmee { background: #f0fff4; color: #276749; border: 1px solid #9ae6b4; }
-        button { cursor: pointer; padding: 5px 10px; border: none; border-radius: 4px; color: white; font-weight: bold; }
-        .btn-valider { background: #f6ad55; }
+        
+        .btn-action { cursor: pointer; padding: 6px 12px; border: none; border-radius: 4px; color: white; font-weight: bold; margin-bottom:4px; display:block; width:100%; font-size:12px; }
+        .btn-paye { background: #28a745; }
+        .btn-non-paye { background: #f6ad55; }
         .btn-suppr { background: #e53e3e; }
-        .btn-valider:disabled, .btn-suppr:disabled { opacity: 0.5; cursor: not-allowed; }
-        .refresh-btn { background: #00a8cc; font-size: 14px; padding: 8px 15px; }
+        .btn-action:disabled { opacity: 0.5; cursor: not-allowed; }
+        .refresh-btn { background: #00a8cc; color:white; border:none; border-radius:4px; font-size: 14px; padding: 8px 15px; cursor:pointer;}
         .loader { display: none; margin-left: 10px; font-size: 14px; color: #666; font-weight: normal; }
     </style>
 </head>
@@ -58,11 +66,14 @@
     </div>
 
     <script>
-        const GOOGLE_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxv_TQQ-HLA7jMStWDIEpDNlIlUpN44GRbhVQIbYlxxiyQKRVvLRiJOLSB_i4Yz4OKn/exec';
+        const GOOGLE_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzzBsE4E1yLuSYDkRRgiSPToD7cxUfItP9D2nangZBtyQFVPhM6WWDnt62FWicEPpb7/exec';
 
         let serverDates = {};
         let serverBookings = [];
         let currentView = 'dates';
+        let adminMonthOffset = 0;
+        let selectedAdminDate = null;
+        
         const monthsNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
 
         async function fetchData() {
@@ -87,47 +98,119 @@
             render(); 
         };
 
-        window.editDispo = async (dateStr) => {
-            const res = prompt(`Gérer le ${dateStr} (Tapez M, A, MA, ou 0 pour fermer la date):`);
-            if(!res) return;
-            const v = res.trim().toUpperCase();
-            
-            let newDispo = null;
-            if(v === 'M') newDispo = {m:true, a:false};
-            else if(v === 'A') newDispo = {m:false, a:true};
-            else if(v === 'MA') newDispo = {m:true, a:true};
-            else if(v === '0') newDispo = null;
-            else { alert("Saisie invalide"); return; }
+        window.changeAdminMonth = (dir) => { adminMonthOffset += dir; render(); };
+
+        window.selectAdminDate = (dStr) => {
+            selectedAdminDate = dStr;
+            render();
+        };
+
+        window.updateDispoInline = async () => {
+            if(!selectedAdminDate) return;
+            let isM = document.getElementById('toggle-matin').checked;
+            let isA = document.getElementById('toggle-aprem').checked;
+            let newDispo = (isM || isA) ? {m: isM, a: isA} : null;
 
             document.getElementById('main-loader').style.display = 'inline-block';
             try {
-                await fetch(GOOGLE_WEB_APP_URL, { method: 'POST', redirect: 'follow', body: JSON.stringify({ action: 'update_dates', dateStr: dateStr, dispo: newDispo }) });
-                await fetchData(); 
+                await fetch(GOOGLE_WEB_APP_URL, { method: 'POST', redirect: 'follow', body: JSON.stringify({ action: 'update_dates', dateStr: selectedAdminDate, dispo: newDispo }) });
+                if(newDispo) serverDates[selectedAdminDate] = newDispo; else delete serverDates[selectedAdminDate];
+                render(); 
             } catch (e) {
-                alert("Erreur lors de la sauvegarde."); document.getElementById('main-loader').style.display = 'none';
+                alert("Erreur lors de la sauvegarde."); 
             }
+            document.getElementById('main-loader').style.display = 'none';
         };
 
-        window.validerRes = async (id) => {
-            // (La fonction PDF reste identique)
+        window.validerRes = async (id, statusPayment) => {
             const booking = serverBookings.find(b => b.id == id);
             if(!booking) return;
+            
+            const fullStatus = statusPayment === 'payé' ? 'Confirmée et payée' : 'Confirmée et non payée';
+            
             const btn = document.getElementById('btn-valider-' + id);
-            btn.disabled = true; btn.innerText = "Envoi...";
-            const { jsPDF } = window.jspdf; const doc = new jsPDF();
-            doc.setFontSize(22); doc.setTextColor(0, 33, 87); doc.text("AB MOTORS", 105, 20, null, null, "center");
-            doc.setFontSize(16); doc.setTextColor(0, 0, 0); doc.text("Confirmation de Réservation", 105, 30, null, null, "center");
-            doc.setFontSize(12); doc.text(`Numéro de réservation : #${booking.id}`, 20, 50); doc.text(`Nom : ${booking.contact}`, 20, 60); doc.text(`Email : ${booking.email}`, 20, 70); doc.text(`Téléphone : ${booking.phone}`, 20, 80); doc.text(`Détails du Trajet :`, 20, 100); doc.text(booking.details, 20, 110); doc.text(`Total Passagers : ${booking.pax}`, 20, 130);
-            doc.setFontSize(14); doc.text(`MONTANT PAYÉ / TOTAL : ${booking.total} EUR`, 20, 150);
+            if(btn) { btn.disabled = true; btn.innerText = "Génération PDF..."; }
+
+            const { jsPDF } = window.jspdf; 
+            const doc = new jsPDF();
+            
+            // DESSIN DU DRAPEAU (Style AB MOTORS)
+            doc.setFillColor(252, 210, 28); // Jaune
+            doc.rect(15, 15, 180, 8, 'F');
+            doc.setFillColor(255, 255, 255); // Blanc
+            doc.rect(15, 23, 180, 14, 'F');
+            doc.setFillColor(206, 17, 38); // Rouge
+            doc.rect(15, 37, 180, 8, 'F');
+            
+            doc.setFontSize(22);
+            doc.setTextColor(0, 0, 0);
+            doc.setFont("helvetica", "bold");
+            doc.text("AB MOTORS", 105, 33, null, null, "center");
+
+            // STYLE AIR AUSTRAL
+            doc.setFontSize(14);
+            doc.text("Votre reçu d'achat de services / Booking Receipt", 105, 55, null, null, "center");
+
+            doc.setFontSize(10);
+            doc.setFont("helvetica", "normal");
+            doc.text(`Numéro de réservation / Booking Ref : ${booking.id}`, 15, 70);
+            doc.text(`Passager / Passenger : ${booking.contact}`, 15, 76);
+            doc.text(`Téléphone : ${booking.phone}`, 15, 82);
+            doc.text(`Agence émettrice / Issuing office : AB MOTORS WEB`, 100, 70);
+            doc.text(`Date d'émission / Date of Issuance : ${new Date().toLocaleDateString('fr-FR')}`, 100, 76);
+
+            // TABLEAU DES SERVICES
+            doc.setFillColor(240, 240, 240);
+            doc.rect(15, 95, 180, 10, 'F');
+            doc.setFont("helvetica", "bold");
+            doc.text("Trajet / Route", 20, 101);
+            doc.text("Dates / Horaires", 80, 101);
+            doc.text("Statut", 140, 101);
+            doc.text("Passagers", 170, 101);
+
+            doc.setFont("helvetica", "normal");
+            let route = booking.details.split('|')[0].trim();
+            let depDate = booking.details.split('|')[1] ? booking.details.split('|')[1].trim() : "";
+            doc.text(route, 20, 112);
+            doc.text(depDate, 80, 112);
+            doc.text("Confirmé", 140, 112);
+            doc.text(booking.pax.split(' ')[0], 170, 112); // Nombre total uniquement
+
+            // DETAILS PAIEMENT
+            doc.setFont("helvetica", "bold");
+            doc.text("Détails paiement / Payment Details", 15, 135);
+            doc.setFont("helvetica", "normal");
+            doc.text(`Tarif total / Total Fare : ${booking.total} EUR`, 15, 143);
+
+            if(statusPayment === 'payé') {
+                doc.setTextColor(40, 167, 69);
+                doc.setFont("helvetica", "bold");
+                doc.text("Statut du paiement : PAYÉ", 15, 151);
+            } else {
+                doc.setTextColor(220, 53, 69);
+                doc.setFont("helvetica", "bold");
+                doc.text("Statut du paiement : RESTE À PAYER SUR PLACE", 15, 151);
+            }
+
+            // MENTIONS LEGALES
+            doc.setTextColor(100, 100, 100);
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(8);
+            doc.text("Mentions légales / Notice", 15, 175);
+            let notice = "Lorsque ce document est délivré pour le transport, des conditions particulières peuvent s'appliquer.\nCes termes et conditions peuvent être obtenues auprès de l'agent émetteur AB MOTORS.\nCe document est un reçu de paiement et de réservation.\nMerci d'avoir choisi AB MOTORS pour votre traversée.";
+            doc.text(notice, 15, 180);
+
             const pdfBase64 = doc.output('datauristring').split(',')[1];
+            
             try {
-                await fetch(GOOGLE_WEB_APP_URL, { method: 'POST', redirect: 'follow', body: JSON.stringify({ action: 'validate_booking', id: booking.id, email: booking.email, contact: booking.contact, pdfBase64: pdfBase64 }) });
-                alert("Validée et PDF envoyé !"); await fetchData();
-            } catch (err) { alert("Erreur d'envoi."); btn.disabled = false; btn.innerText = "Valider"; }
+                await fetch(GOOGLE_WEB_APP_URL, { method: 'POST', redirect: 'follow', body: JSON.stringify({ action: 'validate_booking', id: booking.id, email: booking.email, contact: booking.contact, pdfBase64: pdfBase64, newStatus: fullStatus }) });
+                alert("Statut mis à jour et PDF officiel envoyé !"); 
+                await fetchData();
+            } catch (err) { alert("Erreur d'envoi."); if(btn) { btn.disabled = false; btn.innerText = "Valider"; } }
         };
 
         window.supprRes = async (id) => {
-            if(confirm('Supprimer cette réservation ?')) {
+            if(confirm('Supprimer définitivement cette réservation ?')) {
                 document.getElementById('main-loader').style.display = 'inline-block';
                 await fetch(GOOGLE_WEB_APP_URL, { method: 'POST', redirect: 'follow', body: JSON.stringify({ action: 'delete_booking', id: id }) });
                 await fetchData();
@@ -154,6 +237,7 @@
                 let dispo = serverDates[dStr];
                 let isAvail = dispo && (dispo.m || dispo.a);
                 let cssClass = isAvail ? 'available' : '';
+                if(selectedAdminDate === dStr) cssClass += ' selected-admin';
                 
                 let dotsHTML = '';
                 if(isAvail) {
@@ -163,7 +247,7 @@
                     dotsHTML += `</div>`;
                 }
 
-                html += `<div class="cal-day ${cssClass}" onclick="editDispo('${dStr}')">${d}${dotsHTML}</div>`;
+                html += `<div class="cal-day ${cssClass}" onclick="selectAdminDate('${dStr}')">${d}${dotsHTML}</div>`;
             }
             return html + `</div></div>`;
         };
@@ -172,19 +256,56 @@
             const content = document.getElementById('content');
             if (currentView === 'dates') {
                 const d = new Date();
-                let html = `<p>Cliquez sur un jour pour ouvrir/fermer les traversées. Les points de couleurs indiquent les créneaux ouverts.</p>`;
+                d.setMonth(d.getMonth() + adminMonthOffset);
+                
+                let html = `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    <p style="margin:0;">Cliquez sur un jour pour ouvrir/fermer les traversées ci-dessous.</p>
+                    <div>
+                        <button class="refresh-btn" onclick="changeAdminMonth(-1)">← Mois Précédent</button>
+                        <button class="refresh-btn" onclick="changeAdminMonth(1)">Mois Suivant →</button>
+                    </div>
+                </div>`;
+                
                 html += `<div class="legend"><div><span class="time-dot matin"></span> Matin</div><div><span class="time-dot aprem"></span> Après-midi</div></div><br>`;
                 html += `<div class="calendar-wrapper">` + renderMonthAdmin(d.getFullYear(), d.getMonth());
                 let nextM = d.getMonth() + 1, nextY = d.getFullYear();
                 if(nextM > 11) { nextM = 0; nextY++; }
                 html += renderMonthAdmin(nextY, nextM) + `</div>`;
+                
+                // PANEL INLINE D'EDITION DE DATE
+                if (selectedAdminDate) {
+                    let dispo = serverDates[selectedAdminDate] || {m:false, a:false};
+                    html += `
+                    <div class="inline-editor">
+                        <h3>Configuration du ${selectedAdminDate.split('-').reverse().join('/')} :</h3>
+                        <label><input type="checkbox" id="toggle-matin" ${dispo.m ? 'checked':''} onchange="updateDispoInline()"> Ouvrir Matin</label>
+                        <label><input type="checkbox" id="toggle-aprem" ${dispo.a ? 'checked':''} onchange="updateDispoInline()"> Ouvrir Après-midi</label>
+                    </div>`;
+                }
+
                 content.innerHTML = html;
             } else {
                 let html = `<table><tr><th>ID</th><th>Client</th><th>Trajet & Date</th><th>Pax</th><th>Total</th><th>Statut</th><th>Action</th></tr>`;
                 serverBookings.forEach(b => {
+                    let actionsHTML = '';
+                    let statusLower = b.status ? b.status.toLowerCase() : '';
+                    
+                    if (statusLower === 'en attente') {
+                        actionsHTML += `<button id="btn-valider-${b.id}" class="btn-action btn-paye" onclick="validerRes(${b.id}, 'payé')">Valider (PAYÉ)</button>`;
+                        actionsHTML += `<button class="btn-action btn-non-paye" onclick="validerRes(${b.id}, 'non payé')">Valider (NON PAYÉ)</button>`;
+                    } else if (statusLower === 'confirmée et non payée') {
+                        actionsHTML += `<button id="btn-valider-${b.id}" class="btn-action btn-paye" onclick="validerRes(${b.id}, 'payé')">Marquer comme PAYÉ</button>`;
+                    }
+                    actionsHTML += `<button class="btn-action btn-suppr" onclick="supprRes(${b.id})">Supprimer</button>`;
+
+                    let badgeClass = 'attente';
+                    if(statusLower === 'confirmée et payée') badgeClass = 'confirmee';
+                    if(statusLower === 'confirmée et non payée') badgeClass = 'attente';
+
                     html += `<tr><td>#${b.id}</td><td>${b.contact}<br><small>${b.phone}<br>${b.email}</small></td><td style="font-size:11px;">${b.details}</td><td>${b.pax}</td><td>${b.total}€</td>
-                    <td><span class="badge ${b.status === 'confirmée' ? 'confirmee' : 'attente'}">${b.status}</span></td>
-                    <td>${(b.status && b.status.toLowerCase() === 'en attente') ? `<button id="btn-valider-${b.id}" class="btn-valider" onclick="validerRes(${b.id})">Valider & PDF</button>` : ''} <button class="btn-suppr" onclick="supprRes(${b.id})">X</button></td></tr>`;
+                    <td><span class="badge ${badgeClass}">${b.status}</span></td>
+                    <td style="width:140px;">${actionsHTML}</td></tr>`;
                 });
                 if(serverBookings.length === 0) html += `<tr><td colspan="7" style="text-align:center">Aucune réservation pour le moment.</td></tr>`;
                 content.innerHTML = html + `</table>`;
