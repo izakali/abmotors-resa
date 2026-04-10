@@ -8,7 +8,7 @@
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7f6; margin: 0; padding: 20px; }
         .admin-container { max-width: 1000px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h1 { color: #004b87; margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        h1 { color: #004b87; margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
         .nav { display: flex; gap: 10px; margin-bottom: 20px; }
         .nav-btn { padding: 10px 20px; background: #e0e0e0; cursor: pointer; border-radius: 6px; font-weight: bold; }
         .nav-btn.active { background: #004b87; color: white; }
@@ -27,29 +27,42 @@
         button { cursor: pointer; padding: 5px 10px; border: none; border-radius: 4px; color: white; font-weight: bold; }
         .btn-valider { background: #f6ad55; }
         .btn-suppr { background: #e53e3e; }
-        .btn-valider:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-valider:disabled, .btn-suppr:disabled { opacity: 0.5; cursor: not-allowed; }
+        .refresh-btn { background: #00a8cc; font-size: 14px; padding: 8px 15px; }
+        .loader { display: none; margin-left: 10px; font-size: 14px; color: #666; font-weight: normal; }
     </style>
 </head>
 <body>
     <div class="admin-container">
-        <h1>Dashboard Admin</h1>
+        <h1>Dashboard Admin <button class="refresh-btn" onclick="fetchData()">Rafraîchir <span id="main-loader" class="loader">⏳</span></button></h1>
         <div class="nav">
             <div class="nav-btn active" id="btn-dates" onclick="setView('dates')">Gérer les Dates</div>
             <div class="nav-btn" id="btn-res" onclick="setView('res')">Voir les Réservations</div>
         </div>
-        <div id="content"></div>
+        <div id="content">Chargement des données...</div>
     </div>
 
     <script>
         const GOOGLE_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzzBsE4E1yLuSYDkRRgiSPToD7cxUfItP9D2nangZBtyQFVPhM6WWDnt62FWicEPpb7/exec';
 
-        const getDates = () => JSON.parse(localStorage.getItem('abmotors_dates')) || {};
-        const getBookings = () => JSON.parse(localStorage.getItem('abmotors_bookings')) || [];
-        const saveDates = (d) => localStorage.setItem('abmotors_dates', JSON.stringify(d));
-        const saveBookings = (b) => localStorage.setItem('abmotors_bookings', JSON.stringify(b));
-
-        window.addEventListener('storage', () => render());
+        let serverDates = {};
+        let serverBookings = [];
         let currentView = 'dates';
+
+        // Fonction pour télécharger la base de données (Sheets)
+        async function fetchData() {
+            document.getElementById('main-loader').style.display = 'inline-block';
+            try {
+                const response = await fetch(GOOGLE_WEB_APP_URL);
+                const data = await response.json();
+                serverDates = data.dates || {};
+                serverBookings = data.bookings || [];
+                render();
+            } catch (err) {
+                alert("Erreur de connexion au serveur.");
+            }
+            document.getElementById('main-loader').style.display = 'none';
+        }
 
         const setView = (v) => { 
             currentView = v; 
@@ -58,97 +71,87 @@
             render(); 
         };
 
-        const editDispo = (dateStr) => {
-            const db = getDates();
-            const res = prompt(`Gérer le ${dateStr} (M, A, MA, ou 0):`);
+        window.editDispo = async (dateStr) => {
+            const res = prompt(`Gérer le ${dateStr} (M, A, MA, ou 0 pour fermer):`);
             if(!res) return;
             const v = res.trim().toUpperCase();
-            if(v === 'M') db[dateStr] = {m:true, a:false};
-            else if(v === 'A') db[dateStr] = {m:false, a:true};
-            else if(v === 'MA') db[dateStr] = {m:true, a:true};
-            else if(v === '0') delete db[dateStr];
-            saveDates(db); render();
+            
+            let newDispo = null;
+            if(v === 'M') newDispo = {m:true, a:false};
+            else if(v === 'A') newDispo = {m:false, a:true};
+            else if(v === 'MA') newDispo = {m:true, a:true};
+            else if(v === '0') newDispo = null;
+            else { alert("Saisie invalide"); return; }
+
+            document.getElementById('main-loader').style.display = 'inline-block';
+            
+            // Envoi au Cloud
+            await fetch(GOOGLE_WEB_APP_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'update_dates', dateStr: dateStr, dispo: newDispo })
+            });
+
+            await fetchData(); // Recharger après l'update
         };
 
         window.validerRes = async (id) => {
-            const db = getBookings();
-            const booking = db.find(b => b.id === id);
+            const booking = serverBookings.find(b => b.id == id);
             if(!booking) return;
 
             const btn = document.getElementById('btn-valider-' + id);
-            btn.disabled = true;
-            btn.innerText = "Envoi...";
+            btn.disabled = true; btn.innerText = "Envoi...";
 
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             
-            doc.setFontSize(22);
-            doc.setTextColor(0, 75, 135);
-            doc.text("AB MOTORS", 105, 20, null, null, "center");
-            
-            doc.setFontSize(16);
-            doc.setTextColor(0, 0, 0);
-            doc.text("Confirmation de Réservation", 105, 30, null, null, "center");
-
+            doc.setFontSize(22); doc.setTextColor(0, 75, 135); doc.text("AB MOTORS", 105, 20, null, null, "center");
+            doc.setFontSize(16); doc.setTextColor(0, 0, 0); doc.text("Confirmation de Réservation", 105, 30, null, null, "center");
             doc.setFontSize(12);
             doc.text(`Numéro de réservation : #${booking.id}`, 20, 50);
             doc.text(`Nom : ${booking.contact}`, 20, 60);
             doc.text(`Email : ${booking.email}`, 20, 70);
             doc.text(`Téléphone : ${booking.phone}`, 20, 80);
-            
             doc.text(`Détails du Trajet :`, 20, 100);
             doc.text(booking.details, 20, 110);
-            
             doc.text(`Total Passagers : ${booking.pax}`, 20, 130);
-            doc.setFontSize(14);
-            doc.text(`MONTANT PAYÉ / TOTAL : ${booking.total} EUR`, 20, 150);
+            doc.setFontSize(14); doc.text(`MONTANT PAYÉ / TOTAL : ${booking.total} EUR`, 20, 150);
 
             const pdfBase64 = doc.output('datauristring').split(',')[1];
-
-            const payload = {
-                action: 'validate_booking',
-                id: booking.id,
-                email: booking.email,
-                contact: booking.contact,
-                pdfBase64: pdfBase64
-            };
 
             try {
                 await fetch(GOOGLE_WEB_APP_URL, {
                     method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                        "Content-Type": "text/plain;charset=utf-8",
-                    },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify({ action: 'validate_booking', id: booking.id, email: booking.email, contact: booking.contact, pdfBase64: pdfBase64 })
                 });
 
-                booking.status = "confirmée";
-                saveBookings(db);
                 alert("Réservation validée et PDF envoyé au client !");
-                render();
+                await fetchData();
             } catch (err) {
                 alert("Erreur lors de l'envoi de l'email.");
-                btn.disabled = false;
-                btn.innerText = "Valider";
+                btn.disabled = false; btn.innerText = "Valider";
             }
         };
 
-        const supprRes = (id) => {
-            if(confirm('Supprimer ?')) {
-                const db = getBookings(); saveBookings(db.filter(b => b.id !== id)); render();
+        window.supprRes = async (id) => {
+            if(confirm('Êtes-vous sûr de vouloir supprimer cette réservation ?')) {
+                document.getElementById('main-loader').style.display = 'inline-block';
+                await fetch(GOOGLE_WEB_APP_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'delete_booking', id: id })
+                });
+                await fetchData();
             }
         };
 
         const render = () => {
             const content = document.getElementById('content');
             if (currentView === 'dates') {
-                const today = new Date(); const dbDates = getDates();
-                let html = `<p>Cliquez sur un jour pour ouvrir ou fermer les traversées.</p><div class="calendar">`;
+                const today = new Date();
+                let html = `<p>Cliquez sur un jour pour ouvrir ou fermer les traversées. Vos modifications sont sauvegardées en direct dans Excel.</p><div class="calendar">`;
                 for (let i = 0; i < 28; i++) {
                     const d = new Date(today); d.setDate(today.getDate() + i);
                     const dateStr = d.toISOString().split('T')[0];
-                    const dispo = dbDates[dateStr];
+                    const dispo = serverDates[dateStr];
                     const isAvail = dispo && (dispo.m || dispo.a);
                     let timeHTML = '';
                     if(isAvail) {
@@ -160,17 +163,19 @@
                 }
                 content.innerHTML = html + `</div>`;
             } else {
-                const db = getBookings();
                 let html = `<table><tr><th>ID</th><th>Client</th><th>Trajet & Date</th><th>Pax</th><th>Total</th><th>Statut</th><th>Action</th></tr>`;
-                db.forEach(b => {
+                serverBookings.forEach(b => {
                     html += `<tr><td>#${b.id}</td><td>${b.contact}<br><small>${b.phone}<br>${b.email}</small></td><td style="font-size:11px;">${b.details}</td><td>${b.pax}</td><td>${b.total}€</td>
                     <td><span class="badge ${b.status === 'confirmée' ? 'confirmee' : 'attente'}">${b.status}</span></td>
-                    <td>${b.status === 'en attente' ? `<button id="btn-valider-${b.id}" class="btn-valider" onclick="validerRes(${b.id})">Valider & Envoyer PDF</button>` : ''} <button class="btn-suppr" onclick="supprRes(${b.id})">X</button></td></tr>`;
+                    <td>${b.status.toLowerCase() === 'en attente' ? `<button id="btn-valider-${b.id}" class="btn-valider" onclick="validerRes(${b.id})">Valider & PDF</button>` : ''} <button class="btn-suppr" onclick="supprRes(${b.id})">X</button></td></tr>`;
                 });
+                if(serverBookings.length === 0) html += `<tr><td colspan="7" style="text-align:center">Aucune réservation pour le moment.</td></tr>`;
                 content.innerHTML = html + `</table>`;
             }
         };
-        render();
+
+        // Lancer la récupération initiale des données
+        fetchData();
     </script>
 </body>
 </html>
