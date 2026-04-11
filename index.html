@@ -7,27 +7,22 @@
     <style>
         :root { --primary: #002157; --secondary: #00a8cc; --success: #28a745; --bg: #f4f7f6; --surface: #ffffff; --text: #333333; --error: #dc3545; --font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         * { box-sizing: border-box; font-family: var(--font); }
-        body { margin: 0; padding: 0; display: flex; justify-content: center; min-height: 100vh; position: relative; overflow-x: hidden; -webkit-user-select: none; user-select: none; }
-        
+        body { margin: 0; padding: 0; display: flex; justify-content: center; min-height: 100vh; position: relative; overflow-x: hidden; }
         .background-slideshow { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; list-style: none; margin: 0; padding: 0; }
         .background-slideshow li { position: absolute; width: 100%; height: 100%; background-position: center; background-size: cover; opacity: 0; animation: imageAnimation 30s linear infinite; }
-        
-        .background-slideshow li:nth-child(1) { background-image: url('https://img.freepik.com/photos-gratuite/bateaux-peche-au-coucher-du-soleil-ocean-nusa-lembongan-fond-naturel_26167815.jpg'); animation-delay: 0s; } 
-        .background-slideshow li:nth-child(2) { background-image: url('https://img.freepik.com/photos-gratuite/lever-du-soleil-st-thomas_26921072.jpg'); animation-delay: 6s; } 
-        .background-slideshow li:nth-child(3) { background-image: url('https://img.freepik.com/photos-gratuite/vue-aerienne-belle-plage-tropicale_4123435.jpg'); animation-delay: 12s; } 
-        .background-slideshow li:nth-child(4) { background-image: url('https://thumbs.dreamstime.com/b/l-afrique-comores-anjouan-45874472.jpg'); animation-delay: 18s; } 
-        .background-slideshow li:nth-child(5) { background-image: url('https://thumbs.dreamstime.com/b/l-afrique-comores-anjouan-45880601.jpg'); animation-delay: 24s; } 
-
-        @keyframes imageAnimation { 0% { opacity: 0; } 10% { opacity: 1; } 20% { opacity: 1; } 30% { opacity: 0; } 100% { opacity: 0; } }
+        .background-slideshow li:nth-child(1) { background-image: url('https://img.freepik.com/photos-gratuite/bateaux-peche-au-coucher-du-soleil-ocean-nusa-lembongan-fond-naturel_26167815.jpg'); animation-delay: 0s; }
+        .background-slideshow li:nth-child(2) { background-image: url('https://img.freepik.com/photos-gratuite/lever-du-soleil-st-thomas_26921072.jpg'); animation-delay: 6s; }
+        .background-slideshow li:nth-child(3) { background-image: url('https://img.freepik.com/photos-gratuite/vue-aerienne-belle-plage-tropicale_4123435.jpg'); animation-delay: 12s; }
+        .background-slideshow li:nth-child(4) { background-image: url('https://thumbs.dreamstime.com/b/l-afrique-comores-anjouan-45874472.jpg'); animation-delay: 18s; }
+        .background-slideshow li:nth-child(5) { background-image: url('https://thumbs.dreamstime.com/b/l-afrique-comores-anjouan-45880601.jpg'); animation-delay: 24s; }
+        @keyframes imageAnimation { 0%{opacity:0}10%{opacity:1}20%{opacity:1}30%{opacity:0}100%{opacity:0} }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: -1; }
-
         #app-container { background: var(--surface); width: 100%; max-width: 650px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); margin: 40px 20px; z-index: 10; position: relative; }
         .header { background: var(--primary); color: white; padding: 30px 20px 20px; text-align: center; border-radius: 12px 12px 0 0; position: relative; }
         .header h1 { margin: 10px 0 0 0; font-size: 26px; }
         .header p { margin: 5px 0 0 0; font-size: 14px; opacity: 0.9; }
         #app-logo { position: absolute; top: -40px; left: 50%; transform: translateX(-50%); width: 80px; height: 80px; background: white; border-radius: 50%; padding: 5px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); border: 3px solid var(--primary); display: flex; align-items: center; justify-content: center; }
         #app-logo img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
-        
         .content { padding: 30px; }
         .form-control { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; margin-bottom: 15px; }
         .row { display: flex; gap: 15px; margin-bottom: 15px; } .col { flex: 1; }
@@ -35,7 +30,6 @@
         .btn { width: 100%; padding: 15px; border: none; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
         .btn-primary { background: var(--secondary); color: white; }
         .btn-secondary { background: #e0e0e0; color: var(--text); margin-bottom: 10px; }
-        
         .calendar-section { margin-bottom: 25px; }
         .calendar-section > label { display: block; font-weight: bold; color: var(--primary); font-size: 18px; margin-bottom: 10px; border-bottom: 2px solid #eee; padding-bottom: 5px; }
         .calendar-wrapper { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 10px; }
@@ -49,50 +43,44 @@
         .cal-day.unavailable, .cal-day.past { background-color: transparent; color: #ccc; cursor: not-allowed; }
         .cal-day.selected { background-color: var(--primary); color: white; transform: scale(1.05); box-shadow: 0 4px 8px rgba(0,33,87,0.3); border-radius: 6px; }
         .empty-day { aspect-ratio: 1; }
-        
         .time-dot-container { display: flex; gap: 3px; position: absolute; bottom: 3px; }
         .time-dot { width: 5px; height: 5px; border-radius: 50%; }
         .time-dot.matin { background-color: #f6ad55; }
         .time-dot.aprem { background-color: #4fd1c5; }
         .cal-day.selected .time-dot { background-color: #fff; }
-
         .time-select-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; background: #f9f9f9; padding: 15px; border-radius: 8px; }
         .time-btn { padding: 10px; text-align: center; border: 2px solid #ddd; border-radius: 6px; cursor: pointer; font-weight: bold; color: var(--text); background: white; }
         .time-btn.selected { border-color: var(--primary); background-color: #e6f0fa; color: var(--primary); }
         .time-btn.disabled { opacity: 0.4; cursor: not-allowed; }
-        
         .counter-group { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
         .counter-btn { width: 35px; height: 35px; border-radius: 50%; border: 1px solid var(--primary); background: transparent; color: var(--primary); font-size: 20px; cursor: pointer; }
-        .phone-input { display: flex; gap: 10px; } .phone-input select { width: 190px; }
+        .phone-input { display: flex; gap: 10px; } .phone-input select { width: 220px; flex-shrink: 0; }
         .recap-box { background: #f9f9f9; border-left: 4px solid var(--secondary); padding: 15px; margin-bottom: 20px; }
         .total-price { font-size: 24px; font-weight: bold; color: var(--primary); text-align: center; margin: 20px 0; padding: 15px; border-top: 2px dashed #ccc; border-bottom: 2px dashed #ccc; }
         .error { color: var(--error); font-size: 14px; display: none; margin-bottom: 15px; text-align: center; font-weight: bold; padding: 10px; border: 1px solid var(--error); border-radius: 6px; background: #fff8f8; }
         .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--secondary); border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-left: 10px; display: none; }
+        @keyframes spin { 0%{transform:rotate(0deg)}100%{transform:rotate(360deg)} }
         .loading-data { text-align: center; padding: 40px; font-size: 18px; color: var(--primary); font-weight: bold; }
-        
         .success-box { text-align:center; padding: 30px 10px; }
         .success-icon { width: 80px; height: 80px; background: #e0f6e5; color: var(--success); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 40px; }
-        
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @media (max-width: 600px) { body { padding: 0; } #app-container { margin: 0; border-radius: 0; min-height: 100vh; } .header { padding-top: 40px; border-radius: 0; } .row { flex-direction: column; gap: 0; } .phone-input { flex-direction: column; } .phone-input select { width: 100%; } .calendar-wrapper { flex-direction: column; } .content { padding: 20px; } .time-select-group { grid-template-columns: 1fr; } }
+        @media (max-width: 600px) {
+            body { padding: 0; }
+            #app-container { margin: 0; border-radius: 0; min-height: 100vh; }
+            .header { padding-top: 40px; border-radius: 0; }
+            .row { flex-direction: column; gap: 0; }
+            .phone-input { flex-direction: column; }
+            .phone-input select { width: 100%; }
+            .calendar-wrapper { flex-direction: column; }
+            .content { padding: 20px; }
+            .time-select-group { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
-    <script>
-        document.onkeydown = function(e) {
-            if(e.keyCode == 123) return false; // Bloque F12
-            if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false; // Bloque Ctrl+Shift+I
-            if(e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false; // Bloque Ctrl+Shift+C
-            if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false; // Bloque Ctrl+Shift+J
-            if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; // Bloque Ctrl+U
-        }
-    </script>
-
     <ul class="background-slideshow">
         <li></li><li></li><li></li><li></li><li></li>
     </ul>
     <div class="overlay"></div>
-
     <div id="app-container">
         <div class="header">
             <div id="app-logo"><img src="./Gemini_Generabbted_Image_.png" alt="Logo AB Motors"></div>
@@ -105,227 +93,315 @@
     </div>
 
     <script>
-        const GOOGLE_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxv_TQQ-HLA7jMStWDIEpDNlIlUpN44GRbhVQIbYlxxiyQKRVvLRiJOLSB_i4Yz4OKn/exec';
+    // ===== PROTECTION CODE SOURCE =====
+    (function() {
+        document.addEventListener('keydown', function(e) {
+            if (e.keyCode === 123) { e.preventDefault(); e.stopPropagation(); return false; }
+            if (e.ctrlKey && e.keyCode === 85) { e.preventDefault(); e.stopPropagation(); return false; }
+            if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) { e.preventDefault(); e.stopPropagation(); return false; }
+            if (e.metaKey && e.keyCode === 85) { e.preventDefault(); e.stopPropagation(); return false; }
+            if (e.metaKey && e.altKey && e.keyCode === 73) { e.preventDefault(); e.stopPropagation(); return false; }
+        }, true);
+    })();
 
-        let serverDates = {};
-        const monthsNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
+    // ===== INDICATIFS TÉLÉPHONIQUES (tous pays) =====
+    const PHONE_CODES = [
+        ['+269','🇰🇲 Comores'], ['+262','🇾🇹 Mayotte'], ['+33','🇫🇷 France'],
+        ['---','──────────'],
+        ['+93','🇦🇫 Afghanistan'],['+355','🇦🇱 Albanie'],['+213','🇩🇿 Algérie'],['+376','🇦🇩 Andorre'],
+        ['+244','🇦🇴 Angola'],['+1268','🇦🇬 Antigua-et-Barbuda'],['+54','🇦🇷 Argentine'],
+        ['+374','🇦🇲 Arménie'],['+61','🇦🇺 Australie'],['+43','🇦🇹 Autriche'],
+        ['+994','🇦🇿 Azerbaïdjan'],['+1242','🇧🇸 Bahamas'],['+973','🇧🇭 Bahreïn'],
+        ['+880','🇧🇩 Bangladesh'],['+1246','🇧🇧 Barbade'],['+375','🇧🇾 Biélorussie'],
+        ['+32','🇧🇪 Belgique'],['+501','🇧🇿 Belize'],['+229','🇧🇯 Bénin'],
+        ['+975','🇧🇹 Bhoutan'],['+591','🇧🇴 Bolivie'],['+387','🇧🇦 Bosnie-Herzégovine'],
+        ['+267','🇧🇼 Botswana'],['+55','🇧🇷 Brésil'],['+673','🇧🇳 Brunei'],
+        ['+359','🇧🇬 Bulgarie'],['+226','🇧🇫 Burkina Faso'],['+257','🇧🇮 Burundi'],
+        ['+238','🇨🇻 Cap-Vert'],['+855','🇰🇭 Cambodge'],['+237','🇨🇲 Cameroun'],
+        ['+1','🇨🇦 Canada'],['+236','🇨🇫 Centrafrique'],['+235','🇹🇩 Tchad'],
+        ['+56','🇨🇱 Chili'],['+86','🇨🇳 Chine'],['+57','🇨🇴 Colombie'],
+        ['+242','🇨🇬 Congo'],['+243','🇨🇩 Congo (RDC)'],['+506','🇨🇷 Costa Rica'],
+        ['+225','🇨🇮 Côte d\'Ivoire'],['+385','🇭🇷 Croatie'],['+53','🇨🇺 Cuba'],
+        ['+357','🇨🇾 Chypre'],['+420','🇨🇿 République Tchèque'],['+45','🇩🇰 Danemark'],
+        ['+253','🇩🇯 Djibouti'],['+1767','🇩🇲 Dominique'],['+1809','🇩🇴 Rép. Dominicaine'],
+        ['+593','🇪🇨 Équateur'],['+20','🇪🇬 Égypte'],['+503','🇸🇻 El Salvador'],
+        ['+240','🇬🇶 Guinée Équatoriale'],['+291','🇪🇷 Érythrée'],['+372','🇪🇪 Estonie'],
+        ['+251','🇪🇹 Éthiopie'],['+679','🇫🇯 Fidji'],['+358','🇫🇮 Finlande'],
+        ['+241','🇬🇦 Gabon'],['+220','🇬🇲 Gambie'],['+995','🇬🇪 Géorgie'],
+        ['+49','🇩🇪 Allemagne'],['+233','🇬🇭 Ghana'],['+30','🇬🇷 Grèce'],
+        ['+1473','🇬🇩 Grenade'],['+502','🇬🇹 Guatemala'],['+224','🇬🇳 Guinée'],
+        ['+245','🇬🇼 Guinée-Bissau'],['+592','🇬🇾 Guyana'],['+509','🇭🇹 Haïti'],
+        ['+504','🇭🇳 Honduras'],['+36','🇭🇺 Hongrie'],['+354','🇮🇸 Islande'],
+        ['+91','🇮🇳 Inde'],['+62','🇮🇩 Indonésie'],['+98','🇮🇷 Iran'],
+        ['+964','🇮🇶 Irak'],['+353','🇮🇪 Irlande'],['+972','🇮🇱 Israël'],
+        ['+39','🇮🇹 Italie'],['+1876','🇯🇲 Jamaïque'],['+81','🇯🇵 Japon'],
+        ['+962','🇯🇴 Jordanie'],['+7','🇰🇿 Kazakhstan'],['+254','🇰🇪 Kenya'],
+        ['+686','🇰🇮 Kiribati'],['+383','🇽🇰 Kosovo'],['+965','🇰🇼 Koweït'],
+        ['+996','🇰🇬 Kirghizistan'],['+856','🇱🇦 Laos'],['+371','🇱🇻 Lettonie'],
+        ['+961','🇱🇧 Liban'],['+266','🇱🇸 Lesotho'],['+231','🇱🇷 Liberia'],
+        ['+218','🇱🇾 Libye'],['+423','🇱🇮 Liechtenstein'],['+370','🇱🇹 Lituanie'],
+        ['+352','🇱🇺 Luxembourg'],['+261','🇲🇬 Madagascar'],['+265','🇲🇼 Malawi'],
+        ['+60','🇲🇾 Malaisie'],['+960','🇲🇻 Maldives'],['+223','🇲🇱 Mali'],
+        ['+356','🇲🇹 Malte'],['+222','🇲🇷 Mauritanie'],['+230','🇲🇺 Maurice'],
+        ['+52','🇲🇽 Mexique'],['+373','🇲🇩 Moldavie'],['+377','🇲🇨 Monaco'],
+        ['+976','🇲🇳 Mongolie'],['+382','🇲🇪 Monténégro'],['+212','🇲🇦 Maroc'],
+        ['+258','🇲🇿 Mozambique'],['+264','🇳🇦 Namibie'],['+977','🇳🇵 Népal'],
+        ['+31','🇳🇱 Pays-Bas'],['+64','🇳🇿 Nouvelle-Zélande'],['+505','🇳🇮 Nicaragua'],
+        ['+227','🇳🇪 Niger'],['+234','🇳🇬 Nigeria'],['+850','🇰🇵 Corée du Nord'],
+        ['+389','🇲🇰 Macédoine du Nord'],['+47','🇳🇴 Norvège'],['+968','🇴🇲 Oman'],
+        ['+92','🇵🇰 Pakistan'],['+970','🇵🇸 Palestine'],['+507','🇵🇦 Panama'],
+        ['+675','🇵🇬 Papouasie-N.-Guinée'],['+595','🇵🇾 Paraguay'],['+51','🇵🇪 Pérou'],
+        ['+63','🇵🇭 Philippines'],['+48','🇵🇱 Pologne'],['+351','🇵🇹 Portugal'],
+        ['+974','🇶🇦 Qatar'],['+40','🇷🇴 Roumanie'],['+7','🇷🇺 Russie'],
+        ['+250','🇷🇼 Rwanda'],['+1869','🇰🇳 Saint-Kitts-et-Nevis'],['+1758','🇱🇨 Sainte-Lucie'],
+        ['+1784','🇻🇨 Saint-Vincent'],['+685','🇼🇸 Samoa'],['+378','🇸🇲 Saint-Marin'],
+        ['+239','🇸🇹 São Tomé-et-Príncipe'],['+966','🇸🇦 Arabie Saoudite'],
+        ['+221','🇸🇳 Sénégal'],['+381','🇷🇸 Serbie'],['+248','🇸🇨 Seychelles'],
+        ['+232','🇸🇱 Sierra Leone'],['+65','🇸🇬 Singapour'],['+421','🇸🇰 Slovaquie'],
+        ['+386','🇸🇮 Slovénie'],['+252','🇸🇴 Somalie'],['+27','🇿🇦 Afrique du Sud'],
+        ['+82','🇰🇷 Corée du Sud'],['+211','🇸🇸 Soudan du Sud'],['+34','🇪🇸 Espagne'],
+        ['+94','🇱🇰 Sri Lanka'],['+249','🇸🇩 Soudan'],['+597','🇸🇷 Suriname'],
+        ['+268','🇸🇿 Eswatini'],['+46','🇸🇪 Suède'],['+41','🇨🇭 Suisse'],
+        ['+963','🇸🇾 Syrie'],['+886','🇹🇼 Taïwan'],['+992','🇹🇯 Tadjikistan'],
+        ['+255','🇹🇿 Tanzanie'],['+66','🇹🇭 Thaïlande'],['+670','🇹🇱 Timor-Leste'],
+        ['+228','🇹🇬 Togo'],['+676','🇹🇴 Tonga'],['+1868','🇹🇹 Trinité-et-Tobago'],
+        ['+216','🇹🇳 Tunisie'],['+90','🇹🇷 Turquie'],['+993','🇹🇲 Turkménistan'],
+        ['+256','🇺🇬 Ouganda'],['+380','🇺🇦 Ukraine'],['+971','🇦🇪 Émirats Arabes Unis'],
+        ['+44','🇬🇧 Royaume-Uni'],['+1','🇺🇸 États-Unis'],['+598','🇺🇾 Uruguay'],
+        ['+998','🇺🇿 Ouzbékistan'],['+678','🇻🇺 Vanuatu'],['+58','🇻🇪 Venezuela'],
+        ['+84','🇻🇳 Vietnam'],['+967','🇾🇪 Yémen'],['+260','🇿🇲 Zambie'],['+263','🇿🇼 Zimbabwe']
+    ];
 
-        const state = {
-            step: 1, tripType: 'aller', departure: 'Anjouan', arrival: 'Moheli',
-            dateAller: null, timeAller: '', dateRetour: null, timeRetour: '',
-            adults: 1, children: 0, passengers: [],
-            monthOffsetAller: 0, monthOffsetRetour: 0,
-            user: { phoneCodeValue: "+269", phoneExample: "333 44 55", phone: '', email: '' }
-        };
+    function generatePhoneOptions(selectedVal) {
+        return PHONE_CODES.map(([val, name]) =>
+            val === '---'
+                ? `<option value="" disabled>──────────</option>`
+                : `<option value="${val}" ${selectedVal === val ? 'selected' : ''}>${val} ${name}</option>`
+        ).join('');
+    }
 
-        async function fetchDates() {
-            try {
-                const response = await fetch(GOOGLE_WEB_APP_URL, { method: 'GET', redirect: 'follow' });
-                if (!response.ok) throw new Error("Erreur HTTP");
-                const data = await response.json();
-                if (data.error) throw new Error("Erreur de script");
-                serverDates = data.dates || {};
-                renderApp();
-            } catch (error) {
-                document.getElementById('app-content').innerHTML = `<div class="error" style="display:block">Erreur de connexion au serveur. Rafraîchissez la page.</div>`;
-            }
-        }
+    const GOOGLE_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxv_TQQ-HLA7jMStWDIEpDNlIlUpN44GRbhVQIbYlxxiyQKRVvLRiJOLSB_i4Yz4OKn/exec';
 
-        const renderMonth = (year, month, type) => {
-            let html = `<div class="month-container"><div class="month-header">${monthsNames[month]} ${year}</div>`;
-            html += `<div class="weekdays"><div>L</div><div>M</div><div>M</div><div>J</div><div>V</div><div>S</div><div>D</div></div><div class="days-grid">`;
+    let serverDates = {};
+    const monthsNames = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
 
-            let firstDay = new Date(year, month, 1).getDay();
-            firstDay = firstDay === 0 ? 6 : firstDay - 1;
-            let daysInMonth = new Date(year, month + 1, 0).getDate();
+    const state = {
+        step: 1, tripType: 'aller', departure: 'Anjouan', arrival: 'Moheli',
+        dateAller: null, timeAller: '', dateRetour: null, timeRetour: '',
+        adults: 1, children: 0, passengers: [],
+        monthOffsetAller: 0, monthOffsetRetour: 0,
+        user: { phoneCodeValue: '+269', phone: '', email: '' }
+    };
 
-            for(let i=0; i<firstDay; i++) html += `<div class="empty-day"></div>`;
-
-            const todayStr = new Date().toISOString().split('T')[0];
-
-            for(let d=1; d<=daysInMonth; d++) {
-                let dStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-                
-                if (dStr < todayStr) {
-                    html += `<div class="cal-day past">${d}</div>`;
-                    continue;
-                }
-
-                let dispo = serverDates[dStr];
-                let isAvail = dispo && (dispo.m || dispo.a);
-                let cssClass = isAvail ? 'available' : 'unavailable';
-                if (state[type === 'aller' ? 'dateAller' : 'dateRetour'] === dStr) cssClass += ' selected';
-
-                let dotsHTML = '';
-                if(isAvail) {
-                    dotsHTML = `<div class="time-dot-container">`;
-                    if(dispo.m) dotsHTML += `<div class="time-dot matin"></div>`;
-                    if(dispo.a) dotsHTML += `<div class="time-dot aprem"></div>`;
-                    dotsHTML += `</div>`;
-                }
-
-                html += `<div class="cal-day ${cssClass}" ${isAvail ? `onclick="selectDate('${type}', '${dStr}')"` : ''}>${d}${dotsHTML}</div>`;
-            }
-            return html + `</div></div>`;
-        };
-
-        const createCalendar = (type) => {
-            const d = new Date();
-            const offset = type === 'aller' ? state.monthOffsetAller : state.monthOffsetRetour;
-            d.setMonth(d.getMonth() + offset);
-
-            let html = `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                <button class="btn-secondary" style="width:auto; padding:8px 15px; margin:0;" onclick="changeMonth('${type}', -1)">← Précédent</button>
-                <button class="btn-secondary" style="width:auto; padding:8px 15px; margin:0;" onclick="changeMonth('${type}', 1)">Suivant →</button>
-            </div>`;
-            
-            html += `<div class="calendar-wrapper">` + renderMonth(d.getFullYear(), d.getMonth(), type);
-            let nextM = d.getMonth() + 1, nextY = d.getFullYear();
-            if(nextM > 11) { nextM = 0; nextY++; }
-            html += renderMonth(nextY, nextM, type) + `</div>`;
-            return html;
-        };
-
-        window.changeMonth = (type, dir) => {
-            if(type === 'aller') state.monthOffsetAller += dir;
-            else state.monthOffsetRetour += dir;
+    async function fetchDates() {
+        try {
+            const response = await fetch(GOOGLE_WEB_APP_URL, { method: 'GET', redirect: 'follow' });
+            if (!response.ok) throw new Error("Erreur HTTP");
+            const data = await response.json();
+            if (data.error) throw new Error("Erreur de script");
+            serverDates = data.dates || {};
             renderApp();
+        } catch (error) {
+            document.getElementById('app-content').innerHTML = `<div class="error" style="display:block">Erreur de connexion au serveur. Rafraîchissez la page.</div>`;
+        }
+    }
+
+    const renderMonth = (year, month, type) => {
+        let html = `<div class="month-container"><div class="month-header">${monthsNames[month]} ${year}</div>`;
+        html += `<div class="weekdays"><div>L</div><div>M</div><div>M</div><div>J</div><div>V</div><div>S</div><div>D</div></div><div class="days-grid">`;
+        let firstDay = new Date(year, month, 1).getDay();
+        firstDay = firstDay === 0 ? 6 : firstDay - 1;
+        let daysInMonth = new Date(year, month + 1, 0).getDate();
+        for(let i=0;i<firstDay;i++) html += `<div class="empty-day"></div>`;
+        const todayStr = new Date().toISOString().split('T')[0];
+        for(let d=1;d<=daysInMonth;d++) {
+            let dStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+            if (dStr < todayStr) { html += `<div class="cal-day past">${d}</div>`; continue; }
+            let dispo = serverDates[dStr];
+            let isAvail = dispo && (dispo.m || dispo.a);
+            let cssClass = isAvail ? 'available' : 'unavailable';
+            if (state[type === 'aller' ? 'dateAller' : 'dateRetour'] === dStr) cssClass += ' selected';
+            let dotsHTML = '';
+            if(isAvail) {
+                dotsHTML = `<div class="time-dot-container">`;
+                if(dispo.m) dotsHTML += `<div class="time-dot matin"></div>`;
+                if(dispo.a) dotsHTML += `<div class="time-dot aprem"></div>`;
+                dotsHTML += `</div>`;
+            }
+            html += `<div class="cal-day ${cssClass}" ${isAvail ? `onclick="selectDate('${type}','${dStr}')"` : ''}>${d}${dotsHTML}</div>`;
+        }
+        return html + `</div></div>`;
+    };
+
+    const createCalendar = (type) => {
+        const d = new Date();
+        const offset = type === 'aller' ? state.monthOffsetAller : state.monthOffsetRetour;
+        d.setMonth(d.getMonth() + offset);
+        let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <button class="btn-secondary" style="width:auto;padding:8px 15px;margin:0;" onclick="changeMonth('${type}',-1)">← Précédent</button>
+            <button class="btn-secondary" style="width:auto;padding:8px 15px;margin:0;" onclick="changeMonth('${type}',1)">Suivant →</button>
+        </div>`;
+        html += `<div class="calendar-wrapper">` + renderMonth(d.getFullYear(), d.getMonth(), type);
+        let nextM = d.getMonth() + 1, nextY = d.getFullYear();
+        if(nextM > 11) { nextM = 0; nextY++; }
+        html += renderMonth(nextY, nextM, type) + `</div>`;
+        return html;
+    };
+
+    window.changeMonth = (type, dir) => {
+        if(type === 'aller') state.monthOffsetAller += dir; else state.monthOffsetRetour += dir;
+        renderApp();
+    };
+    window.selectDate = (type, date) => { state[type === 'aller' ? 'dateAller' : 'dateRetour'] = date; state[type === 'aller' ? 'timeAller' : 'timeRetour'] = ''; renderApp(); };
+    window.selectTime = (type, time) => { state[type === 'aller' ? 'timeAller' : 'timeRetour'] = time; renderApp(); };
+    window.updateCounter = (type, action) => {
+        if(type === 'adults') { if(action === 'plus') state.adults++; else if(state.adults > 1) state.adults--; }
+        else { if(action === 'plus') state.children++; else if(state.children > 0) state.children--; }
+        renderApp();
+    };
+    window.switchDest = (dep) => { state.departure = dep; state.arrival = (dep === 'Anjouan' ? 'Moheli' : 'Anjouan'); renderApp(); };
+
+    const saveInputs = () => {
+        state.passengers.forEach((p, i) => {
+            const n = document.getElementById(`nom_${i}`); const pr = document.getElementById(`prenom_${i}`);
+            if(n) p.nom = n.value; if(pr) p.prenom = pr.value;
+        });
+        const ph = document.getElementById('phone'); if(ph) state.user.phone = ph.value;
+        const em = document.getElementById('email'); if(em) state.user.email = em.value;
+        const sel = document.getElementById('phone-code-select'); if(sel) state.user.phoneCodeValue = sel.value;
+    };
+
+    window.navStep1 = () => { saveInputs(); state.step = 1; renderApp(); };
+    window.navStep2 = () => {
+        if (!state.dateAller || !state.timeAller || (state.tripType === 'aller-retour' && (!state.dateRetour || !state.timeRetour))) {
+            document.getElementById('err-s1').style.display = 'block'; return;
+        }
+        state.passengers = [];
+        for(let i=0;i<state.adults;i++) state.passengers.push({ type:'Adulte', nom:'', prenom:'' });
+        for(let i=0;i<state.children;i++) state.passengers.push({ type:'Enfant', nom:'', prenom:'' });
+        state.step = 2; renderApp();
+    };
+    window.navStep3 = () => {
+        saveInputs(); let isValid = true;
+        state.passengers.forEach(p => { if (!p.nom.trim() || !p.prenom.trim()) isValid = false; });
+        if (!state.user.phone.trim() || !state.user.email.trim()) isValid = false;
+        if (!isValid) { document.getElementById('err-s2').style.display = 'block'; return; }
+        state.step = 3; renderApp();
+    };
+
+    window.submitBooking = async () => {
+        const btn = document.getElementById('submit-btn');
+        const loader = document.getElementById('loader');
+        btn.disabled = true; loader.style.display = 'inline-block';
+        const totalCost = (state.adults * 30 + state.children * 15) * (state.tripType === 'aller-retour' ? 2 : 1);
+        const bookingId = Math.floor(Math.random() * 90000) + 10000;
+        const detailsStr = `${state.departure} -> ${state.arrival} | Aller: ${state.dateAller} (${state.timeAller})` + (state.tripType === 'aller-retour' ? ` | Retour: ${state.dateRetour} (${state.timeRetour})` : '');
+        let paxDetails = `${state.adults} Adulte(s)`;
+        if (state.children > 0) paxDetails += ` et ${state.children} Enfant(s)`;
+        const payload = {
+            action: 'new_booking', id: bookingId,
+            contact: state.passengers[0].nom + ' ' + state.passengers[0].prenom,
+            phone: state.user.phoneCodeValue + ' ' + state.user.phone,
+            email: state.user.email, details: detailsStr, total: totalCost, pax: paxDetails,
+            passengers: JSON.stringify(state.passengers)
         };
+        try {
+            await fetch(GOOGLE_WEB_APP_URL, { method: 'POST', redirect: 'follow', body: JSON.stringify(payload) });
+            state.step = 4; renderApp();
+        } catch (error) {
+            alert("Erreur lors de l'envoi."); btn.disabled = false; loader.style.display = 'none';
+        }
+    };
 
-        window.selectDate = (type, date) => { state[type === 'aller' ? 'dateAller' : 'dateRetour'] = date; state[type === 'aller' ? 'timeAller' : 'timeRetour'] = ''; renderApp(); };
-        window.selectTime = (type, time) => { state[type === 'aller' ? 'timeAller' : 'timeRetour'] = time; renderApp(); };
-        window.updateCounter = (type, action) => { if(type === 'adults') { if(action === 'plus') state.adults++; else if(state.adults > 1) state.adults--; } else { if(action === 'plus') state.children++; else if(state.children > 0) state.children--; } renderApp(); };
-        window.switchDest = (dep) => { state.departure = dep; state.arrival = (dep === 'Anjouan' ? 'Moheli' : 'Anjouan'); renderApp(); };
-
-        const saveInputs = () => {
-            state.passengers.forEach((p, i) => { const n = document.getElementById(`nom_${i}`); const pr = document.getElementById(`prenom_${i}`); if(n) p.nom = n.value; if(pr) p.prenom = pr.value; });
-            const ph = document.getElementById('phone'); if(ph) state.user.phone = ph.value;
-            const em = document.getElementById('email'); if(em) state.user.email = em.value;
-        };
-
-        window.navStep1 = () => { saveInputs(); state.step = 1; renderApp(); };
-        window.navStep2 = () => {
-            if (!state.dateAller || !state.timeAller || (state.tripType === 'aller-retour' && (!state.dateRetour || !state.timeRetour))) { document.getElementById('err-s1').style.display = 'block'; return; }
-            state.passengers = [];
-            for(let i=0; i<state.adults; i++) state.passengers.push({ type: 'Adulte', nom: '', prenom: '' });
-            for(let i=0; i<state.children; i++) state.passengers.push({ type: 'Enfant', nom: '', prenom: '' });
-            state.step = 2; renderApp();
-        };
-        window.navStep3 = () => {
-            saveInputs(); let isValid = true;
-            state.passengers.forEach(p => { if (!p.nom.trim() || !p.prenom.trim()) isValid = false; });
-            if (!state.user.phone.trim() || !state.user.email.trim()) isValid = false;
-            if (!isValid) { document.getElementById('err-s2').style.display = 'block'; return; }
-            state.step = 3; renderApp();
-        };
-
-        window.submitBooking = async () => {
-            const btn = document.getElementById('submit-btn');
-            const loader = document.getElementById('loader');
-            btn.disabled = true; loader.style.display = 'inline-block';
-
-            const totalCost = (state.adults * 30 + state.children * 15) * (state.tripType === 'aller-retour' ? 2 : 1);
-            const bookingId = Math.floor(Math.random() * 90000) + 10000;
-            const detailsStr = `${state.departure} -> ${state.arrival} | Aller: ${state.dateAller} (${state.timeAller})` + (state.tripType === 'aller-retour' ? ` | Retour: ${state.dateRetour} (${state.timeRetour})` : '');
-            
-            let paxDetails = `${state.adults} Adulte(s)`;
-            if (state.children > 0) paxDetails += ` et ${state.children} Enfant(s)`;
-
-            const payload = {
-                action: 'new_booking', id: bookingId, contact: state.passengers[0].nom + " " + state.passengers[0].prenom,
-                phone: state.user.phoneCodeValue + " " + state.user.phone, email: state.user.email,
-                details: detailsStr, total: totalCost, pax: paxDetails,
-                passengersData: state.passengers // On envoie TOUTE la liste au serveur !
+    const renderApp = () => {
+        let html = '';
+        if (state.step === 1) {
+            const getTimes = (dStr, tType, tVal) => {
+                if(!dStr || !serverDates[dStr]) return '';
+                const dispo = serverDates[dStr];
+                return `<div class="time-select-group">
+                    <div class="time-btn ${dispo.m?'':'disabled'} ${tVal==='matin'?'selected':''}" onclick="${dispo.m?`selectTime('${tType}','matin')`:''}">Matin</div>
+                    <div class="time-btn ${dispo.a?'':'disabled'} ${tVal==='aprem'?'selected':''}" onclick="${dispo.a?`selectTime('${tType}','aprem')`:''}">Après-midi</div>
+                </div>`;
             };
-
-            try {
-                await fetch(GOOGLE_WEB_APP_URL, { method: 'POST', redirect: 'follow', body: JSON.stringify(payload) });
-                state.step = 4;
-                renderApp();
-            } catch (error) {
-                alert("Erreur lors de l'envoi."); btn.disabled = false; loader.style.display = 'none';
-            }
-        };
-
-        const renderApp = () => {
-            let html = '';
-            if (state.step === 1) {
-                const getTimes = (dStr, tType, tVal) => {
-                    if(!dStr || !serverDates[dStr]) return '';
-                    const dispo = serverDates[dStr];
-                    return `<div class="time-select-group">
-                        <div class="time-btn ${dispo.m?'':'disabled'} ${tVal==='matin'?'selected':''}" onclick="${dispo.m?`selectTime('${tType}', 'matin')`:''}">Matin</div>
-                        <div class="time-btn ${dispo.a?'':'disabled'} ${tVal==='aprem'?'selected':''}" onclick="${dispo.a?`selectTime('${tType}', 'aprem')`:''}">Après-midi</div>
-                    </div>`;
-                };
-                
-                html += `
-                    <select class="form-control" onchange="state.tripType=this.value; renderApp();">
-                        <option value="aller" ${state.tripType === 'aller' ? 'selected' : ''}>Aller simple</option>
-                        <option value="aller-retour" ${state.tripType === 'aller-retour' ? 'selected' : ''}>Aller-Retour</option>
-                    </select>
-                    
-                    <div class="row">
-                        <div class="col"><label>Départ</label><select class="form-control" onchange="switchDest(this.value)">
-                            <option value="Anjouan" ${state.departure==='Anjouan'?'selected':''}>Anjouan</option>
-                            <option value="Moheli" ${state.departure==='Moheli'?'selected':''}>Moheli</option>
-                        </select></div>
-                        <div class="col"><label>Arrivée</label><select class="form-control" disabled>
-                            <option value="Moheli" ${state.arrival==='Moheli'?'selected':''}>Moheli</option>
-                            <option value="Anjouan" ${state.arrival==='Anjouan'?'selected':''}>Anjouan</option>
-                        </select></div>
-                    </div>
-
-                    <div class="calendar-section">
-                        <label>Sélectionnez votre date d'Aller</label>
-                        ${createCalendar('aller')}
-                        ${getTimes(state.dateAller, 'aller', state.timeAller)}
-                    </div>
-                `;
-
-                if (state.tripType === 'aller-retour') {
-                    html += `
-                    <div class="calendar-section">
-                        <label>Sélectionnez votre date de Retour</label>
-                        ${createCalendar('retour')}
-                        ${getTimes(state.dateRetour, 'retour', state.timeRetour)}
-                    </div>`;
-                }
-
-                html += `
-                    <div class="counter-group"><span>Adultes</span><div class="counter-controls"><button class="counter-btn" onclick="updateCounter('adults','minus')">-</button><strong style="margin:0 15px;">${state.adults}</strong><button class="counter-btn" onclick="updateCounter('adults','plus')">+</button></div></div>
-                    <div class="counter-group">
-                        <span>Enfants <small style="display:block; color:#888; font-size:12px;">(Moins de 13 ans)</small></span>
-                        <div class="counter-controls"><button class="counter-btn" onclick="updateCounter('children','minus')">-</button><strong style="margin:0 15px;">${state.children}</strong><button class="counter-btn" onclick="updateCounter('children','plus')">+</button></div>
-                    </div>
-                    <div id="err-s1" class="error">Sélectionnez vos dates et heures de traversée.</div>
-                    <button class="btn btn-primary" onclick="navStep2()">Suivant</button>
-                `;
-            }
-            if (state.step === 2) {
-                state.passengers.forEach((p, i) => {
-                    html += `<div class="passenger-box"><h4>Passager ${i+1} (${p.type})</h4><div class="row"><div class="col"><input type="text" class="form-control" id="nom_${i}" value="${p.nom}" placeholder="Nom"></div><div class="col"><input type="text" class="form-control" id="prenom_${i}" value="${p.prenom}" placeholder="Prénom"></div></div>`;
-                    if(i===0) html += `<div class="phone-input"><select class="form-control" onchange="state.user.phoneCodeValue=this.value;"><option value="+269">+269 COMORES</option><option value="+33">+33 FRANCE</option></select><input type="tel" class="form-control" id="phone" value="${state.user.phone}" placeholder="Tél"></div><input type="email" class="form-control" id="email" value="${state.user.email}" placeholder="Email">`;
-                    html += `</div>`;
-                });
-                html += `<div id="err-s2" class="error">Remplissez tous les champs.</div><button class="btn btn-secondary" onclick="navStep1()">Retour</button><button class="btn btn-primary" onclick="navStep3()">Récapitulatif</button>`;
-            }
-            if (state.step === 3) {
-                html += `<div class="recap-box"><p>Total à payer: <strong>${(state.adults * 30 + state.children * 15) * (state.tripType === 'aller-retour' ? 2 : 1)} €</strong></p></div><button class="btn btn-secondary" onclick="navStep2()">Modifier</button>
-                <button id="submit-btn" class="btn btn-primary" onclick="submitBooking()">Confirmer<span id="loader" class="loader"></span></button>`;
-            }
-            if (state.step === 4) {
-                html += `
-                <div class="success-box">
-                    <div class="success-icon">✓</div>
-                    <h2 style="color:var(--success); margin-bottom: 10px;">Réservation bien prise en compte !</h2>
-                    <p style="font-size:16px; color:#555; line-height:1.5;">Votre demande a été envoyée avec succès.<br><strong>Merci de rester à l'affût dans vos mails</strong> pour la validation définitive de votre traversée.</p>
-                    <button class="btn btn-secondary" style="margin-top:30px;" onclick="location.reload()">Faire une nouvelle réservation</button>
+            html += `
+                <select class="form-control" onchange="state.tripType=this.value; renderApp();">
+                    <option value="aller" ${state.tripType==='aller'?'selected':''}>Aller simple</option>
+                    <option value="aller-retour" ${state.tripType==='aller-retour'?'selected':''}>Aller-Retour</option>
+                </select>
+                <div class="row">
+                    <div class="col"><label>Départ</label><select class="form-control" onchange="switchDest(this.value)">
+                        <option value="Anjouan" ${state.departure==='Anjouan'?'selected':''}>Anjouan</option>
+                        <option value="Moheli" ${state.departure==='Moheli'?'selected':''}>Moheli</option>
+                    </select></div>
+                    <div class="col"><label>Arrivée</label><select class="form-control" disabled>
+                        <option value="Moheli" ${state.arrival==='Moheli'?'selected':''}>Moheli</option>
+                        <option value="Anjouan" ${state.arrival==='Anjouan'?'selected':''}>Anjouan</option>
+                    </select></div>
+                </div>
+                <div class="calendar-section">
+                    <label>Sélectionnez votre date d'Aller</label>
+                    ${createCalendar('aller')}
+                    ${getTimes(state.dateAller,'aller',state.timeAller)}
+                </div>`;
+            if (state.tripType === 'aller-retour') {
+                html += `<div class="calendar-section">
+                    <label>Sélectionnez votre date de Retour</label>
+                    ${createCalendar('retour')}
+                    ${getTimes(state.dateRetour,'retour',state.timeRetour)}
                 </div>`;
             }
-            document.getElementById('app-content').innerHTML = html;
-        };
-        fetchDates();
+            html += `
+                <div class="counter-group"><span>Adultes</span><div class="counter-controls"><button class="counter-btn" onclick="updateCounter('adults','minus')">-</button><strong style="margin:0 15px;">${state.adults}</strong><button class="counter-btn" onclick="updateCounter('adults','plus')">+</button></div></div>
+                <div class="counter-group"><span>Enfants <small style="display:block;color:#888;font-size:12px;">(Moins de 13 ans)</small></span><div class="counter-controls"><button class="counter-btn" onclick="updateCounter('children','minus')">-</button><strong style="margin:0 15px;">${state.children}</strong><button class="counter-btn" onclick="updateCounter('children','plus')">+</button></div></div>
+                <div id="err-s1" class="error">Sélectionnez vos dates et heures de traversée.</div>
+                <button class="btn btn-primary" onclick="navStep2()">Suivant</button>`;
+        }
+        if (state.step === 2) {
+            state.passengers.forEach((p, i) => {
+                html += `<div class="passenger-box"><h4 style="color:var(--primary);margin-bottom:10px;">Passager ${i+1} (${p.type})</h4>
+                    <div class="row">
+                        <div class="col"><input type="text" class="form-control" id="nom_${i}" value="${p.nom}" placeholder="Nom"></div>
+                        <div class="col"><input type="text" class="form-control" id="prenom_${i}" value="${p.prenom}" placeholder="Prénom"></div>
+                    </div>`;
+                if(i===0) html += `
+                    <div class="phone-input">
+                        <select class="form-control" id="phone-code-select" onchange="state.user.phoneCodeValue=this.value;">
+                            ${generatePhoneOptions(state.user.phoneCodeValue)}
+                        </select>
+                        <input type="tel" class="form-control" id="phone" value="${state.user.phone}" placeholder="Numéro de téléphone">
+                    </div>
+                    <input type="email" class="form-control" id="email" value="${state.user.email}" placeholder="Adresse email">`;
+                html += `</div>`;
+            });
+            html += `<div id="err-s2" class="error">Remplissez tous les champs obligatoires.</div>
+                <button class="btn btn-secondary" onclick="navStep1()">Retour</button>
+                <button class="btn btn-primary" onclick="navStep3()">Récapitulatif</button>`;
+        }
+        if (state.step === 3) {
+            const total = (state.adults * 30 + state.children * 15) * (state.tripType === 'aller-retour' ? 2 : 1);
+            html += `<div class="recap-box">
+                <p><strong>Type :</strong> ${state.tripType === 'aller-retour' ? 'Aller-Retour' : 'Aller Simple'}</p>
+                <p><strong>Trajet :</strong> ${state.departure} → ${state.arrival}</p>
+                <p><strong>Aller :</strong> ${state.dateAller} (${state.timeAller})</p>
+                ${state.tripType === 'aller-retour' ? `<p><strong>Retour :</strong> ${state.dateRetour} (${state.timeRetour})</p>` : ''}
+                <p><strong>Passagers :</strong> ${state.adults} Adulte(s)${state.children > 0 ? ` et ${state.children} Enfant(s)` : ''}</p>
+            </div>
+            <div class="total-price">Total : ${total} €</div>
+            <button class="btn btn-secondary" onclick="navStep2()">Modifier</button>
+            <button id="submit-btn" class="btn btn-primary" onclick="submitBooking()">Confirmer la réservation <span id="loader" class="loader"></span></button>`;
+        }
+        if (state.step === 4) {
+            html += `<div class="success-box">
+                <div class="success-icon">✓</div>
+                <h2 style="color:var(--success);margin-bottom:10px;">Réservation bien prise en compte !</h2>
+                <p style="font-size:16px;color:#555;line-height:1.5;">Votre demande a été envoyée avec succès.<br><strong>Merci de rester à l'affût dans vos mails</strong> pour la validation définitive de votre traversée.</p>
+                <button class="btn btn-secondary" style="margin-top:30px;" onclick="location.reload()">Faire une nouvelle réservation</button>
+            </div>`;
+        }
+        document.getElementById('app-content').innerHTML = html;
+    };
+    fetchDates();
     </script>
 </body>
 </html>
