@@ -247,8 +247,8 @@ window.validerRes = async (id, statusPayment) => {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ unit: 'mm', format: 'a4' });
     const pageW = 210;
-    const leftX = 15;
-    const rightX = 110;
+    const leftX = 20;
+    const rightX = 115;
 
     // ===== PAGE 1 : logo seul en haut à gauche, sans bandes =====
     const imgLogo = await loadImage('unnammmed.png');
