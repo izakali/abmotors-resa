@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administration - AB MOTORS</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7f6; margin: 0; padding: 20px; -webkit-user-select: none; user-select: none; }
         .admin-container { max-width: 1000px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
@@ -118,168 +117,68 @@
             await Promise.all(promises); selectedDates.clear(); fetchData();
         };
 
-        const loadImage = (url) => new Promise((resolve) => {
-            const img = new Image(); img.onload = () => resolve(img); img.onerror = () => resolve(null); img.src = url;
-        });
-
-        // === CREATION DU PDF (REFAITE DE ZERO EN CODE MATHEMATIQUE) ===
         window.validerRes = async (id, statusPayment) => {
             const booking = serverBookings.find(b => b.id == id);
             if(!booking) return;
             const btn = document.getElementById('btn-valider-' + id);
-            if(btn) { btn.disabled = true; btn.innerText = "Création PDF..."; }
-            
-            const fullStatus = statusPayment === 'payé' ? 'Confirmée et payée' : 'Confirmée et non payée';
-            const { jsPDF } = window.jspdf; 
-            const doc = new jsPDF();
-            
-            let y = 0; // Le curseur vertical
+            if(btn) { btn.disabled = true; btn.innerText = "Génération..."; }
 
-            const dessinerEnTete = async () => {
-                // 1. Dessin des 3 bandes de couleurs (qui prennent toute la largeur)
-                doc.setFillColor(252, 210, 28); doc.rect(0, 10, 210, 12, 'F'); // Jaune
-                doc.setFillColor(255, 255, 255); doc.rect(0, 22, 210, 18, 'F'); // Blanc
-                doc.setFillColor(206, 17, 38); doc.rect(0, 40, 210, 12, 'F'); // Rouge
-                
-                // 2. Placement du logo drapeau à gauche
-                const imgHaut = await loadImage('unnammmed.png');
-                if (imgHaut) {
-                    const logoW = 50; const ratio = imgHaut.naturalHeight / imgHaut.naturalWidth;
-                    doc.addImage(imgHaut, 'PNG', 15, 10, logoW, logoW * ratio);
-                } else {
-                    // Secours si image pas trouvée
-                    doc.setFontSize(22); doc.setTextColor(0, 0, 0); doc.setFont("helvetica", "bold");
-                    doc.text("AB MOTORS", 30, 35, null, null, "left");
-                }
-                
-                y = 70; // On descend le curseur pour la suite
-            };
-
-            const dessinerPiedDePage = async () => {
-                // Logo Rond en bas à droite
-                const imgBas = await loadImage('Gemini_Generabbted_Image_.png');
-                if (imgBas) { doc.addImage(imgBas, 'PNG', 150, 230, 40, 40); }
-                
-                // Mentions légales centrées tout en bas
-                doc.setTextColor(100, 100, 100); doc.setFont("helvetica", "normal"); doc.setFontSize(9);
-                let notice = "Mentions légales / Notice\nLorsque ce document est délivré pour le transport, des conditions particulières peuvent s'appliquer.\nCes termes et conditions peuvent être obtenues auprès de l'agent émetteur AB MOTORS.\nCe document est un reçu de paiement et de réservation.\nMerci d'avoir choisi AB MOTORS pour votre traversée.";
-                doc.text(notice, 105, 275, { align: "center", lineHeightFactor: 1.5 });
-            };
-
-            // ---- PAGE 1 ----
-            await dessinerEnTete();
-
-            // Titre central
-            doc.setFontSize(14); doc.setFont("helvetica", "bold"); doc.setTextColor(0, 0, 0);
-            doc.text("Votre reçu d'achat de services / Booking Receipt", 105, y, null, null, "center");
-            y += 15;
-
-            // Infos Réservation (Gauche) et Agence (Droite)
-            doc.setFontSize(10); doc.setFont("helvetica", "normal");
-            doc.text(`Numéro de réservation / Booking Ref : ${booking.id}`, 15, y);
-            doc.text(`Passager / Passenger : ${booking.contact}`, 15, y+6);
-            doc.text(`Téléphone : ${booking.phone}`, 15, y+12);
-            
-            doc.text(`Agence émettrice / Issuing office : AB MOTORS`, 110, y);
-            doc.text(`(+269) 3315118`, 110, y+6);
-            doc.text(`(+269) 4350423`, 110, y+12);
-            doc.text(`Date d'émission / Date of Issuance : ${new Date().toLocaleDateString('fr-FR')}`, 110, y+18);
-            y += 30;
-
-            // TABLEAU 1 (Trajet)
-            doc.setFillColor(240, 240, 240); doc.rect(15, y, 180, 8, 'F');
-            doc.setFontSize(9); doc.setFont("helvetica", "bold");
-            doc.text("Trajet / Route", 18, y+5); doc.text("Dates / Horaires", 80, y+5);
-            doc.text("Statut", 145, y+5); doc.text("Passagers", 170, y+5);
-            
-            y += 15;
-            doc.setFont("helvetica", "normal");
-            let route = booking.details.split('|')[0].trim();
-            let depDate = booking.details.split('|')[1] ? booking.details.split('|')[1].trim() : "";
-            
-            // Calcul total de passagers depuis la liste ou depuis le string
-            let nbPassagers = 0; let passagersList = [];
-            try { 
-                passagersList = JSON.parse(booking.passengersData); 
-                nbPassagers = passagersList.length;
-            } catch(e) { 
-                nbPassagers = booking.pax.split(' ')[0]; 
-                passagersList = [{ nom: booking.contact.split(' ')[0] || '', prenom: booking.contact.split(' ')[1] || '', type: 'Adulte' }];
-            }
-
-            doc.text(route, 18, y); doc.text(depDate, 80, y);
-            doc.text("Confirmé", 145, y); doc.text(String(nbPassagers), 170, y); 
-            y += 10;
-
-            // TABLEAU 2 (Liste des passagers)
-            doc.setFillColor(240, 240, 240); doc.rect(15, y-5, 180, 8, 'F');
-            doc.setFont("helvetica", "bold");
-            doc.text("Passager", 18, y); doc.text("Type de passager", 80, y); doc.text("Catégorie tarifaire", 140, y);
-            doc.setFont("helvetica", "normal");
-            y += 10;
-
-            // BOUCLE MAGIQUE : Crée des pages automatiquement si la liste est longue !
-            for (let p of passagersList) {
-                if (y > 260) { 
-                    await dessinerPiedDePage(); // Fin de la page actuelle
-                    doc.addPage(); // Création nouvelle page
-                    await dessinerEnTete(); // Remet les bandes de couleur en haut
-                    
-                    // Remet l'en-tête du tableau gris sur la page 2
-                    doc.setFillColor(240, 240, 240); doc.rect(15, y-5, 180, 8, 'F');
-                    doc.setFont("helvetica", "bold");
-                    doc.text("Passager", 18, y); doc.text("Type de passager", 80, y); doc.text("Catégorie tarifaire", 140, y);
-                    doc.setFont("helvetica", "normal");
-                    y += 10;
-                }
-                doc.text(`${p.nom} ${p.prenom}`, 18, y);
-                doc.text(p.type, 80, y);
-                doc.text(p.type === 'Adulte' ? 'Tarif adulte' : 'Tarif enfant', 140, y);
-                y += 8;
-            }
-
-            // DETAILS PAIEMENT
-            y += 10;
-            // Si on est trop bas pour écrire le paiement, on ajoute une page
-            if (y > 240) {
-                await dessinerPiedDePage();
-                doc.addPage();
-                await dessinerEnTete();
-            }
-
-            doc.setFontSize(10); doc.setFont("helvetica", "bold"); doc.setTextColor(0, 0, 0);
-            doc.text("Détails paiement / Payment Details", 15, y);
-            doc.setFont("helvetica", "normal"); doc.setFontSize(9);
-            doc.text(`Tarif total / Total Fare : ${booking.total} EUR`, 15, y+7);
-
-            if(statusPayment === 'payé') {
-                doc.setTextColor(40, 167, 69); doc.setFont("helvetica", "bold");
-                doc.text("Statut du paiement : PAYÉ", 15, y+15);
-            } else {
-                doc.setTextColor(220, 53, 69); doc.setFont("helvetica", "bold");
-                doc.text("Statut du paiement : RESTE À PAYER SUR PLACE", 15, y+15);
-            }
-
-            // On dessine le pied de page final (avec le logo rond) sur la toute dernière page
-            await dessinerPiedDePage();
-
-            // --- FIN DU DESSIN ---
-            const pdfBase64 = doc.output('datauristring').split(',')[1];
-            
             try {
-                await fetch(GOOGLE_WEB_APP_URL, { 
-                    method: 'POST', redirect: 'follow', 
-                    body: JSON.stringify({ action: 'validate_booking', id: booking.id, email: booking.email, contact: booking.contact, pdfBase64: pdfBase64, newStatus: fullStatus }) 
+                const res = await fetch(GOOGLE_WEB_APP_URL, {
+                    method: 'POST', redirect: 'follow',
+                    body: JSON.stringify({ 
+                        action: 'validate_booking', 
+                        id: booking.id, email: booking.email, contact: booking.contact, 
+                        statusPayment: statusPayment, details: booking.details, 
+                        pax: booking.pax, total: booking.total, 
+                        passengersData: booking.passengersData, phone: booking.phone 
+                    })
                 });
-                alert("Statut mis à jour et PDF officiel envoyé au client !"); 
+                const responseData = await res.json();
+                
+                if(responseData.result === "success") {
+                    alert("Statut mis à jour et PDF généré et envoyé via DocSpring !");
+                } else {
+                    alert("Erreur: " + responseData.message);
+                }
                 await fetchData();
-            } catch (err) { 
-                alert("Erreur lors de l'envoi."); 
-                if(btn) { btn.disabled = false; btn.innerText = "Valider"; } 
+            } catch (err) {
+                alert("Erreur lors de la communication avec le serveur.");
+                if(btn) { btn.disabled = false; btn.innerText = "Valider"; }
             }
         };
 
         window.supprRes = async (id) => { if(confirm('Supprimer ?')) { await fetch(GOOGLE_WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'delete_booking', id: id }) }); fetchData(); } };
+
+        const renderCalendarOnly = () => {
+            const d = new Date(); d.setMonth(d.getMonth() + adminMonthOffset);
+            const wrapper = document.getElementById('cal-wrapper'); if (!wrapper) return;
+            let nextM = d.getMonth() + 1, nextY = d.getFullYear(); if (nextM > 11) { nextM = 0; nextY++; }
+            wrapper.innerHTML = renderMonthAdmin(d.getFullYear(), d.getMonth()) + renderMonthAdmin(nextY, nextM);
+            updateBulkPanel();
+        };
+
+        const updateBulkPanel = () => {
+            const panel = document.getElementById('bulk-panel'); if (!panel) return;
+            if (selectedDates.size === 0) { panel.innerHTML = `<p style="font-size:13px;">Sélectionnez des jours.</p>`; return; }
+            panel.innerHTML = `<div class="inline-editor"><b>${selectedDates.size} sélectionnés</b><label><input type="checkbox" id="bulk-matin" checked> Matin</label><label><input type="checkbox" id="bulk-aprem"> Aprem</label><button class="refresh-btn" onclick="applyBulkDispo()">Appliquer</button><button class="refresh-btn" style="background:#e53e3e;" onclick="clearSelection()">Annuler</button></div>`;
+        };
+
+        const renderMonthAdmin = (year, month) => {
+            let html = `<div class="month-container"><div class="month-header">${monthsNames[month]} ${year}</div><div class="weekdays"><div>L</div><div>M</div><div>M</div><div>J</div><div>V</div><div>S</div><div>D</div></div><div class="days-grid">`;
+            let firstDay = new Date(year, month, 1).getDay(); firstDay = firstDay === 0 ? 6 : firstDay - 1;
+            let daysInMonth = new Date(year, month + 1, 0).getDate();
+            for(let i=0; i<firstDay; i++) html += `<div class="empty-day"></div>`;
+            const todayStr = new Date().toISOString().split('T')[0];
+            for(let d=1; d<=daysInMonth; d++) {
+                let dStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+                if (dStr < todayStr) { html += `<div class="cal-day past" style="opacity:0.3;">${d}</div>`; continue; }
+                let isAvail = serverDates[dStr]; let isSelected = selectedDates.has(dStr);
+                let dots = isAvail ? `<div class="time-dot-container">${isAvail.m?'<div class="time-dot matin"></div>':''}${isAvail.a?'<div class="time-dot aprem"></div>':''}</div>` : '';
+                html += `<div class="cal-day ${isAvail?'available':''} ${isSelected?'selected-admin':''}" onclick="toggleDate('${dStr}')">${d}${dots}</div>`;
+            }
+            return html + `</div></div>`;
+        };
 
         window.updateTable = () => {
             const container = document.getElementById('table-container'); if (!container) return;
@@ -299,28 +198,7 @@
             if (currentView === 'dates') {
                 const d = new Date(); d.setMonth(d.getMonth() + adminMonthOffset);
                 let nextM = d.getMonth() + 1, nextY = d.getFullYear(); if(nextM > 11) { nextM = 0; nextY++; }
-                
-                let html = `<div style="display:flex; justify-content:space-between; margin-bottom:15px;"><p>Gérez les dates.</p><div><button class="refresh-btn" onclick="changeAdminMonth(-1)">←</button><button class="refresh-btn" onclick="changeAdminMonth(1)">→</button></div></div><div id="cal-wrapper" class="calendar-wrapper">`;
-                
-                const renderM = (y, m) => {
-                    let out = `<div class="month-container"><div class="month-header">${monthsNames[m]} ${y}</div><div class="weekdays"><div>L</div><div>M</div><div>M</div><div>J</div><div>V</div><div>S</div><div>D</div></div><div class="days-grid">`;
-                    let fD = new Date(y, m, 1).getDay(); fD = fD === 0 ? 6 : fD - 1;
-                    let dim = new Date(y, m + 1, 0).getDate();
-                    for(let i=0; i<fD; i++) out += `<div class="empty-day"></div>`;
-                    const tStr = new Date().toISOString().split('T')[0];
-                    for(let d=1; d<=dim; d++) {
-                        let dStr = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-                        if (dStr < tStr) { out += `<div class="cal-day past" style="opacity:0.3;">${d}</div>`; continue; }
-                        let isAvail = serverDates[dStr]; let isSelected = selectedDates.has(dStr);
-                        let dots = isAvail ? `<div class="time-dot-container">${isAvail.m?'<div class="time-dot matin"></div>':''}${isAvail.a?'<div class="time-dot aprem"></div>':''}</div>` : '';
-                        out += `<div class="cal-day ${isAvail?'available':''} ${isSelected?'selected-admin':''}" onclick="toggleDate('${dStr}')">${d}${dots}</div>`;
-                    }
-                    return out + `</div></div>`;
-                };
-                
-                html += renderM(d.getFullYear(), d.getMonth()) + renderM(nextY, nextM) + `</div><div id="bulk-panel"></div>`;
-                content.innerHTML = html;
-                updateBulkPanel();
+                content.innerHTML = `<div style="display:flex; justify-content:space-between; margin-bottom:15px;"><p>Gérez les dates.</p><div><button class="refresh-btn" onclick="changeAdminMonth(-1)">←</button><button class="refresh-btn" onclick="changeAdminMonth(1)">→</button></div></div><div id="cal-wrapper" class="calendar-wrapper">${renderMonthAdmin(d.getFullYear(), d.getMonth())}${renderMonthAdmin(nextY, nextM)}</div><div id="bulk-panel"></div>`;
             } else {
                 content.innerHTML = `<input type="text" id="search-input" class="search-box" placeholder="Rechercher ID" oninput="updateTable()"><div id="table-container"></div>`;
                 updateTable();
