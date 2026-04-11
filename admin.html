@@ -247,8 +247,18 @@ window.validerRes = async (id, statusPayment) => {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ unit: 'mm', format: 'a4' });
     const pageW = 210;
-    const leftX = 25;
-    const rightX = 120;
+
+    // Colonnes : gauche et droite
+    const leftX = 15;
+    const rightX = 110;
+
+    // Offsets fixes pour les valeurs (après les labels)
+    // Ces nombres représentent la largeur approximative de chaque label en mm à fontSize 10
+    const VAL_REF       = leftX + 87;   // après "Numéro de réservation / Booking Ref :"
+    const VAL_AGENCE    = rightX + 79;  // après "Agence émettrice / Issuing office :"
+    const VAL_PASSAGER  = leftX + 52;   // après "Passager / Passenger :"
+    const VAL_TEL       = leftX + 28;   // après "Téléphone :"
+    const VAL_DATE      = rightX + 83;  // après "Date d'émission / Date of Issuance :"
 
     // ===== PAGE 1 : logo seul en haut à gauche, sans bandes =====
     const imgLogo = await loadImage('unnammmed.png');
@@ -260,54 +270,49 @@ window.validerRes = async (id, statusPayment) => {
     }
 
     // ===== TITRE =====
-    let y = 51;
+    let y = 48;
     doc.setFontSize(14);
     doc.setFont("helvetica", "bold");
     doc.setTextColor(0, 0, 0);
     doc.text("Votre reçu d'achat de services / Booking Receipt", pageW / 2, y, { align: 'center' });
 
-    // ===== SECTION INFO avec espacement dynamique =====
+    // ===== SECTION INFO =====
     y += 14;
     doc.setFontSize(10);
 
     // Ligne 1 : Numéro de réservation | Agence émettrice
     doc.setFont("helvetica", "bold");
-    const lbl_ref = "Numéro de réservation / Booking Ref :";
-    doc.text(lbl_ref, leftX, y);
+    doc.text("Numéro de réservation / Booking Ref :", leftX, y);
     doc.setFont("helvetica", "normal");
-    doc.text(String(booking.id), leftX + doc.getTextWidth(lbl_ref) + 2, y);
+    doc.text(String(booking.id), VAL_REF, y);
 
     doc.setFont("helvetica", "bold");
-    const lbl_agence = "Agence émettrice / Issuing office :";
-    doc.text(lbl_agence, rightX, y);
+    doc.text("Agence émettrice / Issuing office :", rightX, y);
     doc.setFont("helvetica", "normal");
-    doc.text("AB MOTORS", rightX + doc.getTextWidth(lbl_agence) + 2, y);
+    doc.text("AB MOTORS", VAL_AGENCE, y);
 
     y += 7;
-    // Ligne 2 : Passager | Téléphone agence 1
+    // Ligne 2 : Passager | Tel agence 1
     doc.setFont("helvetica", "bold");
-    const lbl_pax = "Passager / Passenger :";
-    doc.text(lbl_pax, leftX, y);
+    doc.text("Passager / Passenger :", leftX, y);
     doc.setFont("helvetica", "normal");
-    doc.text(booking.contact || '', leftX + doc.getTextWidth(lbl_pax) + 2, y);
+    doc.text(booking.contact || '', VAL_PASSAGER, y);
     doc.text("(+269) 3315118", rightX, y);
 
     y += 7;
-    // Ligne 3 : Téléphone client | Téléphone agence 2
+    // Ligne 3 : Téléphone client | Tel agence 2
     doc.setFont("helvetica", "bold");
-    const lbl_tel = "Téléphone :";
-    doc.text(lbl_tel, leftX, y);
+    doc.text("Téléphone :", leftX, y);
     doc.setFont("helvetica", "normal");
-    doc.text(booking.phone || '', leftX + doc.getTextWidth(lbl_tel) + 2, y);
+    doc.text(booking.phone || '', VAL_TEL, y);
     doc.text("(+269) 4350423", rightX, y);
 
     y += 7;
-    // Ligne 4 : Date d'émission
+    // Ligne 4 : Date d'émission (colonne droite seulement)
     doc.setFont("helvetica", "bold");
-    const lbl_date = "Date d'émission / Date of Issuance :";
-    doc.text(lbl_date, rightX, y);
+    doc.text("Date d'émission / Date of Issuance :", rightX, y);
     doc.setFont("helvetica", "normal");
-    doc.text(new Date().toLocaleDateString('fr-FR'), rightX + doc.getTextWidth(lbl_date) + 2, y);
+    doc.text(new Date().toLocaleDateString('fr-FR'), VAL_DATE, y);
 
     // ===== TABLEAU TRAJET =====
     y += 14;
@@ -364,11 +369,10 @@ window.validerRes = async (id, statusPayment) => {
 
     for (let i = 0; i < passengers.length; i++) {
         const p = passengers[i];
-        // Nouvelle page si besoin — SANS header, SANS logo
+        // Nouvelle page si besoin — SANS logo, SANS bandes
         if (y > 265) {
             doc.addPage();
             y = 20;
-            // Répéter uniquement l'en-tête du tableau passagers
             doc.setFillColor(230, 230, 230);
             doc.rect(leftX, y, 180, 10, 'F');
             doc.setFont("helvetica", "bold");
@@ -416,7 +420,7 @@ window.validerRes = async (id, statusPayment) => {
         doc.text("Statut du paiement : RESTE À PAYER SUR PLACE", leftX, y);
     }
 
-    // ===== LOGO BAS DROITE (page courante, pas de nouveau header) =====
+    // ===== LOGO BAS DROITE =====
     y += 15;
     if (y > 230) {
         doc.addPage();
