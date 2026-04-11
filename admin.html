@@ -124,7 +124,7 @@ const GOOGLE_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxv_TQQ-HLA7
 
 // ===== GESTION SESSION =====
 const SESSION_KEY = 'abm_admin_auth';
-const SESSION_DURATION = 6 * 60 * 60 * 1000; // 6 heures
+const SESSION_DURATION = 6 * 60 * 60 * 1000;
 
 function getSession() {
     try { return JSON.parse(sessionStorage.getItem(SESSION_KEY)); } catch(e) { return null; }
@@ -236,7 +236,7 @@ window.applyBulkDispo = async () => {
     document.getElementById('main-loader').style.display = 'none';
 };
 
-// ===== GÉNÉRATION PDF (modèle Canva) =====
+// ===== GÉNÉRATION PDF =====
 window.validerRes = async (id, statusPayment) => {
     const booking = serverBookings.find(b => b.id == id);
     if (!booking) return;
@@ -247,74 +247,70 @@ window.validerRes = async (id, statusPayment) => {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({ unit: 'mm', format: 'a4' });
     const pageW = 210;
+    const leftX = 15;
+    const rightX = 110;
 
-    // ===== FONCTION EN-TÊTE (réutilisable pour chaque page) =====
-    const drawHeader = async () => {
-        // Bande jaune
-        doc.setFillColor(252, 183, 22);
-        doc.rect(0, 0, pageW, 13, 'F');
-        // Bande blanche
-        doc.setFillColor(255, 255, 255);
-        doc.rect(0, 13, pageW, 16, 'F');
-        // Bande rouge
-        doc.setFillColor(196, 22, 28);
-        doc.rect(0, 29, pageW, 13, 'F');
-        // Logo par-dessus
-        const imgLogo = await loadImage('unnammmed.png');
-        if (imgLogo) {
-            const logoW = 42;
-            const ratio = imgLogo.naturalHeight / imgLogo.naturalWidth;
-            const logoH = Math.min(logoW * ratio, 44);
-            doc.addImage(imgLogo, 'PNG', 0, 0, logoW, logoH);
-        }
-    };
-
-    await drawHeader();
+    // ===== PAGE 1 : logo seul en haut à gauche, sans bandes =====
+    const imgLogo = await loadImage('unnammmed.png');
+    if (imgLogo) {
+        const logoW = 38;
+        const ratio = imgLogo.naturalHeight / imgLogo.naturalWidth;
+        const logoH = Math.min(logoW * ratio, 38);
+        doc.addImage(imgLogo, 'PNG', 5, 5, logoW, logoH);
+    }
 
     // ===== TITRE =====
-    let y = 55;
+    let y = 48;
     doc.setFontSize(14);
     doc.setFont("helvetica", "bold");
     doc.setTextColor(0, 0, 0);
     doc.text("Votre reçu d'achat de services / Booking Receipt", pageW / 2, y, { align: 'center' });
 
-    // ===== SECTION INFO =====
-    y += 18;
-    const leftX = 15, rightX = 110;
-
+    // ===== SECTION INFO avec espacement dynamique =====
+    y += 14;
     doc.setFontSize(10);
+
+    // Ligne 1 : Numéro de réservation | Agence émettrice
     doc.setFont("helvetica", "bold");
-    doc.text("Numéro de réservation / Booking Ref :", leftX, y);
+    const lbl_ref = "Numéro de réservation / Booking Ref :";
+    doc.text(lbl_ref, leftX, y);
     doc.setFont("helvetica", "normal");
-    doc.text(String(booking.id), leftX + 79, y); // Sans #
+    doc.text(String(booking.id), leftX + doc.getTextWidth(lbl_ref) + 2, y);
 
     doc.setFont("helvetica", "bold");
-    doc.text("Agence émettrice / Issuing office :", rightX, y);
+    const lbl_agence = "Agence émettrice / Issuing office :";
+    doc.text(lbl_agence, rightX, y);
     doc.setFont("helvetica", "normal");
-    doc.text("AB MOTORS", rightX + 71, y);
+    doc.text("AB MOTORS", rightX + doc.getTextWidth(lbl_agence) + 2, y);
 
     y += 7;
+    // Ligne 2 : Passager | Téléphone agence 1
     doc.setFont("helvetica", "bold");
-    doc.text("Passager / Passenger :", leftX, y);
+    const lbl_pax = "Passager / Passenger :";
+    doc.text(lbl_pax, leftX, y);
     doc.setFont("helvetica", "normal");
-    doc.text(booking.contact || '', leftX + 42, y);
+    doc.text(booking.contact || '', leftX + doc.getTextWidth(lbl_pax) + 2, y);
     doc.text("(+269) 3315118", rightX, y);
 
     y += 7;
+    // Ligne 3 : Téléphone client | Téléphone agence 2
     doc.setFont("helvetica", "bold");
-    doc.text("Téléphone :", leftX, y);
+    const lbl_tel = "Téléphone :";
+    doc.text(lbl_tel, leftX, y);
     doc.setFont("helvetica", "normal");
-    doc.text(booking.phone || '', leftX + 23, y);
+    doc.text(booking.phone || '', leftX + doc.getTextWidth(lbl_tel) + 2, y);
     doc.text("(+269) 4350423", rightX, y);
 
     y += 7;
+    // Ligne 4 : Date d'émission
     doc.setFont("helvetica", "bold");
-    doc.text("Date d'émission / Date of Issuance :", rightX, y);
+    const lbl_date = "Date d'émission / Date of Issuance :";
+    doc.text(lbl_date, rightX, y);
     doc.setFont("helvetica", "normal");
-    doc.text(new Date().toLocaleDateString('fr-FR'), rightX + 76, y);
+    doc.text(new Date().toLocaleDateString('fr-FR'), rightX + doc.getTextWidth(lbl_date) + 2, y);
 
     // ===== TABLEAU TRAJET =====
-    y += 18;
+    y += 14;
     doc.setFillColor(230, 230, 230);
     doc.rect(leftX, y, 180, 10, 'F');
     doc.setFont("helvetica", "bold");
@@ -366,15 +362,13 @@ window.validerRes = async (id, statusPayment) => {
     doc.text("Catégorie tarifaire", leftX + 130, y + 7);
     y += 10;
 
-    let firstPage = true;
     for (let i = 0; i < passengers.length; i++) {
         const p = passengers[i];
+        // Nouvelle page si besoin — SANS header, SANS logo
         if (y > 265) {
             doc.addPage();
-            if (firstPage) firstPage = false;
-            await drawHeader();
-            y = 50;
-            // Répéter en-tête tableau sur nouvelle page
+            y = 20;
+            // Répéter uniquement l'en-tête du tableau passagers
             doc.setFillColor(230, 230, 230);
             doc.rect(leftX, y, 180, 10, 'F');
             doc.setFont("helvetica", "bold");
@@ -396,11 +390,10 @@ window.validerRes = async (id, statusPayment) => {
     }
 
     // ===== PAIEMENT =====
-    y += 18;
+    y += 14;
     if (y > 240) {
         doc.addPage();
-        await drawHeader();
-        y = 50;
+        y = 20;
     }
     doc.setFont("helvetica", "bold");
     doc.setFontSize(11);
@@ -423,15 +416,21 @@ window.validerRes = async (id, statusPayment) => {
         doc.text("Statut du paiement : RESTE À PAYER SUR PLACE", leftX, y);
     }
 
-    // ===== LOGO BAS DROITE =====
-    y += 20;
-    if (y > 230) { doc.addPage(); await drawHeader(); y = 50; }
+    // ===== LOGO BAS DROITE (page courante, pas de nouveau header) =====
+    y += 15;
+    if (y > 230) {
+        doc.addPage();
+        y = 20;
+    }
     const imgBas = await loadImage('Gemini_Generabbted_Image_.png');
     if (imgBas) { doc.addImage(imgBas, 'PNG', 150, y, 45, 45); }
 
     // ===== MENTIONS LÉGALES =====
     y += 50;
-    if (y > 280) { doc.addPage(); await drawHeader(); y = 50; }
+    if (y > 280) {
+        doc.addPage();
+        y = 20;
+    }
     doc.setTextColor(100, 100, 100);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(9);
@@ -589,7 +588,6 @@ const render = () => {
         document.getElementById('admin-app').style.display = 'block';
         fetchData();
     }
-    // Sinon, l'écran de login est déjà visible par défaut
 })();
 </script>
 </body>
