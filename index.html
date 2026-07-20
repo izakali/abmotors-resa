@@ -21,7 +21,7 @@
         }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 33, 87, 0.85); z-index: -1; }
         
-        /* Modal Custom (No Alerts) */
+        /* Modal Custom */
         #custom-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center; padding: 20px; }
         .modal-content { background: var(--dark-surface); border: 1px solid var(--dark-border); padding: 30px; border-radius: 12px; width: 100%; max-width: 400px; text-align: center; color: white; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
         .modal-content h3 { color: var(--secondary); margin-top: 0; }
@@ -35,10 +35,11 @@
         .nav-links a:hover, .nav-links a.active { background: rgba(255,255,255,0.1); color: white; }
         .nav-right { display: flex; align-items: center; gap: 10px; }
         
+        /* Notification Bell */
         .bell-wrapper { position: relative; cursor: pointer; display: none; align-items: center; justify-content: center; padding: 6px; border-radius: 50%; transition: 0.3s; }
         .bell-wrapper:hover { background: rgba(255,255,255,0.1); }
         .bell-icon { width: 20px; height: 20px; fill: white; }
-        .bell-badge { position: absolute; top: 0; right: 0; background: var(--error); color: white; font-size: 9px; font-weight: bold; width: 14px; height: 14px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .bell-badge { position: absolute; top: -2px; right: -2px; background: var(--error); color: white; font-size: 9px; font-weight: bold; width: 14px; height: 14px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
         .notif-dropdown { position: absolute; top: 40px; right: 0; background: var(--dark-surface); border: 1px solid var(--dark-border); width: 280px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: none; flex-direction: column; overflow: hidden; z-index: 200;}
         .notif-header { padding: 10px 15px; background: var(--dark-input); font-weight: bold; color: white; border-bottom: 1px solid var(--dark-border); font-size: 12px;}
         .notif-item { padding: 10px 15px; border-bottom: 1px solid var(--dark-border); font-size: 11px; color: #cbd5e1; cursor: pointer; transition: 0.2s; }
@@ -82,7 +83,7 @@
         .badge-archived { background: #475569; color: white; }
         
         .phone-input-wrapper { display: flex; gap: 10px; }
-        .phone-code-select { flex: 0 0 140px; }
+        .phone-code-select { flex: 0 0 160px; } /* Adapté pour texte pays */
 
         .loader { border: 2px solid transparent; border-top: 2px solid white; border-radius: 50%; width: 14px; height: 14px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-left:10px; display: none;}
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -145,7 +146,7 @@
     <div id="custom-modal">
         <div class="modal-content">
             <h3 id="modal-title">Titre</h3>
-            <p id="modal-desc">Description</p>
+            <p id="modal-desc" style="font-size:14px; color:#cbd5e1;">Description</p>
             <div id="modal-input-container" style="display:none;">
                 <input type="text" id="modal-input" class="form-control">
             </div>
@@ -220,10 +221,10 @@
                 <div class="form-group"><label>Nom complet</label><input type="text" id="reg-name" class="form-control" autocomplete="off"></div>
                 <div class="form-group"><label>Adresse e-mail</label><input type="email" id="reg-email" class="form-control" autocomplete="off"></div>
                 <div class="form-group">
-                    <label>Téléphone</label>
+                    <label>Téléphone & Pays</label>
                     <div class="phone-input-wrapper">
                         <select id="reg-phone-code" class="form-control phone-code-select"></select>
-                        <input type="tel" id="reg-phone" class="form-control" autocomplete="off">
+                        <input type="tel" id="reg-phone" class="form-control" autocomplete="off" placeholder="Numéro">
                     </div>
                 </div>
                 <div class="form-group"><label>Mot de passe (Min 6)</label><input type="password" id="reg-pwd" class="form-control" autocomplete="off"></div>
@@ -243,7 +244,11 @@
             <h2>Paramètres du compte</h2>
             <div id="client-acc-alert" class="inline-alert"></div>
             <div class="row" style="margin-bottom: 20px;">
-                <div class="col"><div class="form-group"><label>Nouveau Téléphone</label><div class="phone-input-wrapper"><select id="acc-phone-code" class="form-control phone-code-select"></select><input type="tel" id="acc-phone" class="form-control"></div></div></div>
+                <div class="col">
+                    <div class="form-group"><label>Nouveau Téléphone / Pays</label>
+                        <div class="phone-input-wrapper"><select id="acc-phone-code" class="form-control phone-code-select"></select><input type="tel" id="acc-phone" class="form-control"></div>
+                    </div>
+                </div>
                 <div class="col"><div class="form-group"><label>Nouveau Mot de passe</label><input type="password" id="acc-pwd" class="form-control" placeholder="Laissez vide si inchangé"></div></div>
             </div>
             <button class="btn btn-success" style="width: auto; margin-bottom:30px;" onclick="updateProfile()">Mettre à jour mes infos <span class="loader" id="loader-acc"></span></button>
@@ -396,7 +401,7 @@
             <div id="adm-res-alert" class="inline-alert"></div>
             <div class="table-responsive">
                 <table id="adm-table-bookings">
-                    <thead><tr><th>ID</th><th>Client</th><th>Trajet & Date</th><th>Pax</th><th>Total</th><th>Statut</th><th style="min-width: 130px;">Action</th></tr></thead>
+                    <thead><tr><th>ID</th><th>Client</th><th>Trajet & Date</th><th>Pax</th><th>Total</th><th>Statut</th><th style="min-width: 140px;">Action</th></tr></thead>
                     <tbody></tbody>
                 </table>
             </div>
@@ -462,7 +467,7 @@
 
     </div>
 
-    <!-- CHAT WIDGET -->
+    <!-- CHAT WIDGET CLIENT -->
     <div id="chat-widget">
         <div id="chat-header"><span>Service Client</span><span style="cursor:pointer;" onclick="closeChatUI()">[X]</span></div>
         <div id="chat-body"></div>
@@ -474,29 +479,26 @@
 
     <script>
         // === LIEN GOOGLE SCRIPT ===
-        const API_URL = 'https://script.google.com/macros/s/AKfycbxSvQbT20HlXT8-daenCg953LrwPPSGRTeTO1UkCJlBi9suwgClPb5Bh6ZjVyoaXJkT/exec'; 
+        const API_URL = 'https://script.google.com/macros/s/AKfycbzWQieP3ZJXAdAtZze7EU0l-xue14EOj9gOvpgWaMNvIg10YeU9EmBn9ZEPP8JH0vA/exec'; 
         
         function formatPrice(eur) { return `${eur}€ / ${eur * 500} KMF`; }
 
         const PHONE_CODES = [
-            ['+269','Comores'], ['+262','Mayotte'], ['+33','France'], ['---','──────────'],
-            ['+213','Algérie'],['+49','Allemagne'],['+32','Belgique'],['+1','Canada'],
-            ['+34','Espagne'],['+1','États-Unis'],['+39','Italie'],['+261','Madagascar'],
-            ['+212','Maroc'],['+44','Royaume-Uni'],['+41','Suisse'],['+216','Tunisie']
+            ['+269','Comores'], ['+262','Mayotte'], ['+262','La Réunion'], ['+33','France']
         ];
 
         let state = {
             user: null, token: null, 
             dates: {}, bookings: [], faqs: [], chats: [], usersList: [],
             config: { priceAdult: 30, priceChild: 15, priceBag: 3, penalty: 10, featBag: true, pageBook: true, pageManage: true, pageHelp: true },
-            selectedDate: null, selectedTime: null, passengersData: [],
+            selectedDate: null, selectedTime: null,
             adminMonthOffsetEdit: 0, adminMonthOffsetSummary: 0, adminSelectedDates: new Set(),
             notifications: [], unreadNotifs: 0, lastSeenBookingId: 0
         };
 
         const monthsNames = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
 
-        // Modal Custom pour remplacer alert/confirm/prompt
+        // Modal Custom (Anti-Pop up navigateur)
         let modalConfirmAction = null;
         function showModal(title, desc, showInput = false, confirmAction = null) {
             document.getElementById('modal-title').textContent = title;
@@ -508,10 +510,7 @@
         }
         function closeModal() { document.getElementById('custom-modal').style.display = 'none'; }
         document.getElementById('modal-confirm').onclick = () => {
-            if(modalConfirmAction) {
-                const val = document.getElementById('modal-input').value;
-                modalConfirmAction(val);
-            }
+            if(modalConfirmAction) { const val = document.getElementById('modal-input').value; modalConfirmAction(val); }
             closeModal();
         };
 
@@ -532,7 +531,7 @@
                 if(viewId === 'help' && !state.config.pageHelp) viewId = 'maintenance';
             }
 
-            localStorage.setItem('abm_view', viewId); // Sauvegarde silencieuse
+            localStorage.setItem('abm_view', viewId); // Mémoire cache silencieuse
 
             document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
             const targetView = document.getElementById('view-' + viewId.replace('/', '-'));
@@ -545,9 +544,7 @@
             if(viewId === 'home') renderCalendar();
             if(viewId === 'manage') renderMyBookings();
             if(viewId === 'help') renderFAQ();
-            if(viewId === 'account') {
-                document.getElementById('view-account-client').style.display = 'block';
-            }
+            if(viewId === 'account') document.getElementById('view-account-client').style.display = 'block';
             if(viewId === 'admin-clients') renderAdminClients();
             
             if(viewId.startsWith('admin')) {
@@ -557,6 +554,7 @@
                 if(viewId === 'admin/bookings') renderAdminBookings();
                 if(viewId === 'admin/stats') renderAdminStats();
                 if(viewId === 'admin/faq') renderAdminFAQList();
+                if(viewId === 'admin/chat') renderAdminChats();
             }
         }
 
@@ -568,10 +566,9 @@
         }
 
         function initPhoneSelects() {
-            const opts = PHONE_CODES.map(([val, name]) => val === '---' ? `<option value="" disabled>──────────</option>` : `<option value="${val}">${val} ${name}</option>`).join('');
+            const opts = PHONE_CODES.map(([val, name]) => `<option value="${val}">${val} ${name}</option>`).join('');
             document.getElementById('reg-phone-code').innerHTML = opts;
             if(document.getElementById('acc-phone-code')) document.getElementById('acc-phone-code').innerHTML = opts;
-            document.getElementById('reg-phone-code').value = '+269';
         }
 
         function toggleAuthMode(mode) {
@@ -609,7 +606,7 @@
             try {
                 const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action, ...payload }) });
                 return await response.json();
-            } catch(e) { return { success: false, error: "Erreur serveur." }; }
+            } catch(e) { return { success: false, error: "Erreur de connexion serveur." }; }
         }
 
         async function doLogin() {
@@ -690,16 +687,17 @@
                     state.chats = res.data.chats || [];
                     if(state.user.role === 'admin') state.usersList = res.data.users || [];
                     
-                    if(!initial && state.user.role === 'admin') {
-                        const newB = state.bookings.filter(b => b.id > state.lastSeenBookingId);
-                        if(newB.length > 0) {
-                            state.unreadNotifs += newB.length;
-                            newB.forEach(b => state.notifications.unshift(`Résa ${b.id} (${b.total}€)`));
-                            if(state.notifications.length > 5) state.notifications.length = 5;
-                            updateBell();
+                    if(state.user.role === 'admin') {
+                        // Stocker les 5 dernières pour le dropdown par défaut
+                        const sorted = [...state.bookings].sort((a,b) => b.id - a.id).slice(0,5);
+                        state.notifications = sorted.map(b => `Nouvelle résa : ${b.route} (${formatPrice(b.total)})`);
+                        
+                        if(!initial && state.lastSeenBookingId > 0) {
+                            const newB = state.bookings.filter(b => b.id > state.lastSeenBookingId);
+                            if(newB.length > 0) { state.unreadNotifs += newB.length; updateBell(); }
                         }
+                        if(state.bookings.length > 0) state.lastSeenBookingId = Math.max(...state.bookings.map(b=>b.id));
                     }
-                    if(state.bookings.length > 0) state.lastSeenBookingId = Math.max(...state.bookings.map(b=>b.id));
                 }
                 applyConfigUI();
                 
@@ -709,9 +707,11 @@
                     const vId = activeViews[0].id.replace('view-', '');
                     if(vId === 'home') renderCalendar();
                     if(vId === 'manage') renderMyBookings();
+                    if(vId === 'help') renderFAQ();
                     if(vId === 'admin-clients') renderAdminClients();
                     if(vId === 'admin-bookings') renderAdminBookings();
                     if(vId === 'admin-stats') renderAdminStats();
+                    if(vId === 'admin-chat') renderAdminChats();
                 }
             }
         }
@@ -809,7 +809,6 @@
             const nEn = parseInt(document.getElementById('book-children').value)||0;
             const paxStr = `${nAd} Adulte(s), ${nEn} Enfant(s)`;
             
-            // Generate basic passengers array for PDF
             let paxArr = [];
             for(let i=0; i<nAd; i++) paxArr.push({ type: 'Adulte', nom: state.user.name, prenom: '' });
             for(let i=0; i<nEn; i++) paxArr.push({ type: 'Enfant', nom: '—', prenom: '' });
@@ -846,6 +845,15 @@
                 showMsg('manage-msg', 'warning', 'Annulation...');
                 const res = await apiCall('cancel', { token: state.token, id });
                 if(res.success) { showMsg('manage-msg', 'success', 'Annulée.'); syncData(); }
+            });
+        }
+        function renderFAQ() {
+            const container = document.getElementById('faq-container'); container.innerHTML = '';
+            if(state.faqs.length === 0) { container.innerHTML = '<p style="color:#cbd5e1;">Aucune question disponible.</p>'; return; }
+            state.faqs.forEach((faq) => {
+                const div = document.createElement('div'); div.className = 'faq-item';
+                div.innerHTML = `<div class="faq-question" onclick="this.parentElement.classList.toggle('open')">${faq.q}<span>[+]</span></div><div class="faq-answer">${faq.a}</div>`;
+                container.appendChild(div);
             });
         }
 
@@ -967,8 +975,9 @@
             const newDispo = (isM || isA) ? {m: isM, m_time: tm, a: isA, a_time: ta} : null;
             document.getElementById('bulk-btn').disabled = true; document.getElementById('bulk-btn').innerText = 'Patientez...';
             
-            const promises = [...state.adminSelectedDates].map(dStr => apiCall('admin_date', { token: state.token, date: dStr, dispo: newDispo }));
-            await Promise.all(promises);
+            const datesArr = [...state.adminSelectedDates];
+            await apiCall('admin_dates_bulk', { token: state.token, dates: datesArr, dispo: newDispo });
+            
             state.adminSelectedDates.clear(); document.getElementById('bulk-btn').disabled = false; document.getElementById('bulk-btn').innerText = 'Publier ces horaires';
             syncData();
         }
@@ -1126,6 +1135,22 @@
         function removeAdminFAQ(index) { state.faqs.splice(index, 1); renderAdminFAQList(); }
         async function saveAdminFAQ() { document.getElementById('loader-faq').style.display='inline-block'; await apiCall('admin_faq', { token: state.token, faqs: state.faqs }); document.getElementById('loader-faq').style.display='none'; showMsg('adm-faq-alert', 'success', 'FAQ Enregistrée !'); syncData(); }
 
+        function renderAdminChats() {
+            const container = document.getElementById('adm-chat-list');
+            container.innerHTML = '<p style="color:#cbd5e1;font-size:13px;">Historique global des messages :</p>';
+            if(state.chats.length === 0) { container.innerHTML += '<p style="color:white;">Aucun message.</p>'; return; }
+            state.chats.forEach(m => {
+                const isAdmin = m.sender === 'abadmin' || m.sender === state.user.email;
+                const align = isAdmin ? 'right' : 'left'; const bg = isAdmin ? 'var(--secondary)' : 'var(--dark-input)';
+                container.innerHTML += `<div style="background:${bg}; padding:10px 15px; margin-bottom:10px; border-radius:8px; border:1px solid var(--dark-border); text-align:${align};">
+                    <b style="color:white;">${m.sender}</b><br><span style="color:#f1f5f9; font-size:13px;">${m.text}</span>
+                    <div style="font-size:10px; color:#cbd5e1; margin-top:5px;">${new Date(m.ts).toLocaleString('fr-FR')}</div>
+                </div>`;
+            });
+            container.innerHTML += `<button class="btn btn-danger" style="margin-top:15px; width:auto;" onclick="cloturerChats()">Effacer tout l'historique</button>`;
+        }
+        function cloturerChats() { showModal("Effacer Historique", "Voulez-vous supprimer tous les messages du support ?", false, async () => { await apiCall('chat_close_all', { token: state.token }); syncData(); }); }
+
         function openChat() { document.getElementById('chat-widget').style.display = 'flex'; renderChatBody(); }
         function closeChatUI() { document.getElementById('chat-widget').style.display = 'none'; }
         function renderChatBody() {
@@ -1142,9 +1167,7 @@
         window.addEventListener('DOMContentLoaded', () => { 
             initPhoneSelects(); 
             const session = localStorage.getItem('abm_session');
-            if(session) { 
-                const s = JSON.parse(session); state.token = s.token; state.user = s.user; 
-            }
+            if(session) { const s = JSON.parse(session); state.token = s.token; state.user = s.user; }
             updateNav(); syncData(true); 
             
             // Reprendre la dernière vue sauvegardée, ou home/login par défaut
