@@ -162,19 +162,28 @@
             <div id="form-register-box" style="display:none;">
                 <div class="form-group">
                     <label>Nom complet</label>
-                    <input type="text" id="reg-name" class="form-control" placeholder="Prénom et Nom">
+                    <input type="text" id="reg-name" class="form-control" placeholder="Prénom et Nom" autocomplete="off">
                 </div>
                 <div class="form-group">
                     <label>Adresse e-mail</label>
-                    <input type="email" id="reg-email" class="form-control" placeholder="exemple@mail.com">
+                    <input type="email" id="reg-email" class="form-control" placeholder="exemple@mail.com" autocomplete="off">
                 </div>
                 <div class="form-group">
                     <label>Téléphone</label>
-                    <input type="tel" id="reg-phone" class="form-control" placeholder="Numéro de téléphone">
+                    <input type="tel" id="reg-phone" class="form-control" placeholder="Numéro de téléphone" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label>Pays de résidence</label>
+                    <select id="reg-country" class="form-control">
+                        <option value="Mayotte">Mayotte</option>
+                        <option value="France">France</option>
+                        <option value="Comores">Comores</option>
+                        <option value="La Réunion">La Réunion</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label>Mot de passe - 6 caractères minimum</label>
-                    <input type="password" id="reg-pwd" class="form-control" placeholder="Créer un mot de passe">
+                    <input type="password" id="reg-pwd" class="form-control" placeholder="Créer un mot de passe" autocomplete="off">
                 </div>
                 <button class="btn btn-primary" onclick="doRegister()" style="background: var(--success);">Créer mon compte <span class="loader" id="loader-reg" style="display:none;"></span></button>
             </div>
@@ -192,6 +201,15 @@
                         <h3>Informations Personnelles</h3>
                         <div class="form-group"><label>Nouvelle Adresse e-mail</label><input type="email" id="acc-email" class="form-control"></div>
                         <div class="form-group"><label>Nouveau Téléphone</label><input type="tel" id="acc-phone" class="form-control"></div>
+                        <div class="form-group">
+                            <label>Pays de résidence</label>
+                            <select id="acc-country" class="form-control">
+                                <option value="Mayotte">Mayotte</option>
+                                <option value="France">France</option>
+                                <option value="Comores">Comores</option>
+                                <option value="La Réunion">La Réunion</option>
+                            </select>
+                        </div>
                         <div class="form-group"><label>Nouveau Mot de passe (Laissez vide si inchangé)</label><input type="password" id="acc-pwd" class="form-control"></div>
                         <button class="btn btn-success" onclick="updateProfile()">Mettre à jour <span class="loader" id="loader-acc" style="display:none;"></span></button>
                         <div id="acc-msg" style="margin-top: 10px; font-weight: bold;"></div>
@@ -417,7 +435,12 @@
 
             if(viewId === 'home') renderCalendar();
             if(viewId === 'manage') renderMyBookings();
-            if(viewId === 'account') { document.getElementById('acc-email').value = state.user.email; renderMyHistory(); }
+            if(viewId === 'account') { 
+                document.getElementById('acc-email').value = state.user.email || ''; 
+                document.getElementById('acc-phone').value = state.user.phone || ''; 
+                document.getElementById('acc-country').value = state.user.country || 'Mayotte'; 
+                renderMyHistory(); 
+            }
             if(viewId === 'help') renderFAQ();
             if(viewId === 'admin') {
                 if(state.user && state.user.role === 'admin') {
@@ -434,6 +457,15 @@
             document.getElementById('tab-register').style.borderBottomColor = mode === 'register' ? 'var(--secondary)' : 'transparent';
             document.getElementById('tab-register').style.color = mode === 'register' ? 'white' : '#94a3b8';
             document.getElementById('auth-msg').textContent = '';
+            
+            // On vide les champs à chaque ouverture d'inscription
+            if(mode === 'register') {
+                document.getElementById('reg-name').value = '';
+                document.getElementById('reg-email').value = '';
+                document.getElementById('reg-phone').value = '';
+                document.getElementById('reg-pwd').value = '';
+                document.getElementById('reg-country').value = 'Mayotte';
+            }
         }
 
         function togglePwd(id) {
@@ -444,7 +476,6 @@
         // --- COMMUNICATION API ---
         async function apiCall(action, payload) {
             try {
-                // Utilisation de text/plain pour éviter les problèmes CORS preflight avec Google Apps Script
                 const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -487,6 +518,7 @@
             const name = document.getElementById('reg-name').value;
             const email = document.getElementById('reg-email').value;
             const phone = document.getElementById('reg-phone').value;
+            const country = document.getElementById('reg-country').value;
             const pwd = document.getElementById('reg-pwd').value;
             const msg = document.getElementById('auth-msg');
             
@@ -494,7 +526,7 @@
             
             document.getElementById('loader-reg').style.display = 'inline-block';
             const hash = await hashPassword(pwd);
-            const res = await apiCall('register', { name, email, phone, hash });
+            const res = await apiCall('register', { name, email, phone, country, hash });
             document.getElementById('loader-reg').style.display = 'none';
             
             if(res.success) {
@@ -547,6 +579,7 @@
         async function updateProfile() {
             const newEmail = document.getElementById('acc-email').value.trim();
             const newPhone = document.getElementById('acc-phone').value.trim();
+            const newCountry = document.getElementById('acc-country').value;
             const newPwd = document.getElementById('acc-pwd').value;
             const msg = document.getElementById('acc-msg');
             
@@ -557,13 +590,15 @@
                 newHash = await hashPassword(newPwd);
             }
             
-            const res = await apiCall('update_profile', { token: state.token, newEmail, newPhone, newHash });
+            const res = await apiCall('update_profile', { token: state.token, newEmail, newPhone, newCountry, newHash });
             document.getElementById('loader-acc').style.display = 'none';
             
             if(res.success) {
                 msg.style.color = 'var(--success)';
                 msg.textContent = 'Profil mis à jour !';
                 state.user.email = newEmail || state.user.email;
+                state.user.phone = newPhone || state.user.phone;
+                state.user.country = newCountry || state.user.country;
                 if(newHash) state.token = btoa(state.user.email + ":" + newHash);
                 else if (newEmail) state.token = btoa(state.user.email + ":" + atob(state.token).split(':')[1]);
             } else {
