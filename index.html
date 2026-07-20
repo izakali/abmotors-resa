@@ -326,8 +326,12 @@
             <p>Sélectionnez vos dates et options.</p>
             <div class="row">
                 <div class="col"><div class="form-group"><label>Trajet</label><select id="book-route" class="form-control"><option value="Anjouan -> Moheli">Anjouan vers Moheli</option><option value="Moheli -> Anjouan">Moheli vers Anjouan</option></select></div></div>
-                <div class="col"><div class="form-group"><label>Adultes</label><input type="number" id="book-adults" class="form-control" value="1" min="1" onchange="calcTotal()"></div></div>
-                <div class="col"><div class="form-group"><label>Enfants (-13 ans)</label><input type="number" id="book-children" class="form-control" value="0" min="0" onchange="calcTotal()"></div></div>
+                <div class="col"><div class="form-group"><label>Adultes</label><input type="number" id="book-adults" class="form-control" value="1" min="1" onchange="handlePassengerCountChange()"></div></div>
+                <div class="col"><div class="form-group"><label>Enfants (-13 ans)</label><input type="number" id="book-children" class="form-control" value="0" min="0" onchange="handlePassengerCountChange()"></div></div>
+            </div>
+            <div id="passenger-names-section" style="display:none; background:#f8f9fa; padding:15px; border-radius:6px; margin-bottom:15px;">
+                <label style="margin-bottom:10px;">Nom et prénom des passagers ajoutés</label>
+                <div id="passenger-names-list"></div>
             </div>
             <div class="form-group" id="bagage-section" style="display:none; background: #f8f9fa; padding: 15px; border-radius: 6px;"><label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin: 0;"><input type="checkbox" id="book-bagages" onchange="calcTotal()"> Voyage avec bagages (+<span id="price-bag"></span>)</label></div>
             <div class="form-group"><label>Sélectionnez une date disponible</label><div id="client-calendar" class="days-grid"></div></div>
@@ -436,7 +440,7 @@
             <div id="adm-res-alert" class="inline-alert"></div>
             <div class="table-responsive">
                 <table id="adm-table-bookings">
-                    <thead><tr><th>ID</th><th>Client</th><th>Trajet & Date</th><th>Pax</th><th>Total</th><th>Statut</th><th style="min-width: 140px;">Action</th></tr></thead>
+                    <thead><tr><th>ID</th><th>Client</th><th>Trajet & Date</th><th>Pax</th><th>Bagages</th><th>Total</th><th>Statut</th><th style="min-width: 140px;">Action</th></tr></thead>
                     <tbody></tbody>
                 </table>
             </div>
@@ -536,6 +540,15 @@
             return raw;
         }
 
+        function formatBagage(value) {
+            if(value === true) return 'Oui';
+            if(value === false) return 'Non';
+            const normalized = String(value ?? '').trim().toLowerCase();
+            if(['oui', 'true', '1'].includes(normalized)) return 'Oui';
+            if(['non', 'false', '0'].includes(normalized)) return 'Non';
+            return 'Non renseigné';
+        }
+
         const PHONE_CODES = [
             ['+269','Comores'], ['+262','Mayotte'], ['+262','La Réunion'], ['+33','France']
         ];
@@ -546,7 +559,7 @@
             config: { priceAdult: 30, priceChild: 15, priceBag: 3, penalty: 10, featBag: true, pageBook: true, pageManage: true, pageHelp: true },
             selectedDate: null, selectedTime: null,
             adminMonthOffsetEdit: 0, adminMonthOffsetSummary: 0, adminSelectedDates: new Set(),
-            notifications: [], unreadNotifs: 0, lastSeenBookingId: 0,
+            notifications: [], unreadNotifs: 0, knownBookingIds: new Set(),
             adminSelectedChatUser: null, dataHashes: {}
         };
 
@@ -612,7 +625,7 @@
             const navLink = document.getElementById('nav-' + actualId.replace('/', '-'));
             if(navLink) navLink.classList.add('active');
 
-            if(actualId === 'home') renderCalendar();
+            if(actualId === 'home') { renderCalendar(); renderPassengerNameFields(); }
             if(actualId === 'manage') renderMyBookings();
             if(actualId === 'help') renderFAQ();
             if(actualId === 'admin-clients') renderAdminClients();
@@ -799,7 +812,7 @@
                     if (checkDataDiff('bookings', res.data.bookings)) {
                         state.bookings = res.data.bookings || [];
                         if(!initial && state.user.role === 'admin') {
-                            const newB = state.bookings.filter(b => b.id > state.lastSeenBookingId);
+                            const newB = state.bookings.filter(b => !state.knownBookingIds.has(String(b.id)));
                             if(newB.length > 0) {
                                 state.unreadNotifs += newB.length;
                                 newB.forEach(b => state.notifications.unshift(`Résa ${b.id} (${b.total}€)`));
@@ -807,7 +820,7 @@
                                 updateBell();
                             }
                         }
-                        if(state.bookings.length > 0) state.lastSeenBookingId = Math.max(...state.bookings.map(b=>b.id));
+                        state.knownBookingIds = new Set(state.bookings.map(b => String(b.id)));
                         
                         if(document.getElementById('view-manage').classList.contains('active')) renderMyBookings();
                         if(document.getElementById('view-admin-bookings').classList.contains('active')) renderAdminBookings();
@@ -917,30 +930,100 @@
             return tot;
         }
 
+        function handlePassengerCountChange() {
+            renderPassengerNameFields();
+            calcTotal();
+        }
+
+        function renderPassengerNameFields() {
+            const section = document.getElementById('passenger-names-section');
+            const list = document.getElementById('passenger-names-list');
+            if(!section || !list) return;
+
+            const savedValues = {};
+            list.querySelectorAll('input[data-passenger-key][data-name-part]').forEach(input => {
+                savedValues[`${input.dataset.passengerKey}-${input.dataset.namePart}`] = input.value;
+            });
+
+            const nAd = Math.max(1, parseInt(document.getElementById('book-adults').value) || 1);
+            const nEn = Math.max(0, parseInt(document.getElementById('book-children').value) || 0);
+            const passengersToName = [];
+
+            for(let i = 2; i <= nAd; i++) passengersToName.push({ key: `adulte-${i}`, label: `Adulte ${i}` });
+            for(let i = 1; i <= nEn; i++) passengersToName.push({ key: `enfant-${i}`, label: `Enfant ${i}` });
+
+            list.innerHTML = '';
+            section.style.display = passengersToName.length ? 'block' : 'none';
+
+            passengersToName.forEach(passenger => {
+                const row = document.createElement('div');
+                row.style.cssText = 'display:grid;grid-template-columns:minmax(90px,0.55fr) 1fr 1fr;gap:10px;align-items:center;margin-bottom:10px;';
+
+                const label = document.createElement('strong');
+                label.style.cssText = 'font-size:13px;color:var(--primary);';
+                label.textContent = passenger.label;
+
+                const nomInput = document.createElement('input');
+                nomInput.type = 'text'; nomInput.className = 'form-control'; nomInput.placeholder = 'Nom';
+                nomInput.dataset.passengerKey = passenger.key; nomInput.dataset.namePart = 'nom';
+                nomInput.value = savedValues[`${passenger.key}-nom`] || '';
+
+                const prenomInput = document.createElement('input');
+                prenomInput.type = 'text'; prenomInput.className = 'form-control'; prenomInput.placeholder = 'Prénom';
+                prenomInput.dataset.passengerKey = passenger.key; prenomInput.dataset.namePart = 'prenom';
+                prenomInput.value = savedValues[`${passenger.key}-prenom`] || '';
+
+                row.append(label, nomInput, prenomInput);
+                list.appendChild(row);
+            });
+        }
+
+        function collectPassengerNames(nAd, nEn) {
+            const passengers = [{ type: 'Adulte', nom: state.user.name, prenom: '' }];
+
+            for(let i = 2; i <= nAd; i++) {
+                const key = `adulte-${i}`;
+                const nom = document.querySelector(`input[data-passenger-key="${key}"][data-name-part="nom"]`)?.value.trim() || '';
+                const prenom = document.querySelector(`input[data-passenger-key="${key}"][data-name-part="prenom"]`)?.value.trim() || '';
+                if(!nom || !prenom) return { success: false, error: `Renseignez le nom et le prénom de l'adulte ${i}.` };
+                passengers.push({ type: 'Adulte', nom, prenom });
+            }
+
+            for(let i = 1; i <= nEn; i++) {
+                const key = `enfant-${i}`;
+                const nom = document.querySelector(`input[data-passenger-key="${key}"][data-name-part="nom"]`)?.value.trim() || '';
+                const prenom = document.querySelector(`input[data-passenger-key="${key}"][data-name-part="prenom"]`)?.value.trim() || '';
+                if(!nom || !prenom) return { success: false, error: `Renseignez le nom et le prénom de l'enfant ${i}.` };
+                passengers.push({ type: 'Enfant', nom, prenom });
+            }
+
+            return { success: true, passengers };
+        }
+
         async function submitBooking() {
             if(!state.selectedDate || !state.selectedTime) { showMsg('book-msg', 'error', 'Sélectionnez date et heure.'); return; }
-            document.getElementById('loader-book').style.display = 'inline-block';
             
             const exactTime = state.selectedTime === 'Matin' ? state.dates[state.selectedDate].m_time : state.dates[state.selectedDate].a_time;
-            const nAd = parseInt(document.getElementById('book-adults').value)||0;
-            const nEn = parseInt(document.getElementById('book-children').value)||0;
+            const nAd = Math.max(1, parseInt(document.getElementById('book-adults').value)||1);
+            const nEn = Math.max(0, parseInt(document.getElementById('book-children').value)||0);
             const paxStr = `${nAd} Adulte(s), ${nEn} Enfant(s)`;
-            
-            let paxArr = [];
-            for(let i=0; i<nAd; i++) paxArr.push({ type: 'Adulte', nom: state.user.name, prenom: '' });
-            for(let i=0; i<nEn; i++) paxArr.push({ type: 'Enfant', nom: '—', prenom: '' });
-            
+            const passengerResult = collectPassengerNames(nAd, nEn);
+            if(!passengerResult.success) { showMsg('book-msg', 'error', passengerResult.error); return; }
+
+            document.getElementById('loader-book').style.display = 'inline-block';
             const booking = {
-                id: Date.now(), client: state.user.email, name: state.user.name, phone: state.user.phone,
+                client: state.user.email, name: state.user.name, phone: state.user.phone,
                 route: document.getElementById('book-route').value, date: state.selectedDate,
-                time: `${state.selectedTime} (${exactTime||''})`, pax: paxStr, bagage: document.getElementById('book-bagages').checked,
-                total: calcTotal(), status: 'En attente', passengers: paxArr
+                time: `${state.selectedTime} (${exactTime||''})`, pax: paxStr, bagage: document.getElementById('book-bagages').checked && state.config.featBag,
+                total: calcTotal(), status: 'En attente', passengers: passengerResult.passengers
             };
             const res = await apiCall('book', { token: state.token, booking });
             document.getElementById('loader-book').style.display = 'none';
             if(res.success) {
-                showMsg('book-msg', 'success', 'Réservation confirmée ! Redirection...');
+                showMsg('book-msg', 'success', `Réservation n°${res.id} confirmée ! Redirection...`);
                 setTimeout(() => { navTo('manage'); }, 2000);
+            } else {
+                showMsg('book-msg', 'error', res.error || 'Impossible de créer la réservation.');
             }
         }
 
@@ -1308,6 +1391,7 @@
 
             y += 14; doc.setFont("helvetica", "bold"); doc.setFontSize(11); doc.text("Détails paiement / Payment Details", leftX, y);
             y += 10; doc.setFontSize(10); doc.text(`Tarif total / Total Fare : ${formatPrice(booking.total)}`, leftX, y);
+            y += 8; doc.text(`Option bagages / Luggage option : ${formatBagage(booking.bagage)}`, leftX, y);
             y += 10;
             if (paymentStatus === 'payé') { doc.setTextColor(40, 167, 69); doc.text("Statut du paiement : PAYÉ", leftX, y); } 
             else { doc.setTextColor(220, 53, 69); doc.text("Statut du paiement : RESTE À PAYER SUR PLACE", leftX, y); }
@@ -1349,7 +1433,7 @@
                     actions += `<button class="btn btn-secondary btn-small" style="background:#475569;color:white;" onclick="renvoyerFacture(${b.id})">Renvoyer Facture</button>`;
                 }
 
-                tr.innerHTML = `<td>${b.id}</td><td>${b.name}<br><small>${b.phone}<br>${b.client}</small></td><td><span style="font-size:12px;">${b.route}<br>${formatDateFR(b.date)} ${b.time}</span></td><td>${b.pax}</td><td>${formatPrice(b.total)}</td><td><span class="badge ${st.includes('payé')?'badge-success':(st.includes('annulé')?'badge-danger':'badge-warning')}">${b.status}</span></td><td>${actions}</td>`;
+                tr.innerHTML = `<td>${b.id}</td><td>${b.name}<br><small>${b.phone}<br>${b.client}</small></td><td><span style="font-size:12px;">${b.route}<br>${formatDateFR(b.date)} ${b.time}</span></td><td>${b.pax}</td><td>${formatBagage(b.bagage)}</td><td>${formatPrice(b.total)}</td><td><span class="badge ${st.includes('payé')?'badge-success':(st.includes('annulé')?'badge-danger':'badge-warning')}">${b.status}</span></td><td>${actions}</td>`;
                 tbody.appendChild(tr);
             });
         }
