@@ -526,6 +526,16 @@
         
         function formatPrice(eur) { return `${eur}€ / ${eur * 500} KMF`; }
 
+        function formatDateFR(value) {
+            const raw = String(value || '').trim();
+            const iso = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+            if(iso) return `${iso[3]}/${iso[2]}/${iso[1]}`;
+
+            const parsed = new Date(raw);
+            if(!isNaN(parsed.getTime())) return parsed.toLocaleDateString('fr-FR');
+            return raw;
+        }
+
         const PHONE_CODES = [
             ['+269','Comores'], ['+262','Mayotte'], ['+262','La Réunion'], ['+33','France']
         ];
@@ -942,7 +952,7 @@
                 if(!b.status.includes('Annulée')) cancelBtn = `<button class="btn btn-danger btn-small" onclick="cancelBooking(${b.id})">Annuler</button>`;
                 return `<div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #ccc;">
                     <div style="display:flex; justify-content: space-between; align-items: center; flex-wrap:wrap; gap:10px;">
-                        <div><strong style="color:var(--primary);">${b.route}</strong> - ${b.date} ${b.time}<br><small>${b.pax} | Total : <b>${formatPrice(b.total)}</b></small><br><span class="badge ${b.status.includes('payé')?'badge-success':'badge-warning'}">${b.status}</span></div>
+                        <div><strong style="color:var(--primary);">${b.route}</strong> - ${formatDateFR(b.date)} ${b.time}<br><small>${b.pax} | Total : <b>${formatPrice(b.total)}</b></small><br><span class="badge ${b.status.includes('payé')?'badge-success':'badge-warning'}">${b.status}</span></div>
                         <div>${cancelBtn}</div>
                     </div></div>`;
             }).join('');
@@ -1278,7 +1288,7 @@
             doc.setFont("helvetica", "bold"); doc.text("Trajet / Route", leftX + 3, y + 7); doc.text("Dates / Horaires", leftX + 58, y + 7); doc.text("Statut", leftX + 118, y + 7); doc.text("Passagers", leftX + 153, y + 7);
             
             y += 10; doc.setFont("helvetica", "normal");
-            doc.text(booking.route, leftX + 3, y + 8); doc.text(`${booking.date} (${booking.time})`, leftX + 58, y + 8); doc.text("Confirmé", leftX + 118, y + 8); doc.text(booking.pax.split(',')[0], leftX + 158, y + 8);
+            doc.text(booking.route, leftX + 3, y + 8); doc.text(`${formatDateFR(booking.date)} (${booking.time})`, leftX + 58, y + 8); doc.text("Confirmé", leftX + 118, y + 8); doc.text(booking.pax.split(',')[0], leftX + 158, y + 8);
             doc.setDrawColor(200); doc.line(leftX, y + 12, 195, y + 12); y += 22;
 
             // Table Passengers
@@ -1309,7 +1319,13 @@
 
             const pdfBase64 = doc.output('datauristring').split(',')[1];
             const res = await apiCall('validate_booking', { token: state.token, id: booking.id, email: booking.client, contact: booking.name, pdfBase64, newStatus: fullStatus });
-            if(res.success) { showMsg('adm-res-alert', 'success', 'Statut mis à jour et PDF envoyé !'); syncData(); }
+            if(res.success) {
+                if(res.mailSent) showMsg('adm-res-alert', 'success', 'Statut mis à jour et PDF envoyé !');
+                else showMsg('adm-res-alert', 'warning', res.warning || 'Statut mis à jour, mais le PDF n’a pas pu être envoyé.');
+                syncData();
+            } else {
+                showMsg('adm-res-alert', 'error', res.error || 'Impossible de valider cette réservation.');
+            }
         }
 
         function renvoyerFacture(id) { validerRes(id, 'payé'); }
@@ -1333,7 +1349,7 @@
                     actions += `<button class="btn btn-secondary btn-small" style="background:#475569;color:white;" onclick="renvoyerFacture(${b.id})">Renvoyer Facture</button>`;
                 }
 
-                tr.innerHTML = `<td>${b.id}</td><td>${b.name}<br><small>${b.phone}<br>${b.client}</small></td><td><span style="font-size:12px;">${b.route}<br>${b.date} ${b.time}</span></td><td>${b.pax}</td><td>${formatPrice(b.total)}</td><td><span class="badge ${st.includes('payé')?'badge-success':(st.includes('annulé')?'badge-danger':'badge-warning')}">${b.status}</span></td><td>${actions}</td>`;
+                tr.innerHTML = `<td>${b.id}</td><td>${b.name}<br><small>${b.phone}<br>${b.client}</small></td><td><span style="font-size:12px;">${b.route}<br>${formatDateFR(b.date)} ${b.time}</span></td><td>${b.pax}</td><td>${formatPrice(b.total)}</td><td><span class="badge ${st.includes('payé')?'badge-success':(st.includes('annulé')?'badge-danger':'badge-warning')}">${b.status}</span></td><td>${actions}</td>`;
                 tbody.appendChild(tr);
             });
         }
