@@ -21,12 +21,12 @@
         }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 33, 87, 0.85); z-index: -1; }
         
-        /* Modal Custom */
+        /* Modal Custom (Remplace alert/prompt) */
         #custom-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center; padding: 20px; }
         .modal-content { background: var(--dark-surface); border: 1px solid var(--dark-border); padding: 30px; border-radius: 12px; width: 100%; max-width: 400px; text-align: center; color: white; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        .modal-content h3 { color: var(--secondary); margin-top: 0; }
-        .modal-content input { margin-top: 15px; }
-
+        .modal-content h3 { color: var(--secondary); margin-top: 0; font-size: 20px;}
+        .modal-content p { font-size: 14px; color: #cbd5e1; margin-bottom: 20px;}
+        
         /* Navbar */
         nav { background: var(--primary); color: white; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.4); position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 10px;}
         .nav-brand { font-size: 18px; font-weight: bold; letter-spacing: 1px; }
@@ -35,11 +35,10 @@
         .nav-links a:hover, .nav-links a.active { background: rgba(255,255,255,0.1); color: white; }
         .nav-right { display: flex; align-items: center; gap: 10px; }
         
-        /* Notification Bell */
         .bell-wrapper { position: relative; cursor: pointer; display: none; align-items: center; justify-content: center; padding: 6px; border-radius: 50%; transition: 0.3s; }
         .bell-wrapper:hover { background: rgba(255,255,255,0.1); }
         .bell-icon { width: 20px; height: 20px; fill: white; }
-        .bell-badge { position: absolute; top: -2px; right: -2px; background: var(--error); color: white; font-size: 9px; font-weight: bold; width: 14px; height: 14px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .bell-badge { position: absolute; top: 0; right: 0; background: var(--error); color: white; font-size: 9px; font-weight: bold; width: 14px; height: 14px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
         .notif-dropdown { position: absolute; top: 40px; right: 0; background: var(--dark-surface); border: 1px solid var(--dark-border); width: 280px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: none; flex-direction: column; overflow: hidden; z-index: 200;}
         .notif-header { padding: 10px 15px; background: var(--dark-input); font-weight: bold; color: white; border-bottom: 1px solid var(--dark-border); font-size: 12px;}
         .notif-item { padding: 10px 15px; border-bottom: 1px solid var(--dark-border); font-size: 11px; color: #cbd5e1; cursor: pointer; transition: 0.2s; }
@@ -59,9 +58,9 @@
         .card-dark h1, .card-dark h2, .card-dark h3, .card-dark h4 { color: white; }
         .form-group { margin-bottom: 15px; position: relative;}
         .form-group label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 13px; }
-        .form-control { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; }
+        .form-control { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; outline:none; }
         .card-dark .form-control { background: var(--dark-input); border: 1px solid var(--dark-border); color: white; }
-        .card-dark .form-control:focus { outline: none; border-color: var(--secondary); }
+        .card-dark .form-control:focus { border-color: var(--secondary); }
         .pwd-toggle { position: absolute; right: 15px; top: 32px; cursor: pointer; fill: #888; width: 18px; height: 18px; }
         
         .btn { width: 100%; padding: 12px; border: none; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.2s; }
@@ -83,7 +82,7 @@
         .badge-archived { background: #475569; color: white; }
         
         .phone-input-wrapper { display: flex; gap: 10px; }
-        .phone-code-select { flex: 0 0 160px; } /* Adapté pour texte pays */
+        .phone-code-select { flex: 0 0 130px; }
 
         .loader { border: 2px solid transparent; border-top: 2px solid white; border-radius: 50%; width: 14px; height: 14px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-left:10px; display: none;}
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -110,10 +109,9 @@
         .month-header { text-align: center; font-weight: bold; color: white; margin-bottom: 15px; text-transform: uppercase; font-size: 13px;}
         .weekdays { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-weight: bold; font-size: 11px; color: #94a3b8; margin-bottom: 10px; }
 
-        /* Stats */
         .stat-box { background: var(--dark-input); border: 1px solid var(--dark-border); border-radius: 8px; padding: 15px; text-align: center; flex: 1; min-width: 180px;}
-        .stat-box h3 { font-size: 24px; color: var(--secondary); margin: 10px 0 5px 0;}
-        .stat-box p { margin: 0; color: white; font-weight: bold; font-size: 14px;}
+        .stat-box h3 { font-size: 20px; color: var(--secondary); margin: 10px 0 5px 0;}
+        .stat-box p { margin: 0; color: white; font-weight: bold; font-size: 13px;}
         .stat-sub { font-size: 11px; color: #cbd5e1; }
         
         .maintenance-msg { text-align: center; padding: 40px; font-size: 16px; color: var(--warning); font-weight: bold; background: var(--dark-input); border-radius: 8px; border: 1px dashed var(--warning); }
@@ -122,16 +120,16 @@
         .alert-error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
         .alert-warning { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
         
-        /* Chat */
-        #chat-widget { position: fixed; bottom: 20px; right: 20px; width: 320px; background: white; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); display: none; flex-direction: column; z-index: 1000; overflow: hidden; }
-        #chat-header { background: var(--primary); color: white; padding: 12px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; font-size: 14px;}
-        #chat-body { height: 280px; overflow-y: auto; padding: 15px; background: #f9f9f9; display: flex; flex-direction: column; gap: 10px; }
-        #chat-input-area { display: flex; padding: 10px; background: white; border-top: 1px solid #eee; }
-        #chat-input-area input { flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 20px; outline: none; font-size: 13px;}
-        #chat-input-area button { background: var(--secondary); color: white; border: none; padding: 8px 12px; border-radius: 20px; margin-left: 10px; cursor: pointer; font-size: 13px;}
-        .msg { max-width: 80%; padding: 8px 12px; border-radius: 15px; font-size: 13px; }
-        .msg-client { background: var(--secondary); color: white; align-self: flex-end; border-bottom-right-radius: 0; }
-        .msg-admin { background: #e0e0e0; color: var(--text); align-self: flex-start; border-bottom-left-radius: 0; }
+        /* Chat Intégré */
+        .chat-container { display: flex; flex-direction: column; background: var(--dark-input); border: 1px solid var(--dark-border); border-radius: 8px; overflow: hidden; height: 450px;}
+        .chat-history { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .chat-input-bar { display: flex; padding: 10px; background: rgba(0,0,0,0.2); }
+        .msg { max-width: 80%; padding: 8px 12px; border-radius: 12px; font-size: 13px; }
+        .msg-self { background: var(--secondary); color: white; align-self: flex-end; border-bottom-right-radius: 0; }
+        .msg-other { background: #e0e0e0; color: var(--text); align-self: flex-start; border-bottom-left-radius: 0; }
+        .admin-user-list { width: 250px; border-right: 1px solid var(--dark-border); overflow-y: auto; background: var(--dark-surface); }
+        .admin-user-item { padding: 12px 15px; cursor: pointer; border-bottom: 1px solid var(--dark-border); font-size: 13px; color: white; transition: 0.2s;}
+        .admin-user-item:hover, .admin-user-item.active { background: var(--secondary); }
         
         .faq-item { background: var(--dark-surface); border: 1px solid var(--dark-border); border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
         .faq-question { padding: 12px; font-weight: bold; color: white; cursor: pointer; display: flex; justify-content: space-between; background: rgba(255,255,255,0.05); font-size: 13px;}
@@ -142,18 +140,27 @@
 <body>
     <div class="overlay"></div>
 
-    <!-- CUSTOM MODAL -->
+    <!-- MODAL (Zéro alert/prompt du navigateur) -->
     <div id="custom-modal">
         <div class="modal-content">
             <h3 id="modal-title">Titre</h3>
-            <p id="modal-desc" style="font-size:14px; color:#cbd5e1;">Description</p>
+            <p id="modal-desc">Description</p>
             <div id="modal-input-container" style="display:none;">
-                <input type="text" id="modal-input" class="form-control">
+                <input type="text" id="modal-input" class="form-control" autocomplete="off">
             </div>
             <div style="display:flex;gap:10px;margin-top:20px;justify-content:center;">
                 <button class="btn btn-secondary" style="background:#475569; color:white; width:auto;" onclick="closeModal()">Annuler</button>
                 <button class="btn btn-primary" id="modal-confirm" style="width:auto;">Confirmer</button>
             </div>
+        </div>
+    </div>
+
+    <div id="force-pwd-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10000; align-items: center; justify-content: center; padding: 20px;">
+        <div class="modal-content" style="max-width: 450px;">
+            <h3 style="color:var(--error);">Sécurité Requise</h3>
+            <p>Vous utilisez un mot de passe provisoire. Pour des raisons de sécurité, vous devez configurer votre mot de passe définitif maintenant.</p>
+            <input type="password" id="force-new-pwd" class="form-control" placeholder="Nouveau mot de passe (Min 6 caractères)">
+            <button class="btn btn-success" style="margin-top: 15px;" onclick="forceSavePassword()">Enregistrer le mot de passe <span class="loader" id="loader-force"></span></button>
         </div>
     </div>
     
@@ -169,12 +176,12 @@
                 <svg class="bell-icon" viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"/></svg>
                 <div class="bell-badge" id="notif-badge" style="display:none;">0</div>
                 <div class="notif-dropdown" id="notif-dropdown">
-                    <div class="notif-header">Dernières Activités</div>
+                    <div class="notif-header">Dernières Réservations</div>
                     <div id="notif-list"></div>
                 </div>
             </div>
 
-            <button class="btn-nav-icon" id="btn-account-nav" onclick="navTo('account')" style="display:none;" title="Profil / Gestion">
+            <button class="btn-nav-icon" id="btn-account-nav" onclick="navTo('account-client')" style="display:none;" title="Profil / Gestion">
                 <svg style="width:18px;height:18px;fill:white;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 4c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm0 14c-2.03 0-4.43-.82-6.14-2.88a9.947 9.947 0 0 1 12.28 0C16.43 19.18 14.03 20 12 20z"/></svg>
             </button>
             <button class="btn-nav" id="btn-logout-nav" onclick="logout()" style="display:none; background: var(--error);">Déconnexion</button>
@@ -204,9 +211,9 @@
             <div id="auth-inline-alert" class="inline-alert"></div>
 
             <div id="form-login-box">
-                <div class="form-group"><label>Adresse e-mail</label><input type="text" id="login-email" class="form-control" placeholder="Entrez votre email"></div>
+                <div class="form-group"><label>Adresse e-mail</label><input type="text" id="login-email" class="form-control" autocomplete="off"></div>
                 <div class="form-group">
-                    <label>Mot de passe</label><input type="password" id="login-pwd" class="form-control" placeholder="Votre mot de passe">
+                    <label>Mot de passe</label><input type="password" id="login-pwd" class="form-control" autocomplete="off">
                     <svg class="pwd-toggle" onclick="togglePwd('login-pwd')" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
                 </div>
                 <button class="btn btn-primary" onclick="doLogin()">Se connecter <span class="loader" id="loader-login"></span></button>
@@ -224,7 +231,7 @@
                     <label>Téléphone & Pays</label>
                     <div class="phone-input-wrapper">
                         <select id="reg-phone-code" class="form-control phone-code-select"></select>
-                        <input type="tel" id="reg-phone" class="form-control" autocomplete="off" placeholder="Numéro">
+                        <input type="tel" id="reg-phone" class="form-control" autocomplete="off">
                     </div>
                 </div>
                 <div class="form-group"><label>Mot de passe (Min 6)</label><input type="password" id="reg-pwd" class="form-control" autocomplete="off"></div>
@@ -249,15 +256,14 @@
                         <div class="phone-input-wrapper"><select id="acc-phone-code" class="form-control phone-code-select"></select><input type="tel" id="acc-phone" class="form-control"></div>
                     </div>
                 </div>
-                <div class="col"><div class="form-group"><label>Nouveau Mot de passe</label><input type="password" id="acc-pwd" class="form-control" placeholder="Laissez vide si inchangé"></div></div>
+                <div class="col"><div class="form-group"><label>Nouveau Mot de passe</label><input type="password" id="acc-pwd" class="form-control" placeholder="Laissez vide si inchangé" autocomplete="new-password"></div></div>
             </div>
             <button class="btn btn-success" style="width: auto; margin-bottom:30px;" onclick="updateProfile()">Mettre à jour mes infos <span class="loader" id="loader-acc"></span></button>
             
             <div style="border-top: 1px solid var(--dark-border); padding-top: 20px;">
                 <h3 style="color:var(--error); font-size:16px;">Zone Dangereuse</h3>
                 <p style="color:#cbd5e1; font-size:13px;">L'archivage supprime vos données actives. Vous serez déconnecté et n'aurez plus accès à vos réservations.</p>
-                <div class="form-group"><label>Mot de passe actuel</label><input type="password" id="del-pwd" class="form-control" placeholder="Requis pour archiver"></div>
-                <button class="btn btn-danger" style="width: auto;" onclick="archiveClientAccount()">Archiver mon compte <span class="loader" id="loader-del"></span></button>
+                <button class="btn btn-danger" style="width: auto;" onclick="archiveClientAccount()">Archiver mon compte définitivement <span class="loader" id="loader-del"></span></button>
             </div>
         </div>
 
@@ -274,11 +280,19 @@
                 </table>
             </div>
 
-            <h3 style="font-size: 15px; color: var(--warning);">Comptes Désactivés / Archivés</h3>
-            <p style="font-size:11px; color:#cbd5e1;">Les comptes archivés par les clients sont définitifs (aucune action possible).</p>
-            <div class="table-responsive">
+            <h3 style="font-size: 15px; color: var(--error);">Comptes Bannis (Temporaire)</h3>
+            <div class="table-responsive" style="margin-bottom: 30px;">
                 <table id="adm-table-banned">
                     <thead><tr><th>Client</th><th>Contact</th><th>Statut</th><th>Action</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            
+            <h3 style="font-size: 15px; color: var(--warning);">Comptes Archivés (Définitif)</h3>
+            <p style="font-size:11px; color:#cbd5e1;">Les comptes archivés par les clients sont définitifs (aucune action possible).</p>
+            <div class="table-responsive">
+                <table id="adm-table-archived">
+                    <thead><tr><th>Client</th><th>Contact</th><th>Statut</th></tr></thead>
                     <tbody></tbody>
                 </table>
             </div>
@@ -305,7 +319,7 @@
             </div>
 
             <div style="margin-top: 30px; border-top: 2px dashed #ccc; padding-top: 20px; text-align: right;">
-                <h3 style="margin-bottom: 10px;">Total estimé : <span id="book-total">0€ / 0 KMF</span></h3>
+                <h3 style="margin-bottom: 10px;">Total estimé : <span id="book-total" style="color:var(--secondary);">0€ / 0 KMF</span></h3>
                 <div id="book-msg" class="inline-alert"></div>
                 <button class="btn btn-primary" style="width: auto; padding: 12px 30px;" onclick="submitBooking()">Confirmer la réservation <span class="loader" id="loader-book"></span></button>
             </div>
@@ -321,10 +335,17 @@
 
         <!-- VIEW: HELP / FAQ (CLIENT) -->
         <div id="view-help" class="view card card-dark">
-            <h2>Questions fréquentes & Support</h2>
+            <h2>Questions fréquentes</h2>
             <div id="faq-container"></div>
-            <div style="margin-top: 30px; border-top: 1px solid var(--dark-border); padding-top: 20px;">
-                <button class="btn btn-primary" style="width: auto;" onclick="openChat()">Discuter avec le support</button>
+            
+            <h2 style="margin-top: 40px; border-top: 1px solid var(--dark-border); padding-top: 20px;">Support en ligne</h2>
+            <p style="font-size:13px; color:#cbd5e1;">Laissez-nous un message, notre équipe vous répondra rapidement.</p>
+            <div class="chat-container">
+                <div class="chat-history" id="client-chat-history"></div>
+                <div class="chat-input-bar">
+                    <input type="text" id="client-chat-input" class="form-control" placeholder="Votre message..." style="border-radius: 20px 0 0 20px; border-right: none;">
+                    <button class="btn btn-primary" style="width: auto; border-radius: 0 20px 20px 0;" onclick="sendChatMessage('client')">Envoyer</button>
+                </div>
             </div>
         </div>
 
@@ -360,7 +381,7 @@
             
             <div id="admin-cal-edit-wrapper" class="calendar-wrapper"></div>
             
-            <div id="bulk-panel" class="inline-editor" style="display:none; flex-direction: column; align-items: stretch;">
+            <div id="bulk-panel" class="inline-editor" style="display:none; flex-direction: column; align-items: stretch; background: #1e293b; border: 1px solid var(--dark-border); padding: 15px; border-radius: 8px;">
                 <div style="font-size: 15px;"><b style="color:var(--secondary);" id="bulk-count">0</b> date(s) sélectionnée(s).</div>
                 <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 10px;">
                     <div style="flex:1; background: var(--dark-surface); padding: 15px; border-radius: 6px; border: 1px solid var(--dark-border);">
@@ -461,25 +482,32 @@
 
         <!-- ADMIN: CHAT -->
         <div id="view-admin-chat" class="view card card-dark">
-            <h2>Messages du Support</h2>
-            <div id="adm-chat-list"></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+                <h2 style="margin:0;">Support & Messages</h2>
+                <button class="btn btn-danger btn-small" onclick="cloturerChats()">Tout effacer</button>
+            </div>
+            
+            <div class="chat-container row" style="height: 500px; padding:0; background:transparent; border:none; gap:20px;">
+                <div class="col admin-user-list" style="flex:1; max-width: 250px; background: var(--dark-input); border: 1px solid var(--dark-border); border-radius: 8px; padding:10px;" id="admin-chat-users">
+                    <!-- Users list -->
+                </div>
+                <div class="col" style="flex:2; display: flex; flex-direction: column; background: var(--dark-input); border: 1px solid var(--dark-border); border-radius: 8px; overflow:hidden;">
+                    <div class="chat-history" id="admin-chat-history">
+                        <div style="color:#cbd5e1; text-align:center; margin-top:20px;">Sélectionnez un client à gauche pour afficher les messages.</div>
+                    </div>
+                    <div class="chat-input-bar">
+                        <input type="text" id="admin-chat-input" class="form-control" placeholder="Répondre..." style="border-radius: 20px 0 0 20px; border-right: none;" disabled>
+                        <button class="btn btn-primary" id="admin-chat-btn" style="width: auto; border-radius: 0 20px 20px 0;" onclick="sendChatMessage('admin')" disabled>Envoyer</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
-    </div>
-
-    <!-- CHAT WIDGET CLIENT -->
-    <div id="chat-widget">
-        <div id="chat-header"><span>Service Client</span><span style="cursor:pointer;" onclick="closeChatUI()">[X]</span></div>
-        <div id="chat-body"></div>
-        <div id="chat-input-area">
-            <input type="text" id="chat-input" placeholder="Votre message...">
-            <button onclick="sendChatMessage()">Envoyer</button>
-        </div>
     </div>
 
     <script>
         // === LIEN GOOGLE SCRIPT ===
-        const API_URL = 'https://script.google.com/macros/s/AKfycbxSvQbT20HlXT8-daenCg953LrwPPSGRTeTO1UkCJlBi9suwgClPb5Bh6ZjVyoaXJkT/exec'; 
+        const API_URL = 'https://script.google.com/macros/s/AKfycbxYQVPtiIfLQKFKqxHsknudK4i2YfQDIYYPFdZ3dQVZT1A2WNKNOAjZt3rBd66P0X8/exec'; 
         
         function formatPrice(eur) { return `${eur}€ / ${eur * 500} KMF`; }
 
@@ -493,7 +521,8 @@
             config: { priceAdult: 30, priceChild: 15, priceBag: 3, penalty: 10, featBag: true, pageBook: true, pageManage: true, pageHelp: true },
             selectedDate: null, selectedTime: null,
             adminMonthOffsetEdit: 0, adminMonthOffsetSummary: 0, adminSelectedDates: new Set(),
-            notifications: [], unreadNotifs: 0, lastSeenBookingId: 0
+            notifications: [], unreadNotifs: 0, lastSeenBookingId: 0,
+            adminSelectedChatUser: null, dataHashes: {}
         };
 
         const monthsNames = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
@@ -510,7 +539,11 @@
         }
         function closeModal() { document.getElementById('custom-modal').style.display = 'none'; }
         document.getElementById('modal-confirm').onclick = () => {
-            if(modalConfirmAction) { const val = document.getElementById('modal-input').value; modalConfirmAction(val); }
+            if(modalConfirmAction) { 
+                const val = document.getElementById('modal-input').value; 
+                if(document.getElementById('modal-input-container').style.display === 'block' && !val) return; // Forcer la saisie
+                modalConfirmAction(val); 
+            }
             closeModal();
         };
 
@@ -518,6 +551,12 @@
             const el = document.getElementById(id); if(!el) return;
             el.className = `inline-alert alert-${type}`; el.textContent = text; el.style.display = 'block';
             setTimeout(() => { el.style.display = 'none'; }, 6000);
+        }
+
+        function checkDataDiff(key, newDataObj) {
+            const newHash = JSON.stringify(newDataObj);
+            if (state.dataHashes[key] !== newHash) { state.dataHashes[key] = newHash; return true; }
+            return false;
         }
 
         // --- GESTION DES VUES ---
@@ -531,30 +570,32 @@
                 if(viewId === 'help' && !state.config.pageHelp) viewId = 'maintenance';
             }
 
-            localStorage.setItem('abm_view', viewId); // Mémoire cache silencieuse
+            let actualId = viewId;
+            if(viewId === 'account') actualId = state.user?.role === 'admin' ? 'admin-clients' : 'account-client';
+
+            localStorage.setItem('abm_view', actualId); // Mémoire cache silencieuse
 
             document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
-            const targetView = document.getElementById('view-' + viewId.replace('/', '-'));
+            const targetView = document.getElementById('view-' + actualId.replace('/', '-'));
             if(targetView) targetView.classList.add('active'); else document.getElementById('view-home').classList.add('active');
             
             document.querySelectorAll('.nav-links a').forEach(el => el.classList.remove('active'));
-            const navLink = document.getElementById('nav-' + viewId.replace('/', '-'));
+            const navLink = document.getElementById('nav-' + actualId.replace('/', '-'));
             if(navLink) navLink.classList.add('active');
 
-            if(viewId === 'home') renderCalendar();
-            if(viewId === 'manage') renderMyBookings();
-            if(viewId === 'help') renderFAQ();
-            if(viewId === 'account') document.getElementById('view-account-client').style.display = 'block';
-            if(viewId === 'admin-clients') renderAdminClients();
+            if(actualId === 'home') renderCalendar();
+            if(actualId === 'manage') renderMyBookings();
+            if(actualId === 'help') { renderFAQ(); renderClientChat(); }
+            if(actualId === 'admin-clients') renderAdminClients();
             
-            if(viewId.startsWith('admin')) {
-                if(viewId === 'admin/config') fillAdminConfig();
-                if(viewId === 'admin/dates') renderAdminCalendarEdit();
-                if(viewId === 'admin/summary') renderAdminCalendarSummary();
-                if(viewId === 'admin/bookings') renderAdminBookings();
-                if(viewId === 'admin/stats') renderAdminStats();
-                if(viewId === 'admin/faq') renderAdminFAQList();
-                if(viewId === 'admin/chat') renderAdminChats();
+            if(actualId.startsWith('admin')) {
+                if(actualId === 'admin/config') fillAdminConfig();
+                if(actualId === 'admin/dates') renderAdminCalendarEdit();
+                if(actualId === 'admin/summary') renderAdminCalendarSummary();
+                if(actualId === 'admin/bookings') renderAdminBookings();
+                if(actualId === 'admin/stats') renderAdminStats();
+                if(actualId === 'admin/faq') renderAdminFAQList();
+                if(actualId === 'admin/chat') renderAdminChatList();
             }
         }
 
@@ -598,7 +639,7 @@
             document.getElementById('loader-rec').style.display = 'inline-block';
             const res = await apiCall(recoveryMode === 'pwd' ? 'reset_pwd' : 'request_unban', { email });
             document.getElementById('loader-rec').style.display = 'none';
-            if(res.success) { showMsg('auth-inline-alert', 'success', 'Demande envoyée avec succès.'); hideRecovery(); } 
+            if(res.success) { showMsg('auth-inline-alert', 'success', 'Demande traitée. Consultez vos emails.'); hideRecovery(); } 
             else { showMsg('auth-inline-alert', 'error', res.error); }
         }
 
@@ -624,8 +665,30 @@
                 state.user = res.user; state.token = tokenStr; 
                 localStorage.setItem('abm_session', JSON.stringify({token: state.token, user: state.user}));
                 updateNav(); syncData(true); 
-                navTo(state.user.role === 'admin' ? 'admin/bookings' : 'home'); 
+                
+                // Contrôle Mot de passe provisoire
+                if(res.tempPass) {
+                    document.getElementById('force-pwd-modal').style.display = 'flex';
+                } else {
+                    navTo(state.user.role === 'admin' ? 'admin/bookings' : 'home'); 
+                }
             } else { showMsg('auth-inline-alert', 'error', res.error); }
+        }
+
+        async function forceSavePassword() {
+            const newPwd = document.getElementById('force-new-pwd').value;
+            if(newPwd.length < 6) { alert("6 caractères minimum."); return; }
+            document.getElementById('loader-force').style.display = 'inline-block';
+            const hash = await hashPassword(newPwd);
+            const res = await apiCall('update_profile', { token: state.token, newHash: hash });
+            document.getElementById('loader-force').style.display = 'none';
+            
+            if(res.success) {
+                document.getElementById('force-pwd-modal').style.display = 'none';
+                state.token = btoa(state.user.email + ":" + hash);
+                localStorage.setItem('abm_session', JSON.stringify({token: state.token, user: state.user}));
+                navTo(state.user.role === 'admin' ? 'admin/bookings' : 'home');
+            } else { alert(res.error); }
         }
 
         async function doRegister() {
@@ -644,7 +707,11 @@
             else { showMsg('auth-inline-alert', 'error', res.error); }
         }
 
-        function logout() { state.user = null; state.token = null; localStorage.removeItem('abm_session'); localStorage.removeItem('abm_view'); updateNav(); navTo('login'); }
+        function logout() { 
+            state.user = null; state.token = null; localStorage.removeItem('abm_session'); localStorage.removeItem('abm_view');
+            document.getElementById('login-email').value = ''; document.getElementById('login-pwd').value = '';
+            updateNav(); navTo('login'); 
+        }
 
         function updateNav() {
             const navLinks = document.getElementById('main-nav-links');
@@ -660,10 +727,10 @@
                     <a id="nav-admin-summary" onclick="navTo('admin/summary')">Dates Dispo</a>
                     <a id="nav-admin-faq" onclick="navTo('admin/faq')">Gestion FAQ</a>
                     <a id="nav-admin-bookings" onclick="navTo('admin/bookings')">Réservations</a>
-                    <a id="nav-admin-chat" onclick="navTo('admin/chat')">Messages</a>
+                    <a id="nav-admin-chat" onclick="navTo('admin/chat')">Messages Clients</a>
                     <a id="nav-admin-stats" onclick="navTo('admin/stats')">Statistiques</a>`;
                 bell.style.display = 'flex';
-                btnAcc.style.display = 'flex'; btnAcc.setAttribute('onclick', "navTo('admin-clients')");
+                btnAcc.style.display = 'flex'; btnAcc.setAttribute('onclick', "navTo('account')");
                 btnLog.style.display = 'none'; btnOut.style.display = 'block';
             } else {
                 navLinks.innerHTML = `
@@ -680,42 +747,45 @@
             const res = await apiCall('sync', { token: state.token || 'public' });
             if(res.success) {
                 state.dates = res.data.dates || {}; state.config = res.data.config || state.config;
-                state.faqs = res.data.faqs || [];
+                if (checkDataDiff('faqs', res.data.faqs)) { state.faqs = res.data.faqs || []; if(document.getElementById('view-help').classList.contains('active')) renderFAQ(); if(document.getElementById('view-admin-faq').classList.contains('active')) renderAdminFAQList(); }
                 
                 if (state.user) {
-                    state.bookings = res.data.bookings || [];
-                    state.chats = res.data.chats || [];
-                    if(state.user.role === 'admin') state.usersList = res.data.users || [];
+                    if(state.user.role === 'admin' && checkDataDiff('users', res.data.users)) { state.usersList = res.data.users || []; if(document.getElementById('view-admin-clients').classList.contains('active')) renderAdminClients(); }
                     
-                    if(state.user.role === 'admin') {
-                        // Stocker les 5 dernières pour le dropdown par défaut
-                        const sorted = [...state.bookings].sort((a,b) => b.id - a.id).slice(0,5);
-                        state.notifications = sorted.map(b => `Nouvelle résa : ${b.route} (${formatPrice(b.total)})`);
-                        
-                        if(!initial && state.lastSeenBookingId > 0) {
+                    if (checkDataDiff('bookings', res.data.bookings)) {
+                        state.bookings = res.data.bookings || [];
+                        if(!initial && state.user.role === 'admin') {
                             const newB = state.bookings.filter(b => b.id > state.lastSeenBookingId);
-                            if(newB.length > 0) { state.unreadNotifs += newB.length; updateBell(); }
+                            if(newB.length > 0) {
+                                state.unreadNotifs += newB.length;
+                                newB.forEach(b => state.notifications.unshift(`Résa ${b.id} (${b.total}€)`));
+                                if(state.notifications.length > 5) state.notifications.length = 5;
+                                updateBell();
+                            }
                         }
                         if(state.bookings.length > 0) state.lastSeenBookingId = Math.max(...state.bookings.map(b=>b.id));
+                        
+                        // Re-render UI seulement si modif
+                        if(document.getElementById('view-manage').classList.contains('active')) renderMyBookings();
+                        if(document.getElementById('view-admin-bookings').classList.contains('active')) renderAdminBookings();
+                        if(document.getElementById('view-admin-stats').classList.contains('active')) renderAdminStats();
+                    }
+
+                    if (checkDataDiff('chats', res.data.chats)) {
+                        state.chats = res.data.chats || [];
+                        if(document.getElementById('view-help').classList.contains('active')) renderClientChat();
+                        if(document.getElementById('view-admin-chat').classList.contains('active')) { renderAdminChatList(); renderAdminChatHistory(); }
                     }
                 }
                 applyConfigUI();
-                
-                // Actualisation discrète de la vue active
-                const activeViews = document.querySelectorAll('.view.active');
-                if(activeViews.length > 0) {
-                    const vId = activeViews[0].id.replace('view-', '');
-                    if(vId === 'home') renderCalendar();
-                    if(vId === 'manage') renderMyBookings();
-                    if(vId === 'help') renderFAQ();
-                    if(vId === 'admin-clients') renderAdminClients();
-                    if(vId === 'admin-bookings') renderAdminBookings();
-                    if(vId === 'admin-stats') renderAdminStats();
-                    if(vId === 'admin-chat') renderAdminChats();
+                if(initial) {
+                    if(document.getElementById('view-home').classList.contains('active')) renderCalendar();
+                    if(document.getElementById('view-admin-dates').classList.contains('active')) renderAdminCalendarEdit();
+                    if(document.getElementById('view-admin-summary').classList.contains('active')) renderAdminCalendarSummary();
                 }
             }
         }
-        setInterval(() => { syncData(); }, 15000);
+        setInterval(() => { syncData(); }, 10000);
 
         function updateBell() {
             const badge = document.getElementById('notif-badge');
@@ -739,30 +809,13 @@
         }
 
         // --- COMPTE CLIENT ---
-        async function updateProfile() {
-            const email = document.getElementById('acc-email').value.trim();
-            const phone = document.getElementById('acc-phone-code').value + " " + document.getElementById('acc-phone').value.trim();
-            const pwd = document.getElementById('acc-pwd').value;
-            
-            document.getElementById('loader-acc').style.display = 'inline-block';
-            let nHash = null; if(pwd) { if(pwd.length<6){ showMsg('client-acc-alert','error','Mot de passe trop court.'); return;} nHash = await hashPassword(pwd); }
-            const res = await apiCall('update_profile', { token: state.token, newEmail: email, newPhone: phone, newHash: nHash });
-            document.getElementById('loader-acc').style.display = 'none';
-            
-            if(res.success) { showMsg('client-acc-alert', 'success', 'Infos mises à jour.'); if(nHash || email) { state.token = btoa((email||state.user.email) + ":" + (nHash||atob(state.token).split(':')[1])); localStorage.setItem('abm_session', JSON.stringify({token: state.token, user: state.user})); } } 
-            else { showMsg('client-acc-alert', 'error', res.error); }
-        }
-
         function archiveClientAccount() {
             showModal("Archivage définitif", "Entrez votre mot de passe actuel pour archiver et désactiver votre compte.", true, async (pwd) => {
-                if(!pwd) return;
                 document.getElementById('loader-del').style.display = 'inline-block';
                 const hash = await hashPassword(pwd);
                 const res = await apiCall('archive_account', { token: state.token, hash: hash });
                 document.getElementById('loader-del').style.display = 'none';
-                if(res.success) { 
-                    showModal("Compte archivé", "Vous allez être déconnecté.", false, () => { logout(); });
-                } else { showMsg('client-acc-alert', 'error', res.error); }
+                if(res.success) { alert("Compte archivé. Vous êtes déconnecté."); logout(); } else { showMsg('client-acc-alert', 'error', res.error); }
             });
         }
 
@@ -857,6 +910,64 @@
             });
         }
 
+        // --- CLIENT CHAT ---
+        function renderClientChat() {
+            const cb = document.getElementById('client-chat-history'); cb.innerHTML = '';
+            if(state.chats.length === 0) { cb.innerHTML = '<p style="color:#666; font-size:12px;">Aucun message. Écrivez-nous ci-dessous.</p>'; }
+            state.chats.forEach(m => {
+                let div = document.createElement('div'); div.className = 'msg ' + (m.role === 'client' ? 'msg-self' : 'msg-other'); div.textContent = m.text; cb.appendChild(div);
+            });
+            cb.scrollTop = cb.scrollHeight;
+        }
+
+        // --- ADMIN CHAT ---
+        function renderAdminChatList() {
+            const list = document.getElementById('admin-chat-users'); list.innerHTML = '';
+            // Extraire emails uniques
+            const emails = [...new Set(state.chats.map(c => c.clientEmail))];
+            if(emails.length === 0) { list.innerHTML = '<p style="color:#cbd5e1; font-size:12px; padding:10px;">Aucune conversation.</p>'; return; }
+            
+            emails.forEach(email => {
+                const div = document.createElement('div'); div.className = 'admin-user-item ' + (state.adminSelectedChatUser === email ? 'active' : '');
+                div.textContent = email;
+                div.onclick = () => { state.adminSelectedChatUser = email; renderAdminChatList(); renderAdminChatHistory(); };
+                list.appendChild(div);
+            });
+        }
+        function renderAdminChatHistory() {
+            const cb = document.getElementById('admin-chat-history'); cb.innerHTML = '';
+            const input = document.getElementById('admin-chat-input'); const btn = document.getElementById('admin-chat-btn');
+            
+            if(!state.adminSelectedChatUser) {
+                cb.innerHTML = '<div style="color:#cbd5e1; text-align:center; margin-top:20px;">Sélectionnez un client à gauche.</div>';
+                input.disabled = true; btn.disabled = true; return;
+            }
+            input.disabled = false; btn.disabled = false;
+            
+            const msgs = state.chats.filter(c => c.clientEmail === state.adminSelectedChatUser);
+            msgs.forEach(m => {
+                let div = document.createElement('div'); div.className = 'msg ' + (m.role === 'admin' ? 'msg-self' : 'msg-other'); div.textContent = m.text; cb.appendChild(div);
+            });
+            cb.scrollTop = cb.scrollHeight;
+        }
+
+        async function sendChatMessage(role) {
+            let txt = '', clientEmail = '';
+            if(role === 'client') {
+                const inp = document.getElementById('client-chat-input'); txt = inp.value.trim(); clientEmail = state.user.email; inp.value = '';
+            } else {
+                const inp = document.getElementById('admin-chat-input'); txt = inp.value.trim(); clientEmail = state.adminSelectedChatUser; inp.value = '';
+            }
+            if(!txt) return;
+            
+            const msg = { clientEmail: clientEmail, role: role, text: txt, ts: Date.now() };
+            state.chats.push(msg);
+            if(role === 'client') renderClientChat(); else renderAdminChatHistory();
+            
+            await apiCall('chat_send', { token: state.token, msg });
+        }
+        function cloturerChats() { showModal("Effacer Historique", "Voulez-vous supprimer tous les messages du support ?", false, async () => { await apiCall('chat_close_all', { token: state.token }); syncData(); }); }
+
         // --- ADMIN: CONFIG ---
         function fillAdminConfig() {
             document.getElementById('cfg-adulte').value = state.config.priceAdult; document.getElementById('cfg-enfant').value = state.config.priceChild;
@@ -883,26 +994,20 @@
         function renderAdminClients() {
             const tActif = document.querySelector('#adm-table-clients tbody'); tActif.innerHTML = '';
             const tBan = document.querySelector('#adm-table-banned tbody'); tBan.innerHTML = '';
+            const tArch = document.querySelector('#adm-table-archived tbody'); tArch.innerHTML = '';
             
             state.usersList.forEach(u => {
-                const isArchived = u.archived || u.banned;
-                let actions = '';
-                if(isArchived) {
-                    if(!u.archived) actions = `<button class="btn btn-success btn-small" onclick="adminToggleUser('${u.email}', false)">Débannir</button>`;
+                if(u.archived) {
+                    tArch.innerHTML += `<tr><td>${u.name}</td><td>${u.email}</td><td><span class="badge badge-archived">Archivé (Définitif)</span></td></tr>`;
+                } else if(u.banned) {
+                    tBan.innerHTML += `<tr><td>${u.name}</td><td>${u.email}<br><small>${u.phone}</small></td><td><span class="badge badge-danger">Banni</span></td><td><button class="btn btn-success btn-small" onclick="adminToggleUser('${u.email}', false)">Débannir</button></td></tr>`;
                 } else {
-                    actions = `<button class="btn btn-danger btn-small" onclick="adminToggleUser('${u.email}', true)">Désactiver</button>`;
+                    tActif.innerHTML += `<tr><td>${u.name}</td><td>${u.email}<br><small>${u.phone}</small></td><td><button class="btn btn-danger btn-small" onclick="adminToggleUser('${u.email}', true)">Désactiver</button></td></tr>`;
                 }
-                
-                let statusBadge = 'Actif';
-                if(u.archived) statusBadge = '<span class="badge badge-archived">Archivé (Définitif)</span>';
-                else if(u.banned) statusBadge = '<span class="badge badge-danger">Banni (Temporaire)</span>';
-
-                const tr = `<tr><td>${u.name}</td><td>${u.email}<br><small>${u.phone}</small></td>${isArchived ? `<td>${statusBadge}</td>`:''}<td>${actions}</td></tr>`;
-                if(isArchived) tBan.innerHTML += tr; else tActif.innerHTML += tr;
             });
         }
         function adminToggleUser(email, banStatus) {
-            const txt = banStatus ? "Désactiver ce compte ?" : "Réactiver ce compte banni ?";
+            const txt = banStatus ? "Désactiver temporairement ce compte ?" : "Réactiver ce compte banni ?";
             showModal("Gestion Compte", txt, false, async () => {
                 const res = await apiCall('admin_unban', { token: state.token, userEmail: email, ban: banStatus });
                 if(res.success) { showMsg('admin-acc-alert', 'success', 'Statut mis à jour.'); syncData(); }
@@ -976,10 +1081,10 @@
             document.getElementById('bulk-btn').disabled = true; document.getElementById('bulk-btn').innerText = 'Patientez...';
             
             const datesArr = [...state.adminSelectedDates];
-            await apiCall('admin_dates_bulk', { token: state.token, dates: datesArr, dispo: newDispo });
+            const res = await apiCall('admin_dates_bulk', { token: state.token, dates: datesArr, dispo: newDispo });
             
             state.adminSelectedDates.clear(); document.getElementById('bulk-btn').disabled = false; document.getElementById('bulk-btn').innerText = 'Publier ces horaires';
-            syncData();
+            if(res.success) { syncData(); } else { alert("Erreur réseau"); }
         }
 
         // --- COMPLEX PDF GENERATOR ---
@@ -1126,7 +1231,7 @@
             });
         }
 
-        // --- ADMIN: FAQ & CHAT ---
+        // --- ADMIN: FAQ ---
         function renderAdminFAQList() {
             const list = document.getElementById('adm-faq-list'); list.innerHTML = '';
             state.faqs.forEach((f, i) => { list.innerHTML += `<div style="background:#334155; padding:10px; margin-bottom:5px; border-radius:4px; display:flex; justify-content:space-between;"><div><b>${f.q}</b><br><small>${f.a}</small></div><button class="btn btn-danger btn-small" onclick="removeAdminFAQ(${i})">X</button></div>`; });
@@ -1135,42 +1240,12 @@
         function removeAdminFAQ(index) { state.faqs.splice(index, 1); renderAdminFAQList(); }
         async function saveAdminFAQ() { document.getElementById('loader-faq').style.display='inline-block'; await apiCall('admin_faq', { token: state.token, faqs: state.faqs }); document.getElementById('loader-faq').style.display='none'; showMsg('adm-faq-alert', 'success', 'FAQ Enregistrée !'); syncData(); }
 
-        function renderAdminChats() {
-            const container = document.getElementById('adm-chat-list');
-            container.innerHTML = '<p style="color:#cbd5e1;font-size:13px;">Historique global des messages :</p>';
-            if(state.chats.length === 0) { container.innerHTML += '<p style="color:white;">Aucun message.</p>'; return; }
-            state.chats.forEach(m => {
-                const isAdmin = m.sender === 'abadmin' || m.sender === state.user.email;
-                const align = isAdmin ? 'right' : 'left'; const bg = isAdmin ? 'var(--secondary)' : 'var(--dark-input)';
-                container.innerHTML += `<div style="background:${bg}; padding:10px 15px; margin-bottom:10px; border-radius:8px; border:1px solid var(--dark-border); text-align:${align};">
-                    <b style="color:white;">${m.sender}</b><br><span style="color:#f1f5f9; font-size:13px;">${m.text}</span>
-                    <div style="font-size:10px; color:#cbd5e1; margin-top:5px;">${new Date(m.ts).toLocaleString('fr-FR')}</div>
-                </div>`;
-            });
-            container.innerHTML += `<button class="btn btn-danger" style="margin-top:15px; width:auto;" onclick="cloturerChats()">Effacer tout l'historique</button>`;
-        }
-        function cloturerChats() { showModal("Effacer Historique", "Voulez-vous supprimer tous les messages du support ?", false, async () => { await apiCall('chat_close_all', { token: state.token }); syncData(); }); }
-
-        function openChat() { document.getElementById('chat-widget').style.display = 'flex'; renderChatBody(); }
-        function closeChatUI() { document.getElementById('chat-widget').style.display = 'none'; }
-        function renderChatBody() {
-            const cb = document.getElementById('chat-body'); cb.innerHTML = '';
-            state.chats.forEach(m => { let div = document.createElement('div'); div.className = 'msg ' + (m.sender === state.user?.email ? 'msg-client' : 'msg-admin'); div.textContent = m.text; cb.appendChild(div); });
-            cb.scrollTop = cb.scrollHeight;
-        }
-        async function sendChatMessage() {
-            const inp = document.getElementById('chat-input'); const txt = inp.value.trim(); if(!txt || !state.user) return; inp.value = '';
-            const msg = { sender: state.user.email, text: txt, ts: Date.now() }; state.chats.push(msg); renderChatBody();
-            await apiCall('chat_send', { token: state.token, msg });
-        }
-
         window.addEventListener('DOMContentLoaded', () => { 
             initPhoneSelects(); 
             const session = localStorage.getItem('abm_session');
             if(session) { const s = JSON.parse(session); state.token = s.token; state.user = s.user; }
             updateNav(); syncData(true); 
             
-            // Reprendre la dernière vue sauvegardée, ou home/login par défaut
             const lastView = localStorage.getItem('abm_view');
             if(lastView) navTo(lastView); else navTo('home');
         });
