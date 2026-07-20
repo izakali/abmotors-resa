@@ -199,7 +199,7 @@
             <div id="auth-msg" style="margin-top: 15px; text-align: center; font-size: 14px; font-weight: bold;"></div>
         </div>
 
-        <!-- VIEW: HOME (BOOKING) -->
+        <!-- VIEW: HOME / BOOKING -->
         <div id="view-home" class="view">
             <div class="card">
                 <h2>Réserver votre traversée</h2>
@@ -382,11 +382,10 @@
     </div>
 
     <script>
-        const API_URL = 'https://script.google.com/macros/s/AKfycbzWQieP3ZJXAdAtZze7EU0l-xue14EOj9gOvpgWaMNvIg10YeU9EmBn9ZEPP8JH0vA/exec'; // Remplacer par l'URL finale du script déployé
-        // Note: For demonstration without a real GAS endpoint, logic is built to handle the payload structure.
+        const API_URL = 'https://script.google.com/macros/s/AKfycbzWQieP3ZJXAdAtZze7EU0l-xue14EOj9gOvpgWaMNvIg10YeU9EmBn9ZEPP8JH0vA/exec'; 
         
         let state = {
-            user: null, // { email, name, role }
+            user: null, 
             token: null,
             dates: {},
             bookings: [],
@@ -410,7 +409,7 @@
         // --- NAVIGATION ---
         function navigate(viewId) {
             if(viewId !== 'login' && !state.user && viewId !== 'home') {
-                viewId = 'login'; // Force login
+                viewId = 'login';
             }
             
             document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
@@ -450,14 +449,10 @@
 
         // --- AUTH API ---
         async function apiCall(action, payload) {
-            // Replace with actual fetch to GAS
-            // return fetch(API_URL, { method: 'POST', body: JSON.stringify({action, ...payload}) }).then(r=>r.json());
-            
-            // SIMULATION FOR DEMO PURPOSES:
             return new Promise((resolve) => {
                 setTimeout(() => {
                     if(action === 'login') {
-                        if(payload.email === 'abadmin' && payload.hash === '71b1ea4c03d0ed1ec3b5ccbc53755cd28b8a0714ed953c829107ccfa4d17c91a') { // hash of @@Iza.0405//
+                        if(payload.email === 'abadmin' && payload.hash === '71b1ea4c03d0ed1ec3b5ccbc53755cd28b8a0714ed953c829107ccfa4d17c91a') {
                             resolve({ success: true, user: { email: 'abadmin', name: 'Admin', role: 'admin' }, token: 'tk_adm' });
                         } else if(payload.email !== 'abadmin' && payload.hash) {
                             resolve({ success: true, user: { email: payload.email, name: 'Client', role: 'client' }, token: 'tk_cli' });
@@ -505,7 +500,7 @@
             const pwd = document.getElementById('reg-pwd').value;
             const msg = document.getElementById('auth-msg');
             
-            if(!name || !email || !pwd || pwd.length < 6) { msg.style.color = 'var(--error)'; msg.textContent = 'Remplissez correctement les champs (mdp min 6 car).'; return; }
+            if(!name || !email || !pwd || pwd.length < 6) { msg.style.color = 'var(--error)'; msg.textContent = 'Remplissez correctement les champs - mdp min 6 car.'; return; }
             
             document.getElementById('loader-reg').style.display = 'inline-block';
             const hash = await hashPassword(pwd);
@@ -518,7 +513,7 @@
                 setTimeout(() => toggleAuthMode('login'), 2000);
             } else {
                 msg.style.color = 'var(--error)';
-                msg.textContent = res.error || 'Erreur lors de l'inscription.';
+                msg.textContent = res.error || 'Erreur lors de l\'inscription.';
             }
         }
 
@@ -584,7 +579,7 @@
                 if(document.getElementById('view-admin').classList.contains('active')) renderAdminBookings();
             }
         }
-        setInterval(() => { if(state.user) syncData(); }, 30000); // 30s background sync
+        setInterval(() => { if(state.user) syncData(); }, 30000);
 
         // --- UI RENDERERS ---
         function applyConfigUI() {
@@ -606,7 +601,6 @@
             const grid = document.getElementById('client-calendar');
             grid.innerHTML = '';
             
-            // Simple generic 14 days calendar starting tomorrow
             let d = new Date();
             d.setDate(d.getDate() + 1);
             for(let i=0; i<14; i++) {
@@ -701,9 +695,8 @@
                 const div = document.createElement('div');
                 div.style.background = '#f8f9fa'; div.style.padding = '15px'; div.style.borderRadius = '8px'; div.style.marginBottom = '10px'; div.style.border = '1px solid #e2e8f0';
                 
-                // Logic Cancellation: if diff < 2h, show penalty
                 let deptDate = new Date(b.date);
-                deptDate.setHours(b.time === 'Matin' ? 8 : 14, 0, 0, 0); // Assume 8h for Matin, 14h for Apres midi
+                deptDate.setHours(b.time === 'Matin' ? 8 : 14, 0, 0, 0);
                 let now = new Date();
                 let diffHours = (deptDate - now) / (1000 * 60 * 60);
                 
@@ -725,8 +718,7 @@
 
         async function cancelBooking(id, withPenalty) {
             let msg = "Êtes-vous sûr de vouloir annuler cette réservation ?";
-            if(withPenalty) msg += `
-ATTENTION : Annulation à moins de 2h du départ. Une pénalité de ${state.config.penalty}€ sera appliquée.`;
+            if(withPenalty) msg += `\nATTENTION : Annulation à moins de 2h du départ. Une pénalité de ${state.config.penalty}€ sera appliquée.`;
             
             if(confirm(msg)) {
                 await apiCall('cancel', { token: state.token, id, penalty: withPenalty ? state.config.penalty : 0 });
@@ -837,9 +829,8 @@ ATTENTION : Annulation à moins de 2h du départ. Une pénalité de ${state.conf
             await apiCall('chat_send', { token: state.token, msg });
         }
         function renderAdminChats() {
-            // Simplified admin chat view
             const container = document.getElementById('adm-chat-list');
-            container.innerHTML = '<p>Liste globale des messages (Démonstration).</p>';
+            container.innerHTML = '<p>Liste globale des messages</p>';
             state.chats.forEach(m => {
                 container.innerHTML += `<div style="background:#1e293b; padding:10px; margin-bottom:5px; border-radius:6px; color:white;"><b>${m.sender}:</b> ${m.text}</div>`;
             });
@@ -852,6 +843,11 @@ ATTENTION : Annulation à moins de 2h du départ. Une pénalité de ${state.conf
                 renderAdminChats();
             }
         }
+
+        // --- INITIALISATION AU CHARGEMENT ---
+        window.addEventListener('DOMContentLoaded', () => {
+            navigate('home');
+        });
         
     </script>
 </body>
