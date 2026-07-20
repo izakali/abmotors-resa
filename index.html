@@ -128,20 +128,30 @@
         .msg { max-width: 80%; padding: 8px 12px; border-radius: 12px; font-size: 13px; }
         .msg-self { background: var(--secondary); color: white; align-self: flex-end; border-bottom-right-radius: 0; }
         .msg-other { background: #e0e0e0; color: var(--text); align-self: flex-start; border-bottom-left-radius: 0; }
-        .admin-user-list { width: 250px; border-right: 1px solid var(--dark-border); overflow-y: auto; background: var(--dark-surface); }
-        .admin-user-item { padding: 12px 15px; cursor: pointer; border-bottom: 1px solid var(--dark-border); font-size: 13px; color: white; transition: 0.2s;}
-        .admin-user-item:hover, .admin-user-item.active { background: var(--secondary); }
+        .admin-chat-card { background: var(--dark-input); border: 1px solid var(--dark-border); border-radius: 12px; padding: 15px; margin-bottom: 15px; }
+        .admin-chat-card-header { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 12px; flex-wrap: wrap; }
+        .admin-chat-client { color: white; font-size: 15px; font-weight: bold; word-break: break-word; }
+        .admin-chat-status { color: #dbeafe; font-size: 12px; font-weight: bold; }
+        .admin-chat-messages { min-height: 80px; max-height: 260px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding: 12px; background: var(--dark-surface); border-radius: 8px; margin-bottom: 12px; }
+        .admin-chat-compose { display: flex; gap: 10px; align-items: stretch; }
+        .admin-chat-compose input { flex: 1; min-width: 160px; }
+        .admin-chat-compose .btn { width: auto; white-space: nowrap; }
         
-        #floating-chat-btn { position: fixed; bottom: 20px; right: 20px; width: 55px; height: 55px; background: #38c172; border-radius: 50%; display: none; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 1000; transition: 0.3s; }
-        #floating-chat-btn:hover { transform: scale(1.05); }
+        #floating-chat-btn { position: fixed; bottom: 20px; right: 20px; width: 55px; height: 55px; background: var(--secondary); border: 2px solid rgba(255,255,255,0.35); border-radius: 50%; display: none; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 6px 18px rgba(0,33,87,0.35); z-index: 1000; transition: 0.3s; }
+        #floating-chat-btn:hover { transform: scale(1.05); background: var(--primary); }
         #floating-chat-btn svg { width: 26px; height: 26px; fill: white; }
         
         #chat-widget { position: fixed; bottom: 85px; right: 20px; width: 320px; background: var(--dark-surface); border: 1px solid var(--dark-border); border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); display: none; flex-direction: column; z-index: 1000; overflow: hidden; }
-        #chat-header { background: var(--dark-input); color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; font-size: 15px; border-bottom: 1px solid var(--dark-border);}
+        #chat-header { background: var(--primary); color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; font-size: 15px; border-bottom: 1px solid var(--dark-border);}
         #chat-body { height: 280px; overflow-y: auto; padding: 15px; background: var(--dark-surface); display: flex; flex-direction: column; gap: 10px; }
         #chat-input-area { display: flex; padding: 15px; background: var(--dark-surface); border-top: 1px solid var(--dark-border); }
         #chat-input-area input { flex: 1; padding: 10px; border: 1px solid var(--dark-border); border-radius: 6px; outline: none; font-size: 13px; background: var(--dark-input); color: white;}
-        #chat-input-area button { background: #38c172; color: white; border: none; padding: 10px 15px; border-radius: 6px; margin-left: 10px; cursor: pointer; font-size: 13px; font-weight:bold;}
+        #chat-input-area button { background: var(--secondary); color: white; border: none; padding: 10px 15px; border-radius: 6px; margin-left: 10px; cursor: pointer; font-size: 13px; font-weight:bold;}
+        @media (max-width: 640px) {
+            #chat-widget { left: 12px; right: 12px; width: auto; bottom: 82px; }
+            .admin-chat-compose { flex-wrap: wrap; }
+            .admin-chat-compose input { flex-basis: 100%; }
+        }
 
         .faq-item { background: var(--dark-surface); border: 1px solid var(--dark-border); border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
         .faq-question { padding: 12px; font-weight: bold; color: white; cursor: pointer; display: flex; justify-content: space-between; background: rgba(255,255,255,0.05); font-size: 13px;}
@@ -377,6 +387,7 @@
         <!-- ADMIN: DISPONIBILITÉS & HEURES -->
         <div id="view-admin-dates" class="view card card-dark">
             <h2>Disponibilités & Heures</h2>
+            <div id="dates-msg" class="inline-alert"></div>
             <div style="display:flex; justify-content:flex-end; margin-bottom:15px; gap:10px;">
                 <button class="btn btn-secondary btn-small" style="background:#334155; color:white;" onclick="changeAdminMonth(-1)">&larr; Précédent</button>
                 <button class="btn btn-secondary btn-small" style="background:#334155; color:white;" onclick="changeAdminMonth(1)">Suivant &rarr;</button>
@@ -485,25 +496,12 @@
 
         <!-- ADMIN: CHAT -->
         <div id="view-admin-chat" class="view card card-dark">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
-                <h2 style="margin:0;">Support & Messages</h2>
-                <button class="btn btn-danger btn-small" onclick="cloturerChatsAdmin()">Tout effacer</button>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px; gap:15px; flex-wrap:wrap;">
+                <h2 style="margin:0;">Messages & Support</h2>
+                <button class="btn btn-danger btn-small" onclick="cloturerChatsAdmin()">Clôturer toutes les discussions</button>
             </div>
-            
-            <div class="chat-container row" style="height: 500px; padding:0; background:transparent; border:none; gap:20px;">
-                <div class="col admin-user-list" style="flex:1; max-width: 250px; background: var(--dark-input); border: 1px solid var(--dark-border); border-radius: 8px; padding:10px;" id="admin-chat-users">
-                    <!-- Users list -->
-                </div>
-                <div class="col" style="flex:2; display: flex; flex-direction: column; background: var(--dark-input); border: 1px solid var(--dark-border); border-radius: 8px; overflow:hidden;">
-                    <div class="chat-history" id="admin-chat-history">
-                        <div style="color:#cbd5e1; text-align:center; margin-top:20px;">Sélectionnez un client à gauche pour afficher les messages.</div>
-                    </div>
-                    <div class="chat-input-bar">
-                        <input type="text" id="admin-chat-input" class="form-control" placeholder="Répondre..." style="border-radius: 20px 0 0 20px; border-right: none;" disabled>
-                        <button class="btn btn-primary" id="admin-chat-btn" style="width: auto; border-radius: 0 20px 20px 0;" onclick="sendChatMessage('admin')" disabled>Envoyer</button>
-                    </div>
-                </div>
-            </div>
+            <div id="admin-chat-alert" class="inline-alert"></div>
+            <div id="admin-chat-cards"></div>
         </div>
 
     </div>
@@ -517,11 +515,8 @@
         <div id="chat-header"><span>Service Client</span><span style="cursor:pointer; font-size:16px;" onclick="toggleChatWidget()">✕</span></div>
         <div id="chat-body"></div>
         <div id="chat-input-area">
-            <input type="text" id="chat-input" placeholder="Votre message...">
+            <input type="text" id="chat-input" placeholder="Votre message..." onkeydown="if(event.key === 'Enter') sendChatMessage('client')">
             <button onclick="sendChatMessage('client')">Envoyer</button>
-        </div>
-        <div style="background: var(--dark-surface); padding: 0 15px 15px; text-align: center;">
-            <button class="btn btn-danger btn-small" style="width: 100%; border-radius: 6px; padding: 8px;" onclick="closeClientChat()">Clôturer la discussion</button>
         </div>
     </div>
 
@@ -546,6 +541,10 @@
         };
 
         const monthsNames = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
+
+        function toLocalDateKey(date) {
+            return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+        }
 
         // Modal Custom (Anti-Pop up navigateur)
         let modalConfirmAction = null;
@@ -772,7 +771,16 @@
         async function syncData(initial = false) {
             const res = await apiCall('sync', { token: state.token || 'public' });
             if(res.success) {
-                state.dates = res.data.dates || {}; state.config = res.data.config || state.config;
+                const incomingDates = res.data.dates || {};
+                const datesChanged = checkDataDiff('dates', incomingDates);
+                if(datesChanged) {
+                    state.dates = incomingDates;
+                    if(document.getElementById('view-home').classList.contains('active')) renderCalendar();
+                    if(document.getElementById('view-admin-dates').classList.contains('active')) renderAdminCalendarEdit();
+                    if(document.getElementById('view-admin-summary').classList.contains('active')) renderAdminCalendarSummary();
+                }
+
+                state.config = res.data.config || state.config;
                 if (checkDataDiff('faqs', res.data.faqs)) { state.faqs = res.data.faqs || []; if(document.getElementById('view-help').classList.contains('active')) renderFAQ(); if(document.getElementById('view-admin-faq').classList.contains('active')) renderAdminFAQList(); }
                 
                 if (state.user) {
@@ -798,12 +806,12 @@
 
                     if (checkDataDiff('chats', res.data.chats)) {
                         state.chats = res.data.chats || [];
-                        renderClientChat(); 
-                        if(document.getElementById('view-admin-chat').classList.contains('active')) { renderAdminChatList(); renderAdminChatHistory(); }
+                        if(state.user.role !== 'admin') renderClientChat();
+                        if(document.getElementById('view-admin-chat').classList.contains('active')) renderAdminChatList();
                     }
                 }
                 applyConfigUI();
-                if(initial) {
+                if(initial && !datesChanged) {
                     if(document.getElementById('view-home').classList.contains('active')) renderCalendar();
                     if(document.getElementById('view-admin-dates').classList.contains('active')) renderAdminCalendarEdit();
                     if(document.getElementById('view-admin-summary').classList.contains('active')) renderAdminCalendarSummary();
@@ -863,7 +871,7 @@
             const grid = document.getElementById('client-calendar'); grid.innerHTML = '';
             let d = new Date(); d.setDate(d.getDate() + 1);
             for(let i=0; i<14; i++) {
-                let dStr = d.toISOString().split('T')[0];
+                let dStr = toLocalDateKey(d);
                 let dispo = state.dates[dStr];
                 let div = document.createElement('div');
                 div.className = 'cal-day ' + (dispo && (dispo.m || dispo.a) ? 'available' : '');
@@ -972,70 +980,139 @@
             cb.innerHTML = '';
             if(state.chats.length === 0) { cb.innerHTML = '<p style="color:#cbd5e1; font-size:13px; text-align:center; margin-top:40px;">Envoyez-nous un message.</p>'; }
             state.chats.forEach(m => {
-                let div = document.createElement('div'); 
-                div.className = 'msg ' + (m.role === 'client' ? 'msg-client' : 'msg-admin'); 
-                div.textContent = m.text; 
+                const div = document.createElement('div');
+                div.className = 'msg ' + (m.role === 'client' ? 'msg-self' : 'msg-other');
+                div.textContent = m.text;
                 cb.appendChild(div);
             });
             cb.scrollTop = cb.scrollHeight;
         }
 
-        function closeClientChat() {
-            showModal("Clôturer la discussion", "Voulez-vous terminer cette discussion et effacer l'historique ?", false, async () => {
-                const res = await apiCall('chat_close_client', { token: state.token });
+        // --- ADMIN CHAT ---
+        function renderAdminChatList() {
+            const list = document.getElementById('admin-chat-cards');
+            if(!list) return;
+            list.innerHTML = '';
+            const emails = [...new Set(state.chats.map(c => c.clientEmail).filter(Boolean))];
+            if(emails.length === 0) {
+                list.innerHTML = '<div style="color:#cbd5e1; text-align:center; padding:35px 15px; background:var(--dark-input); border:1px solid var(--dark-border); border-radius:10px;">Aucune discussion ouverte.</div>';
+                return;
+            }
+
+            emails.forEach(email => {
+                const card = document.createElement('div');
+                card.className = 'admin-chat-card';
+
+                const header = document.createElement('div');
+                header.className = 'admin-chat-card-header';
+                const client = document.createElement('div');
+                client.className = 'admin-chat-client';
+                client.textContent = `Client : ${email}`;
+                const status = document.createElement('div');
+                status.className = 'admin-chat-status';
+                status.textContent = 'Ouvert';
+                header.append(client, status);
+
+                const history = document.createElement('div');
+                history.className = 'admin-chat-messages';
+                state.chats.filter(c => c.clientEmail === email).forEach(m => {
+                    const bubble = document.createElement('div');
+                    bubble.className = 'msg ' + (m.role === 'admin' ? 'msg-self' : 'msg-other');
+                    bubble.textContent = m.text;
+                    history.appendChild(bubble);
+                });
+
+                const compose = document.createElement('div');
+                compose.className = 'admin-chat-compose';
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'form-control';
+                input.placeholder = 'Répondre...';
+                const sendBtn = document.createElement('button');
+                sendBtn.className = 'btn btn-primary';
+                sendBtn.textContent = 'Envoyer';
+                const closeBtn = document.createElement('button');
+                closeBtn.className = 'btn';
+                closeBtn.style.background = '#334155';
+                closeBtn.style.color = 'white';
+                closeBtn.textContent = 'Clôturer';
+
+                const send = () => sendAdminChatMessage(email, input);
+                sendBtn.onclick = send;
+                input.onkeydown = event => { if(event.key === 'Enter') send(); };
+                closeBtn.onclick = () => closeAdminChat(email);
+                compose.append(input, sendBtn, closeBtn);
+
+                card.append(header, history, compose);
+                list.appendChild(card);
+                history.scrollTop = history.scrollHeight;
+            });
+        }
+
+        function renderAdminChatHistory() {
+            renderAdminChatList();
+        }
+
+        async function sendChatMessage(role) {
+            if(role !== 'client' || !state.user) return;
+            const inp = document.getElementById('chat-input');
+            const txt = inp.value.trim();
+            if(!txt) return;
+            inp.value = '';
+
+            const msg = { clientEmail: state.user.email, role: 'client', text: txt, ts: Date.now() };
+            state.chats.push(msg);
+            renderClientChat();
+            const res = await apiCall('chat_send', { token: state.token, msg });
+            if(!res.success) {
+                state.chats.pop();
+                renderClientChat();
+                showModal('Erreur', res.error || 'Message non envoyé.');
+            }
+        }
+
+        async function sendAdminChatMessage(clientEmail, input) {
+            const txt = input.value.trim();
+            if(!txt) return;
+            input.value = '';
+            const msg = { clientEmail, role: 'admin', text: txt, ts: Date.now() };
+            state.chats.push(msg);
+            renderAdminChatList();
+            const res = await apiCall('chat_send', { token: state.token, msg });
+            if(!res.success) {
+                state.chats.pop();
+                renderAdminChatList();
+                showMsg('admin-chat-alert', 'error', res.error || 'Message non envoyé.');
+            }
+        }
+
+        function closeAdminChat(clientEmail) {
+            showModal('Clôturer la discussion', `Clôturer la discussion avec ${clientEmail} et effacer son historique ?`, false, async () => {
+                const res = await apiCall('chat_close_admin', { token: state.token, clientEmail });
                 if(res.success) {
-                    state.chats = []; renderClientChat();
-                    document.getElementById('chat-widget').style.display = 'none'; syncData();
+                    state.chats = state.chats.filter(c => c.clientEmail !== clientEmail);
+                    renderAdminChatList();
+                    showMsg('admin-chat-alert', 'success', 'Discussion clôturée.');
+                    await syncData();
+                } else {
+                    showMsg('admin-chat-alert', 'error', res.error || 'Clôture impossible.');
                 }
             });
         }
 
-        // --- ADMIN CHAT ---
-        function renderAdminChatList() {
-            const list = document.getElementById('admin-chat-users'); list.innerHTML = '';
-            const emails = [...new Set(state.chats.map(c => c.clientEmail))];
-            if(emails.length === 0) { list.innerHTML = '<p style="color:#cbd5e1; font-size:12px; padding:10px;">Aucune conversation.</p>'; return; }
-            
-            emails.forEach(email => {
-                const div = document.createElement('div'); div.className = 'admin-user-item ' + (state.adminSelectedChatUser === email ? 'active' : '');
-                div.textContent = email;
-                div.onclick = () => { state.adminSelectedChatUser = email; renderAdminChatList(); renderAdminChatHistory(); };
-                list.appendChild(div);
+        function cloturerChatsAdmin() {
+            showModal('Clôturer toutes les discussions', 'Voulez-vous clôturer toutes les discussions et effacer leurs historiques ?', false, async () => {
+                const res = await apiCall('chat_close_all', { token: state.token });
+                if(res.success) {
+                    state.chats = [];
+                    renderAdminChatList();
+                    showMsg('admin-chat-alert', 'success', 'Toutes les discussions ont été clôturées.');
+                    await syncData();
+                } else {
+                    showMsg('admin-chat-alert', 'error', res.error || 'Clôture impossible.');
+                }
             });
         }
-        function renderAdminChatHistory() {
-            const cb = document.getElementById('admin-chat-history'); cb.innerHTML = '';
-            const input = document.getElementById('admin-chat-input'); const btn = document.getElementById('admin-chat-btn');
-            
-            if(!state.adminSelectedChatUser) {
-                cb.innerHTML = '<div style="color:#cbd5e1; text-align:center; margin-top:20px;">Sélectionnez un client à gauche pour afficher les messages.</div>';
-                input.disabled = true; btn.disabled = true; return;
-            }
-            input.disabled = false; btn.disabled = false;
-            
-            const msgs = state.chats.filter(c => c.clientEmail === state.adminSelectedChatUser);
-            msgs.forEach(m => {
-                let div = document.createElement('div'); div.className = 'msg ' + (m.role === 'admin' ? 'msg-self' : 'msg-other'); div.textContent = m.text; cb.appendChild(div);
-            });
-            cb.scrollTop = cb.scrollHeight;
-        }
-
-        async function sendChatMessage(role) {
-            let txt = '', clientEmail = '';
-            if(role === 'client') {
-                const inp = document.getElementById('chat-input'); txt = inp.value.trim(); clientEmail = state.user.email; inp.value = '';
-            } else {
-                const inp = document.getElementById('admin-chat-input'); txt = inp.value.trim(); clientEmail = state.adminSelectedChatUser; inp.value = '';
-            }
-            if(!txt) return;
-            
-            const msg = { clientEmail: clientEmail, role: role, text: txt, ts: Date.now() };
-            state.chats.push(msg);
-            if(role === 'client') renderClientChat(); else renderAdminChatHistory();
-            
-            await apiCall('chat_send', { token: state.token, msg });
-        }
-        function cloturerChatsAdmin() { showModal("Effacer Historique", "Voulez-vous supprimer tous les messages du support ?", false, async () => { await apiCall('chat_close_all', { token: state.token }); syncData(); }); }
 
         // --- ADMIN: CONFIG ---
         function fillAdminConfig() {
@@ -1099,7 +1176,7 @@
             let firstDay = new Date(year, month, 1).getDay(); firstDay = firstDay === 0 ? 6 : firstDay - 1;
             let daysInMonth = new Date(year, month + 1, 0).getDate();
             for(let i=0;i<firstDay;i++) html += `<div class="empty-day"></div>`;
-            const todayStr = new Date().toISOString().split('T')[0];
+            const todayStr = toLocalDateKey(new Date());
             
             for(let d=1;d<=daysInMonth;d++) {
                 let dStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
@@ -1156,13 +1233,22 @@
             const isM = document.getElementById('bulk-matin').checked; const tm = document.getElementById('time-val-m').value;
             const isA = document.getElementById('bulk-apresmidi').checked; const ta = document.getElementById('time-val-a').value;
             const newDispo = (isM || isA) ? {m: isM, m_time: tm, a: isA, a_time: ta} : null;
-            document.getElementById('bulk-btn').disabled = true; document.getElementById('bulk-btn').innerText = 'Patientez...';
+            const bulkBtn = document.getElementById('bulk-btn');
+            bulkBtn.disabled = true; bulkBtn.innerText = 'Patientez...';
             
             const datesArr = [...state.adminSelectedDates];
             const res = await apiCall('admin_dates_bulk', { token: state.token, dates: datesArr, dispo: newDispo });
             
-            state.adminSelectedDates.clear(); document.getElementById('bulk-btn').disabled = false; document.getElementById('bulk-btn').innerText = 'Publier ces horaires';
-            if(res.success) { syncData(); } else { alert("Erreur réseau"); }
+            bulkBtn.disabled = false; bulkBtn.innerText = 'Publier ces horaires';
+            if(res.success) {
+                state.adminSelectedDates.clear();
+                await syncData();
+                renderAdminCalendarEdit();
+                renderAdminCalendarSummary();
+                showMsg('dates-msg', 'success', newDispo ? 'Dates et horaires publiés. Ils sont maintenant visibles côté client.' : 'Disponibilités retirées.');
+            } else {
+                showMsg('dates-msg', 'error', res.error || 'Erreur pendant la publication.');
+            }
         }
 
         // --- COMPLEX PDF GENERATOR ---
