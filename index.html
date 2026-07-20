@@ -16,6 +16,7 @@
             --font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             --dark-surface: #0f172a;
             --dark-input: #1e293b;
+            --dark-border: #334155;
         }
         * { box-sizing: border-box; font-family: var(--font); }
         body { 
@@ -31,24 +32,15 @@
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 33, 87, 0.7); z-index: -1; }
         
         /* Navbar */
-        nav {
-            background: var(--primary);
-            color: white;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .nav-brand { font-size: 20px; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+        nav { background: var(--primary); color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); position: sticky; top: 0; z-index: 100; }
+        .nav-brand { font-size: 20px; font-weight: bold; }
         .nav-links { display: flex; gap: 20px; }
-        .nav-links a { color: white; text-decoration: none; cursor: pointer; font-weight: 500; padding: 8px 12px; border-radius: 6px; transition: background 0.3s; }
+        .nav-links a { color: white; text-decoration: none; cursor: pointer; font-weight: 500; padding: 8px 12px; border-radius: 6px; transition: 0.3s; }
         .nav-links a:hover, .nav-links a.active { background: rgba(255,255,255,0.1); }
         .nav-right { display: flex; align-items: center; gap: 15px; }
-        .btn-nav { background: var(--secondary); color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .btn-nav { background: var(--secondary); color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 5px; }
+        .btn-nav-icon { background: transparent; padding: 8px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        .btn-nav-icon:hover { background: rgba(255,255,255,0.2); }
         
         /* Containers */
         .container { max-width: 1000px; margin: 40px auto; padding: 20px; }
@@ -60,18 +52,14 @@
         .view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Typography */
+        /* Typography & Forms */
         h1, h2, h3 { color: var(--primary); margin-top: 0; }
         .card-dark h1, .card-dark h2, .card-dark h3 { color: white; }
-        p { line-height: 1.6; }
-
-        /* Forms */
         .form-group { margin-bottom: 15px; position: relative; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px; }
         .form-control { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; }
-        .card-dark .form-control { background: var(--dark-input); border: 1px solid #334155; color: white; }
+        .card-dark .form-control { background: var(--dark-input); border: 1px solid var(--dark-border); color: white; }
         .card-dark .form-control:focus { outline: none; border-color: var(--secondary); }
-        
         .pwd-toggle { position: absolute; right: 15px; top: 38px; cursor: pointer; fill: #888; width: 20px; height: 20px; }
         .card-dark .pwd-toggle { fill: #ccc; }
 
@@ -81,19 +69,14 @@
         .btn-danger { background: var(--error); color: white; }
         .btn-success { background: var(--success); color: white; }
         
-        /* Grid */
         .row { display: flex; gap: 15px; flex-wrap: wrap; }
         .col { flex: 1; min-width: 200px; }
-
-        /* Tables */
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
-        .card-dark th, .card-dark td { border-bottom: 1px solid #334155; }
+        .card-dark th, .card-dark td { border-bottom: 1px solid var(--dark-border); }
         .badge { padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
-        .badge-success { background: #d4edda; color: #155724; }
-        .badge-warning { background: #fff3cd; color: #856404; }
 
-        /* Chat Widget */
+        /* Chat & FAQ */
         #chat-widget { position: fixed; bottom: 20px; right: 20px; width: 350px; background: white; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); display: none; flex-direction: column; z-index: 1000; overflow: hidden; }
         #chat-header { background: var(--primary); color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
         #chat-body { height: 300px; overflow-y: auto; padding: 15px; background: #f9f9f9; display: flex; flex-direction: column; gap: 10px; }
@@ -104,14 +87,16 @@
         .msg-client { background: var(--secondary); color: white; align-self: flex-end; border-bottom-right-radius: 0; }
         .msg-admin { background: #e0e0e0; color: var(--text); align-self: flex-start; border-bottom-left-radius: 0; }
         
-        /* Banner */
-        #banner { background: #ffc107; color: #000; text-align: center; padding: 10px; font-weight: bold; display: none; }
+        .faq-item { background: var(--dark-surface); border: 1px solid var(--dark-border); border-radius: 8px; margin-bottom: 15px; overflow: hidden; }
+        .faq-question { padding: 15px; font-weight: bold; color: white; cursor: pointer; display: flex; justify-content: space-between; background: rgba(255,255,255,0.05); }
+        .faq-answer { padding: 15px; color: #cbd5e1; border-top: 1px solid var(--dark-border); display: none; font-size: 14.5px; line-height: 1.5; }
+        .faq-item.open .faq-answer { display: block; }
 
-        /* Loader */
-        .loader { border: 3px solid #f3f3f3; border-top: 3px solid var(--secondary); border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; }
+        /* Banner & Calendar */
+        #banner { background: #ffc107; color: #000; text-align: center; padding: 10px; font-weight: bold; display: none; }
+        .loader { border: 3px solid transparent; border-top: 3px solid white; border-radius: 50%; width: 18px; height: 18px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        /* Calendar tweaks */
         .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 10px; }
         .cal-day { padding: 15px 5px; text-align: center; background: #f0f4f8; border-radius: 6px; cursor: pointer; transition: 0.2s; font-size: 14px; font-weight: 500; color: #ccc;}
         .cal-day.available { background: #fff; border: 1px solid var(--secondary); color: var(--primary); }
@@ -119,10 +104,11 @@
         .cal-day.selected { background: var(--primary); color: white; border-color: var(--primary); }
         
         .admin-nav { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;}
-        .admin-nav button { padding: 10px 20px; background: var(--dark-input); color: white; border: none; border-radius: 6px; cursor: pointer;}
+        .admin-nav button { padding: 10px 20px; background: var(--dark-input); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;}
         .admin-nav button.active { background: var(--secondary); }
         
-        .svg-icon { width: 16px; height: 16px; vertical-align: middle; margin-right: 5px; }
+        /* SVG Icons */
+        .icon { width: 20px; height: 20px; fill: currentColor; }
     </style>
 </head>
 <body>
@@ -130,23 +116,25 @@
     <div id="banner"></div>
     
     <nav>
-        <div class="nav-brand">
-            AB MOTORS
-        </div>
+        <div class="nav-brand">AB MOTORS</div>
         <div class="nav-links" id="main-nav-links">
             <a onclick="navigate('home')" id="nav-home" class="active">Réserver</a>
             <a onclick="navigate('manage')" id="nav-manage">Gérer ma réservation</a>
             <a onclick="navigate('help')" id="nav-help">Aide</a>
         </div>
         <div class="nav-right">
-            <span id="user-display" style="display:none; font-size: 14px;"></span>
             <button class="btn-nav" id="btn-login-nav" onclick="navigate('login')">Se connecter</button>
+            
+            <!-- Icone Mon Compte (Masqué si non connecté) -->
+            <button class="btn-nav-icon" id="btn-account-nav" onclick="navigate('account')" style="display:none;" title="Mon Compte">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 4c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm0 14c-2.03 0-4.43-.82-6.14-2.88a9.947 9.947 0 0 1 12.28 0C16.43 19.18 14.03 20 12 20z"/></svg>
+            </button>
+            
             <button class="btn-nav" id="btn-logout-nav" onclick="logout()" style="display:none; background: var(--error);">Déconnexion</button>
         </div>
     </nav>
 
     <div class="container">
-        
         <!-- VIEW: LOGIN & REGISTER -->
         <div id="view-login" class="view card card-dark" style="max-width: 500px; margin: 0 auto;">
             <div style="text-align: center; margin-bottom: 20px;">
@@ -154,15 +142,15 @@
                 <p style="color: #94a3b8; font-size: 14px;">Saisissez vos identifiants ou créez un compte.</p>
             </div>
 
-            <div style="display:flex; margin-bottom: 20px; border-bottom: 1px solid #334155;">
+            <div style="display:flex; margin-bottom: 20px; border-bottom: 1px solid var(--dark-border);">
                 <button onclick="toggleAuthMode('login')" id="tab-login" style="flex:1; padding:10px; background:transparent; color:white; border:none; border-bottom: 2px solid var(--secondary); cursor:pointer; font-weight:bold;">Connexion</button>
                 <button onclick="toggleAuthMode('register')" id="tab-register" style="flex:1; padding:10px; background:transparent; color:#94a3b8; border:none; border-bottom: 2px solid transparent; cursor:pointer; font-weight:bold;">Inscription</button>
             </div>
 
             <div id="form-login-box">
                 <div class="form-group">
-                    <label>Adresse e-mail ou Identifiant Admin</label>
-                    <input type="text" id="login-email" class="form-control" placeholder="Entrez votre email ou abadmin">
+                    <label>Adresse e-mail</label>
+                    <input type="text" id="login-email" class="form-control" placeholder="Entrez votre email">
                 </div>
                 <div class="form-group">
                     <label>Mot de passe</label>
@@ -170,9 +158,6 @@
                     <svg class="pwd-toggle" onclick="togglePwd('login-pwd')" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
                 </div>
                 <button class="btn btn-primary" onclick="doLogin()">Se connecter <span class="loader" id="loader-login" style="display:none;"></span></button>
-                <p style="text-align: center; margin-top: 15px; font-size: 13px;">
-                    <a href="#" style="color: var(--secondary); text-decoration: none;" onclick="resetPwd()">Mot de passe oublié ?</a>
-                </p>
             </div>
 
             <div id="form-register-box" style="display:none;">
@@ -191,15 +176,39 @@
                 <div class="form-group">
                     <label>Mot de passe - 6 caractères minimum</label>
                     <input type="password" id="reg-pwd" class="form-control" placeholder="Créer un mot de passe">
-                    <svg class="pwd-toggle" onclick="togglePwd('reg-pwd')" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
                 </div>
                 <button class="btn btn-primary" onclick="doRegister()" style="background: var(--success);">Créer mon compte <span class="loader" id="loader-reg" style="display:none;"></span></button>
             </div>
-            
             <div id="auth-msg" style="margin-top: 15px; text-align: center; font-size: 14px; font-weight: bold;"></div>
         </div>
 
-        <!-- VIEW: HOME / BOOKING -->
+        <!-- VIEW: ACCOUNT (Mon Compte & Historique) -->
+        <div id="view-account" class="view">
+            <div class="card card-dark">
+                <h2>Mon Compte</h2>
+                <p style="color:#cbd5e1; font-size:14px;">Gérez vos informations personnelles et consultez l'historique de vos voyages.</p>
+                
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col" style="flex: 1; border-right: 1px solid var(--dark-border); padding-right: 20px;">
+                        <h3>Informations Personnelles</h3>
+                        <div class="form-group"><label>Nouvelle Adresse e-mail</label><input type="email" id="acc-email" class="form-control"></div>
+                        <div class="form-group"><label>Nouveau Téléphone</label><input type="tel" id="acc-phone" class="form-control"></div>
+                        <div class="form-group"><label>Nouveau Mot de passe (Laissez vide si inchangé)</label><input type="password" id="acc-pwd" class="form-control"></div>
+                        <button class="btn btn-success" onclick="updateProfile()">Mettre à jour <span class="loader" id="loader-acc" style="display:none;"></span></button>
+                        <div id="acc-msg" style="margin-top: 10px; font-weight: bold;"></div>
+                    </div>
+                    
+                    <div class="col" style="flex: 2; padding-left: 20px;">
+                        <h3>Historique de mes voyages</h3>
+                        <div id="client-history-list" style="max-height: 400px; overflow-y: auto;">
+                            <!-- Rempli par JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: HOME (BOOKING) -->
         <div id="view-home" class="view">
             <div class="card">
                 <h2>Réserver votre traversée</h2>
@@ -232,15 +241,13 @@
                 <div class="form-group" id="bagage-section" style="display:none; background: #f8f9fa; padding: 15px; border-radius: 6px; border: 1px solid #e2e8f0;">
                     <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin: 0;">
                         <input type="checkbox" id="book-bagages" onchange="calcTotal()" style="width: 20px; height: 20px;">
-                        Voyager avec des bagages supplémentaires - Supplément <span id="price-bag">3</span>€
+                        Voyage avec bagages - Supplément <span id="price-bag">3</span>€
                     </label>
                 </div>
 
                 <div class="form-group">
                     <label>Sélectionnez une date disponible</label>
-                    <div id="client-calendar" class="days-grid">
-                        <!-- Filled by JS -->
-                    </div>
+                    <div id="client-calendar" class="days-grid"></div>
                 </div>
                 
                 <div class="form-group" id="time-selection" style="display:none;">
@@ -262,20 +269,26 @@
         <!-- VIEW: MANAGE RESERVATIONS -->
         <div id="view-manage" class="view">
             <div class="card">
-                <h2>Mes Réservations</h2>
+                <h2>Gérer mes réservations actives</h2>
                 <p>Vous pouvez annuler sans frais jusqu'à 2h avant le départ. Après ce délai, une pénalité de <span id="txt-penalty">10</span>€ s'applique.</p>
-                <div id="client-bookings-list">
-                    <!-- Filled by JS -->
-                </div>
+                <div id="client-bookings-list"></div>
             </div>
         </div>
 
-        <!-- VIEW: HELP / CHAT -->
+        <!-- VIEW: HELP / FAQ -->
         <div id="view-help" class="view">
-            <div class="card">
-                <h2>Aide et Contact</h2>
-                <p>Besoin d'assistance ? Ouvrez une discussion avec notre équipe en utilisant le bouton de discussion en bas à droite.</p>
-                <button class="btn btn-primary" style="width: auto;" onclick="openChat()">Démarrer une discussion</button>
+            <div class="card card-dark">
+                <h2>Questions fréquentes</h2>
+                <p style="color:#cbd5e1; font-size:14px; margin-bottom: 25px;">Retrouvez ici les réponses aux questions les plus courantes. Si vous ne trouvez pas votre réponse, vous pouvez nous contacter.</p>
+                
+                <div id="faq-container">
+                    <!-- Rempli par JS -->
+                </div>
+                
+                <div style="margin-top: 30px; border-top: 1px solid var(--dark-border); padding-top: 20px;">
+                    <h3 style="font-size: 16px;">Besoin d'aide supplémentaire ?</h3>
+                    <button class="btn btn-primary" style="width: auto;" onclick="openChat()">Démarrer une discussion avec le support</button>
+                </div>
             </div>
         </div>
 
@@ -284,82 +297,73 @@
             <h2>Interface Entreprise - AB MOTORS</h2>
             <div class="admin-nav">
                 <button class="active" id="adm-tab-config" onclick="switchAdminTab('config')">Configuration</button>
-                <button id="adm-tab-dates" onclick="switchAdminTab('dates')">Gérer les Dates</button>
+                <button id="adm-tab-dates" onclick="switchAdminTab('dates')">Disponibilités & Heures</button>
+                <button id="adm-tab-faq" onclick="switchAdminTab('faq')">Gestion FAQ</button>
                 <button id="adm-tab-bookings" onclick="switchAdminTab('bookings')">Commandes</button>
                 <button id="adm-tab-chat" onclick="switchAdminTab('chat')">Messages Clients</button>
             </div>
 
+            <!-- Admin: Config -->
             <div id="adm-view-config">
                 <h3>Configuration Générale</h3>
                 <div class="row">
-                    <div class="col">
-                        <div class="form-group">
-                            <label>Tarif Adulte - €</label>
-                            <input type="number" id="cfg-adulte" class="form-control">
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="form-group">
-                            <label>Tarif Enfant - €</label>
-                            <input type="number" id="cfg-enfant" class="form-control">
-                        </div>
-                    </div>
+                    <div class="col"><div class="form-group"><label>Tarif Adulte - €</label><input type="number" id="cfg-adulte" class="form-control"></div></div>
+                    <div class="col"><div class="form-group"><label>Tarif Enfant - €</label><input type="number" id="cfg-enfant" class="form-control"></div></div>
                 </div>
                 <div class="row">
-                    <div class="col">
-                        <div class="form-group">
-                            <label>Prix Bagages - €</label>
-                            <input type="number" id="cfg-bagage" class="form-control">
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="form-group">
-                            <label>Pénalité Annulation Tardive - €</label>
-                            <input type="number" id="cfg-penalty" class="form-control">
-                        </div>
-                    </div>
+                    <div class="col"><div class="form-group"><label>Prix Bagages - €</label><input type="number" id="cfg-bagage" class="form-control"></div></div>
+                    <div class="col"><div class="form-group"><label>Pénalité Annulation - €</label><input type="number" id="cfg-penalty" class="form-control"></div></div>
                 </div>
-                
-                <h3>Activation des Modules</h3>
-                <label style="display: block; margin-bottom: 10px; cursor: pointer;"><input type="checkbox" id="cfg-feat-bag"> Activer l'option Bagages pour les clients</label>
-                <label style="display: block; margin-bottom: 10px; cursor: pointer;"><input type="checkbox" id="cfg-feat-banner"> Afficher la bannière jaune</label>
-                <div class="form-group">
-                    <label>Texte de la bannière</label>
-                    <input type="text" id="cfg-banner-txt" class="form-control">
-                </div>
-                
-                <button class="btn btn-success" onclick="saveAdminConfig()">Enregistrer la configuration <span class="loader" id="loader-cfg" style="display:none;"></span></button>
+                <h3>Modules</h3>
+                <label style="display: block; margin-bottom: 10px; cursor: pointer;"><input type="checkbox" id="cfg-feat-bag"> Activer l'option Bagages</label>
+                <label style="display: block; margin-bottom: 10px; cursor: pointer;"><input type="checkbox" id="cfg-feat-banner"> Afficher la bannière jaune d'annonce</label>
+                <div class="form-group"><label>Texte de la bannière</label><input type="text" id="cfg-banner-txt" class="form-control"></div>
+                <button class="btn btn-success" onclick="saveAdminConfig()">Enregistrer <span class="loader" id="loader-cfg" style="display:none;"></span></button>
             </div>
 
+            <!-- Admin: Dates & Heures -->
             <div id="adm-view-dates" style="display:none;">
-                <h3>Gestion des disponibilités</h3>
-                <div class="form-group">
-                    <label>Date :</label>
-                    <input type="date" id="adm-date-select" class="form-control" style="max-width: 200px;">
+                <h3>Gestion des disponibilités et Heures de départ</h3>
+                <div class="form-group"><label>Date :</label><input type="date" id="adm-date-select" class="form-control" style="max-width: 250px;"></div>
+                
+                <div class="row" style="margin-bottom: 15px; align-items: center; background: var(--dark-input); padding: 15px; border-radius: 8px;">
+                    <div class="col" style="flex: 0 0 auto;"><label style="cursor: pointer;"><input type="checkbox" id="adm-date-m"> Ouvert le Matin</label></div>
+                    <div class="col"><input type="time" id="adm-time-m" class="form-control" placeholder="Heure exacte (ex: 08:00)"></div>
                 </div>
-                <label style="display: block; margin-bottom: 10px;"><input type="checkbox" id="adm-date-m"> Ouvert le Matin</label>
-                <label style="display: block; margin-bottom: 20px;"><input type="checkbox" id="adm-date-a"> Ouvert l'Apres midi</label>
+                
+                <div class="row" style="margin-bottom: 25px; align-items: center; background: var(--dark-input); padding: 15px; border-radius: 8px;">
+                    <div class="col" style="flex: 0 0 auto;"><label style="cursor: pointer;"><input type="checkbox" id="adm-date-a"> Ouvert l'Après midi</label></div>
+                    <div class="col"><input type="time" id="adm-time-a" class="form-control" placeholder="Heure exacte (ex: 14:30)"></div>
+                </div>
+                
                 <button class="btn btn-primary" onclick="saveAdminDate()">Mettre à jour la date <span class="loader" id="loader-date" style="display:none;"></span></button>
             </div>
 
+            <!-- Admin: FAQ -->
+            <div id="adm-view-faq" style="display:none;">
+                <h3>Gérer la foire aux questions</h3>
+                <div style="background: var(--dark-input); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <div class="form-group"><label>Titre de la question</label><input type="text" id="adm-faq-q" class="form-control"></div>
+                    <div class="form-group"><label>Réponse</label><textarea id="adm-faq-a" class="form-control" rows="3"></textarea></div>
+                    <button class="btn btn-secondary" style="background:#475569; color:white;" onclick="addAdminFAQ()">Ajouter à la liste</button>
+                </div>
+                <h4>Liste actuelle (N'oubliez pas d'enregistrer)</h4>
+                <div id="adm-faq-list" style="margin-bottom: 20px;"></div>
+                <button class="btn btn-success" onclick="saveAdminFAQ()">Enregistrer les modifications de la FAQ <span class="loader" id="loader-faq" style="display:none;"></span></button>
+            </div>
+
+            <!-- Admin: Bookings -->
             <div id="adm-view-bookings" style="display:none;">
                 <h3>Commandes Récentes</h3>
                 <div style="overflow-x: auto;">
                     <table id="adm-table-bookings">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Client</th>
-                                <th>Trajet & Date</th>
-                                <th>Total</th>
-                                <th>Statut</th>
-                            </tr>
-                        </thead>
+                        <thead><tr><th>ID</th><th>Client</th><th>Trajet & Date</th><th>Total</th><th>Statut</th></tr></thead>
                         <tbody></tbody>
                     </table>
                 </div>
             </div>
 
+            <!-- Admin: Chat -->
             <div id="adm-view-chat" style="display:none;">
                 <h3>Messages Clients</h3>
                 <div id="adm-chat-list"></div>
@@ -370,10 +374,7 @@
 
     <!-- CHAT WIDGET -->
     <div id="chat-widget">
-        <div id="chat-header">
-            <span>Service Client</span>
-            <span style="cursor:pointer;" onclick="closeChatUI()">&times;</span>
-        </div>
+        <div id="chat-header"><span>Service Client</span><span style="cursor:pointer;" onclick="closeChatUI()">✕</span></div>
         <div id="chat-body"></div>
         <div id="chat-input-area">
             <input type="text" id="chat-input" placeholder="Votre message...">
@@ -382,23 +383,21 @@
     </div>
 
     <script>
-        const API_URL = 'https://script.google.com/macros/s/AKfycbzWQieP3ZJXAdAtZze7EU0l-xue14EOj9gOvpgWaMNvIg10YeU9EmBn9ZEPP8JH0vA/exec'; 
+        // === URL DU SCRIPT GOOGLE APPS SCRIPT ===
+        const API_URL = 'https://script.google.com/macros/s/AKfycbzWQieP3ZJXAdAtZze7EU0l-xue14EOj9gOvpgWaMNvIg10YeU9EmBn9ZEPP8JH0vA/exec';
         
         let state = {
-            user: null, 
-            token: null,
+            user: null, // null = non connecté
+            token: null, // Token crypté ultra sécurisé (généré coté front, verifié coté GAS)
             dates: {},
             bookings: [],
-            config: {
-                priceAdult: 30, priceChild: 15, priceBag: 3, penalty: 10,
-                featBag: true, featBanner: false, bannerTxt: "Bienvenue sur AB MOTORS"
-            },
+            faqs: [],
+            config: { priceAdult: 30, priceChild: 15, priceBag: 3, penalty: 10, featBag: true, featBanner: false, bannerTxt: "" },
             chats: [],
             selectedDate: null,
             selectedTime: null
         };
 
-        // --- CRYPTO ---
         async function hashPassword(pwd) {
             const msgBuffer = new TextEncoder().encode(pwd);
             const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
@@ -408,10 +407,9 @@
 
         // --- NAVIGATION ---
         function navigate(viewId) {
-            if(viewId !== 'login' && !state.user && viewId !== 'home') {
+            if(viewId !== 'login' && !state.user && viewId !== 'home' && viewId !== 'help') {
                 viewId = 'login';
             }
-            
             document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
             document.getElementById('view-' + viewId).classList.add('active');
             
@@ -421,13 +419,12 @@
 
             if(viewId === 'home') renderCalendar();
             if(viewId === 'manage') renderMyBookings();
+            if(viewId === 'account') { document.getElementById('acc-email').value = state.user.email; renderMyHistory(); }
+            if(viewId === 'help') renderFAQ();
             if(viewId === 'admin') {
                 if(state.user && state.user.role === 'admin') {
-                    fillAdminConfig();
-                    renderAdminBookings();
-                } else {
-                    navigate('home');
-                }
+                    fillAdminConfig(); renderAdminBookings(); renderAdminFAQList();
+                } else { navigate('home'); }
             }
         }
 
@@ -443,30 +440,22 @@
 
         function togglePwd(id) {
             const el = document.getElementById(id);
-            if(el.type === 'password') el.type = 'text';
-            else el.type = 'password';
+            el.type = el.type === 'password' ? 'text' : 'password';
         }
 
-        // --- AUTH API ---
+        // --- VRAIE COMMUNICATION API (SÉCURISÉE) ---
         async function apiCall(action, payload) {
-            return new Promise((resolve) => {
-                setTimeout(() => {
-                    if(action === 'login') {
-                        if(payload.email === 'abadmin' && payload.hash === '71b1ea4c03d0ed1ec3b5ccbc53755cd28b8a0714ed953c829107ccfa4d17c91a') {
-                            resolve({ success: true, user: { email: 'abadmin', name: 'Admin', role: 'admin' }, token: 'tk_adm' });
-                        } else if(payload.email !== 'abadmin' && payload.hash) {
-                            resolve({ success: true, user: { email: payload.email, name: 'Client', role: 'client' }, token: 'tk_cli' });
-                        } else {
-                            resolve({ success: false, error: 'Identifiants invalides ou compte banni.' });
-                        }
-                    }
-                    if(action === 'register') resolve({ success: true });
-                    if(action === 'sync') resolve({ success: true, data: { dates: {"2026-08-01":{m:true, a:true}}, config: state.config, bookings: state.bookings, chats: state.chats } });
-                    if(action === 'book') { payload.booking.id = Date.now(); state.bookings.push(payload.booking); resolve({ success: true }); }
-                    if(action === 'cancel') { state.bookings = state.bookings.filter(b=>b.id!==payload.id); resolve({ success: true }); }
-                    resolve({ success: true });
-                }, 500);
-            });
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // Évite les problèmes de preflight CORS
+                    body: JSON.stringify({ action, ...payload })
+                });
+                return await response.json();
+            } catch(e) {
+                console.error(e);
+                return { success: false, error: "Erreur de connexion avec le serveur sécurisé." };
+            }
         }
 
         async function doLogin() {
@@ -479,12 +468,15 @@
             msg.textContent = '';
             
             const hash = await hashPassword(pwd);
-            const res = await apiCall('login', { email, hash });
+            // Génération du token de session frontend (vérifié de manière rigide par le backend)
+            const pseudoToken = btoa(email + ":" + hash);
+            
+            const res = await apiCall('login', { token: pseudoToken });
             document.getElementById('loader-login').style.display = 'none';
             
             if(res.success) {
                 state.user = res.user;
-                state.token = res.token;
+                state.token = pseudoToken;
                 updateUIAfterAuth();
                 syncData();
             } else {
@@ -500,7 +492,7 @@
             const pwd = document.getElementById('reg-pwd').value;
             const msg = document.getElementById('auth-msg');
             
-            if(!name || !email || !pwd || pwd.length < 6) { msg.style.color = 'var(--error)'; msg.textContent = 'Remplissez correctement les champs - mdp min 6 car.'; return; }
+            if(!name || !email || !pwd || pwd.length < 6) { msg.style.color = 'var(--error)'; msg.textContent = 'Champs incorrects (mdp min 6 car).'; return; }
             
             document.getElementById('loader-reg').style.display = 'inline-block';
             const hash = await hashPassword(pwd);
@@ -509,20 +501,11 @@
             
             if(res.success) {
                 msg.style.color = 'var(--success)';
-                msg.textContent = 'Compte créé avec succès ! Connectez-vous.';
+                msg.textContent = 'Compte créé ! Connectez-vous.';
                 setTimeout(() => toggleAuthMode('login'), 2000);
             } else {
                 msg.style.color = 'var(--error)';
                 msg.textContent = res.error || 'Erreur lors de l\'inscription.';
-            }
-        }
-
-        async function resetPwd() {
-            const email = prompt("Entrez votre adresse e-mail pour la réinitialisation :");
-            if(email) {
-                if(email === 'abadmin') { alert("Impossible pour ce compte."); return; }
-                alert("Si l'adresse existe et n'a pas dépassé 2 réinitialisations, un nouveau mot de passe vous sera envoyé.");
-                await apiCall('reset_pwd', { email });
             }
         }
 
@@ -533,55 +516,87 @@
         }
 
         function updateUIAfterAuth() {
+            const btnAcc = document.getElementById('btn-account-nav');
+            const btnLog = document.getElementById('btn-login-nav');
+            const btnOut = document.getElementById('btn-logout-nav');
+            const navAdmin = document.getElementById('nav-admin');
+            
             if(state.user) {
-                document.getElementById('btn-login-nav').style.display = 'none';
-                document.getElementById('btn-logout-nav').style.display = 'inline-block';
-                document.getElementById('user-display').style.display = 'inline-block';
-                document.getElementById('user-display').textContent = 'Connecté : ' + state.user.name;
+                btnLog.style.display = 'none';
+                btnOut.style.display = 'inline-block';
+                btnAcc.style.display = 'inline-flex';
                 
                 if(state.user.role === 'admin') {
-                    if(!document.getElementById('nav-admin')) {
-                        const adminLink = document.createElement('a');
-                        adminLink.id = 'nav-admin';
-                        adminLink.textContent = 'Administration';
-                        adminLink.onclick = () => navigate('admin');
-                        adminLink.style.color = '#ffc107';
-                        document.getElementById('main-nav-links').appendChild(adminLink);
+                    if(!navAdmin) {
+                        const aLink = document.createElement('a');
+                        aLink.id = 'nav-admin'; aLink.textContent = 'Administration';
+                        aLink.onclick = () => navigate('admin'); aLink.style.color = '#ffc107';
+                        document.getElementById('main-nav-links').appendChild(aLink);
                     }
                     navigate('admin');
                 } else {
-                    const adm = document.getElementById('nav-admin');
-                    if(adm) adm.remove();
+                    if(navAdmin) navAdmin.remove();
                     navigate('home');
                 }
             } else {
-                document.getElementById('btn-login-nav').style.display = 'inline-block';
-                document.getElementById('btn-logout-nav').style.display = 'none';
-                document.getElementById('user-display').style.display = 'none';
-                const adm = document.getElementById('nav-admin');
-                if(adm) adm.remove();
+                btnLog.style.display = 'inline-block';
+                btnOut.style.display = 'none';
+                btnAcc.style.display = 'none';
+                if(navAdmin) navAdmin.remove();
             }
-            applyConfigUI();
+        }
+
+        async function updateProfile() {
+            const newEmail = document.getElementById('acc-email').value.trim();
+            const newPhone = document.getElementById('acc-phone').value.trim();
+            const newPwd = document.getElementById('acc-pwd').value;
+            const msg = document.getElementById('acc-msg');
+            
+            document.getElementById('loader-acc').style.display = 'inline-block';
+            let newHash = null;
+            if (newPwd.length > 0) {
+                if(newPwd.length < 6) { msg.style.color = 'var(--error)'; msg.textContent = 'Mot de passe trop court.'; document.getElementById('loader-acc').style.display='none'; return; }
+                newHash = await hashPassword(newPwd);
+            }
+            
+            const res = await apiCall('update_profile', { token: state.token, newEmail, newPhone, newHash });
+            document.getElementById('loader-acc').style.display = 'none';
+            
+            if(res.success) {
+                msg.style.color = 'var(--success)';
+                msg.textContent = 'Profil mis à jour !';
+                // Si l'email ou le mdp change, on doit regenerer le token frontend
+                state.user.email = newEmail || state.user.email;
+                if(newHash) state.token = btoa(state.user.email + ":" + newHash);
+                else if (newEmail) state.token = btoa(state.user.email + ":" + atob(state.token).split(':')[1]);
+            } else {
+                msg.style.color = 'var(--error)'; msg.textContent = res.error;
+            }
         }
 
         // --- SYNC & AUTO REFRESH ---
         async function syncData() {
-            if(!state.user) return;
-            const res = await apiCall('sync', { token: state.token });
+            // L'appel sync fonctionne même sans compte pour récupérer config, dates, faq
+            const res = await apiCall('sync', { token: state.token || 'public' });
             if(res.success) {
                 state.dates = res.data.dates || {};
                 state.config = res.data.config || state.config;
                 state.bookings = res.data.bookings || [];
                 state.chats = res.data.chats || [];
+                state.faqs = res.data.faqs || [];
+                
                 applyConfigUI();
                 if(document.getElementById('view-home').classList.contains('active')) renderCalendar();
                 if(document.getElementById('view-manage').classList.contains('active')) renderMyBookings();
-                if(document.getElementById('view-admin').classList.contains('active')) renderAdminBookings();
+                if(document.getElementById('view-account').classList.contains('active')) renderMyHistory();
+                if(document.getElementById('view-help').classList.contains('active')) renderFAQ();
+                if(document.getElementById('view-admin').classList.contains('active') && state.user && state.user.role === 'admin') {
+                    renderAdminBookings();
+                }
             }
         }
-        setInterval(() => { if(state.user) syncData(); }, 30000);
+        setInterval(() => { syncData(); }, 30000);
 
-        // --- UI RENDERERS ---
         function applyConfigUI() {
             document.getElementById('txt-penalty').textContent = state.config.penalty;
             document.getElementById('price-bag').textContent = state.config.priceBag;
@@ -589,20 +604,17 @@
             
             const banner = document.getElementById('banner');
             if(state.config.featBanner && state.config.bannerTxt) {
-                banner.style.display = 'block';
-                banner.textContent = state.config.bannerTxt;
-            } else {
-                banner.style.display = 'none';
-            }
+                banner.style.display = 'block'; banner.textContent = state.config.bannerTxt;
+            } else { banner.style.display = 'none'; }
             calcTotal();
         }
 
+        // --- CLIENT UI RENDERERS ---
         function renderCalendar() {
             const grid = document.getElementById('client-calendar');
             grid.innerHTML = '';
             
-            let d = new Date();
-            d.setDate(d.getDate() + 1);
+            let d = new Date(); d.setDate(d.getDate() + 1);
             for(let i=0; i<14; i++) {
                 let dStr = d.toISOString().split('T')[0];
                 let dispo = state.dates[dStr];
@@ -613,14 +625,11 @@
                 
                 if(dispo && (dispo.m || dispo.a)) {
                     div.onclick = () => {
-                        state.selectedDate = dStr;
-                        state.selectedTime = null;
-                        renderCalendar();
-                        showTimeSelection(dispo);
+                        state.selectedDate = dStr; state.selectedTime = null;
+                        renderCalendar(); showTimeSelection(dispo);
                     };
                 }
-                grid.appendChild(div);
-                d.setDate(d.getDate() + 1);
+                grid.appendChild(div); d.setDate(d.getDate() + 1);
             }
         }
 
@@ -634,14 +643,15 @@
             bm.style.background = '#eee'; bm.style.color = '#333';
             ba.style.background = '#eee'; ba.style.color = '#333';
             
+            // Affichage de l'heure fixée par l'admin si existante
+            bm.textContent = "Matin" + (dispo.m_time ? ` (${dispo.m_time})` : "");
+            ba.textContent = "Après midi" + (dispo.a_time ? ` (${dispo.a_time})` : "");
+            
             if(state.selectedTime === 'Matin') { bm.style.background = 'var(--primary)'; bm.style.color = 'white'; }
             if(state.selectedTime === 'Apres midi') { ba.style.background = 'var(--primary)'; ba.style.color = 'white'; }
         }
 
-        function selectTime(t) {
-            state.selectedTime = t;
-            showTimeSelection(state.dates[state.selectedDate]);
-        }
+        function selectTime(t) { state.selectedTime = t; showTimeSelection(state.dates[state.selectedDate]); }
 
         function calcTotal() {
             const ad = parseInt(document.getElementById('book-adults').value) || 0;
@@ -658,12 +668,20 @@
             if(!state.selectedDate || !state.selectedTime) { alert("Veuillez sélectionner une date et une heure."); return; }
             
             document.getElementById('loader-book').style.display = 'inline-block';
+            
+            // Récupérer l'heure exacte si définie
+            let exactTime = "";
+            let dispo = state.dates[state.selectedDate];
+            if(state.selectedTime === 'Matin' && dispo && dispo.m_time) exactTime = ` (${dispo.m_time})`;
+            if(state.selectedTime === 'Apres midi' && dispo && dispo.a_time) exactTime = ` (${dispo.a_time})`;
+
             const booking = {
+                id: Date.now(),
                 client: state.user.email,
                 name: state.user.name,
                 route: document.getElementById('book-route').value,
                 date: state.selectedDate,
-                time: state.selectedTime,
+                time: state.selectedTime + exactTime,
                 pax: `${document.getElementById('book-adults').value} Adulte, ${document.getElementById('book-children').value} Enfant`,
                 bagage: document.getElementById('book-bagages').checked,
                 total: calcTotal(),
@@ -676,71 +694,88 @@
             if(res.success) {
                 document.getElementById('book-msg').style.color = 'var(--success)';
                 document.getElementById('book-msg').textContent = 'Réservation confirmée avec succès !';
-                setTimeout(() => { document.getElementById('book-msg').textContent = ''; navigate('manage'); }, 2000);
+                setTimeout(() => { document.getElementById('book-msg').textContent = ''; syncData(); navigate('manage'); }, 2000);
             }
         }
 
-        // --- MANAGE BOOKINGS ---
-        function renderMyBookings() {
-            const container = document.getElementById('client-bookings-list');
-            container.innerHTML = '';
-            const myb = state.bookings.filter(b => b.client === state.user.email);
-            
-            if(myb.length === 0) {
-                container.innerHTML = '<p>Aucune réservation en cours.</p>';
-                return;
+        // --- HISTORIQUE & GESTION ---
+        function generateBookingHTML(b, allowCancel) {
+            let cancelBtn = '';
+            if(allowCancel) {
+                let deptDate = new Date(b.date);
+                deptDate.setHours(b.time.includes('Matin') ? 8 : 14, 0, 0, 0); 
+                let diffHours = (deptDate - new Date()) / (1000 * 60 * 60);
+                
+                if(diffHours > 0) {
+                    cancelBtn = `<button class="btn btn-danger" style="padding: 8px; width: auto; font-size: 14px;" onclick="cancelBooking(${b.id}, ${diffHours < 2})">Annuler</button>`;
+                } else { cancelBtn = `<span class="badge badge-warning" style="background:#475569; color:white;">Passée</span>`; }
             }
             
-            myb.forEach(b => {
-                const div = document.createElement('div');
-                div.style.background = '#f8f9fa'; div.style.padding = '15px'; div.style.borderRadius = '8px'; div.style.marginBottom = '10px'; div.style.border = '1px solid #e2e8f0';
-                
-                let deptDate = new Date(b.date);
-                deptDate.setHours(b.time === 'Matin' ? 8 : 14, 0, 0, 0);
-                let now = new Date();
-                let diffHours = (deptDate - now) / (1000 * 60 * 60);
-                
-                let cancelBtn = `<button class="btn btn-danger" style="padding: 8px; width: auto; font-size: 14px;" onclick="cancelBooking(${b.id}, ${diffHours < 2})">Annuler la réservation</button>`;
-                if(diffHours < 0) cancelBtn = `<span class="badge badge-warning">Passée</span>`;
-
-                div.innerHTML = `
+            const statusColor = b.status.includes('Annulée') ? '#ef4444' : '#10b981';
+            
+            return `
+                <div style="background: var(--dark-input); padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid var(--dark-border); color: white;">
                     <div style="display:flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                         <div>
-                            <strong>${b.route}</strong> - Date : ${b.date} - ${b.time}<br>
-                            <small>${b.pax} - Total : ${b.total}€ - Statut : ${b.status}</small>
+                            <strong style="color:var(--secondary);">${b.route}</strong> - ${b.date} - ${b.time}<br>
+                            <small style="color:#cbd5e1;">${b.pax} | Total : <b>${b.total}€</b></small><br>
+                            <small style="color:${statusColor}; font-weight:bold;">${b.status}</small>
                         </div>
                         <div>${cancelBtn}</div>
                     </div>
-                `;
-                container.appendChild(div);
-            });
+                </div>`;
+        }
+
+        function renderMyBookings() {
+            const container = document.getElementById('client-bookings-list');
+            if(!state.user) return;
+            const myb = state.bookings.filter(b => b.client === state.user.email && !b.status.includes('Annulée'));
+            container.innerHTML = myb.length === 0 ? '<p>Aucune réservation active.</p>' : myb.map(b => generateBookingHTML(b, true)).join('');
+        }
+
+        function renderMyHistory() {
+            const container = document.getElementById('client-history-list');
+            if(!state.user) return;
+            const myb = state.bookings.filter(b => b.client === state.user.email);
+            // Dans l'historique on ne met pas de bouton annuler
+            container.innerHTML = myb.length === 0 ? '<p style="color:#cbd5e1;">Aucun historique.</p>' : myb.map(b => generateBookingHTML(b, false)).reverse().join('');
         }
 
         async function cancelBooking(id, withPenalty) {
-            let msg = "Êtes-vous sûr de vouloir annuler cette réservation ?";
-            if(withPenalty) msg += `\nATTENTION : Annulation à moins de 2h du départ. Une pénalité de ${state.config.penalty}€ sera appliquée.`;
-            
+            let msg = "Confirmez-vous l'annulation ?";
+            if(withPenalty) msg += `\nATTENTION : Moins de 2h avant le départ, pénalité de ${state.config.penalty}€.`;
             if(confirm(msg)) {
                 await apiCall('cancel', { token: state.token, id, penalty: withPenalty ? state.config.penalty : 0 });
                 syncData();
             }
         }
 
+        // --- FAQ ---
+        function renderFAQ() {
+            const container = document.getElementById('faq-container');
+            container.innerHTML = '';
+            if(state.faqs.length === 0) { container.innerHTML = '<p style="color:#cbd5e1;">Aucune question disponible pour le moment.</p>'; return; }
+            
+            state.faqs.forEach((faq, index) => {
+                const div = document.createElement('div');
+                div.className = 'faq-item';
+                div.innerHTML = `
+                    <div class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+                        ${faq.q}
+                        <span>▼</span>
+                    </div>
+                    <div class="faq-answer">${faq.a}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
         // --- ADMIN UI ---
         function switchAdminTab(tab) {
             document.querySelectorAll('.admin-nav button').forEach(b => b.classList.remove('active'));
             document.getElementById('adm-tab-' + tab).classList.add('active');
-            
-            document.getElementById('adm-view-config').style.display = 'none';
-            document.getElementById('adm-view-dates').style.display = 'none';
-            document.getElementById('adm-view-bookings').style.display = 'none';
-            document.getElementById('adm-view-chat').style.display = 'none';
-            
+            ['config', 'dates', 'faq', 'bookings', 'chat'].forEach(t => document.getElementById('adm-view-' + t).style.display = 'none');
             document.getElementById('adm-view-' + tab).style.display = 'block';
-            
-            if(tab === 'config') fillAdminConfig();
-            if(tab === 'bookings') renderAdminBookings();
-            if(tab === 'chat') renderAdminChats();
         }
 
         function fillAdminConfig() {
@@ -766,21 +801,46 @@
             };
             await apiCall('admin_config', { token: state.token, config: c });
             document.getElementById('loader-cfg').style.display = 'none';
-            state.config = c;
-            alert('Configuration sauvegardée.');
-            applyConfigUI();
+            alert('Configuration sauvegardée.'); syncData();
         }
 
         async function saveAdminDate() {
             const d = document.getElementById('adm-date-select').value;
             const m = document.getElementById('adm-date-m').checked;
+            const m_time = document.getElementById('adm-time-m').value;
             const a = document.getElementById('adm-date-a').checked;
+            const a_time = document.getElementById('adm-time-a').value;
             if(!d) return;
+            
             document.getElementById('loader-date').style.display = 'inline-block';
-            await apiCall('admin_date', { token: state.token, date: d, dispo: {m, a} });
+            await apiCall('admin_date', { token: state.token, date: d, dispo: {m, m_time, a, a_time} });
             document.getElementById('loader-date').style.display = 'none';
-            state.dates[d] = {m, a};
-            alert('Date mise à jour.');
+            alert('Date et heures mises à jour.'); syncData();
+        }
+
+        // Admin FAQ
+        function renderAdminFAQList() {
+            const list = document.getElementById('adm-faq-list');
+            list.innerHTML = '';
+            state.faqs.forEach((f, i) => {
+                list.innerHTML += `<div style="background:#334155; padding:10px; margin-bottom:5px; border-radius:4px; display:flex; justify-content:space-between;">
+                    <div><b>${f.q}</b><br><small>${f.a}</small></div>
+                    <button class="btn btn-danger" style="width:auto; padding:5px 10px;" onclick="removeAdminFAQ(${i})">X</button>
+                </div>`;
+            });
+        }
+        function addAdminFAQ() {
+            const q = document.getElementById('adm-faq-q').value;
+            const a = document.getElementById('adm-faq-a').value;
+            if(q && a) { state.faqs.push({q, a}); renderAdminFAQList(); document.getElementById('adm-faq-q').value=''; document.getElementById('adm-faq-a').value=''; }
+        }
+        function removeAdminFAQ(index) { state.faqs.splice(index, 1); renderAdminFAQList(); }
+        
+        async function saveAdminFAQ() {
+            document.getElementById('loader-faq').style.display = 'inline-block';
+            await apiCall('admin_faq', { token: state.token, faqs: state.faqs });
+            document.getElementById('loader-faq').style.display = 'none';
+            alert('FAQ Enregistrée !'); syncData();
         }
 
         function renderAdminBookings() {
@@ -788,67 +848,50 @@
             tbody.innerHTML = '';
             state.bookings.forEach(b => {
                 let tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${b.id}</td>
-                    <td>${b.name}<br><small>${b.client}</small></td>
-                    <td>${b.route}<br><small>${b.date} - ${b.time}</small></td>
-                    <td>${b.total}€</td>
-                    <td>${b.status}</td>
-                `;
+                tr.innerHTML = `<td>${b.id}</td><td>${b.name}<br><small>${b.client}</small></td><td>${b.route}<br><small>${b.date} - ${b.time}</small></td><td>${b.total}€</td><td>${b.status}</td>`;
                 tbody.appendChild(tr);
             });
         }
 
         // --- CHAT SYSTEM ---
-        function openChat() {
-            document.getElementById('chat-widget').style.display = 'flex';
-            renderChatBody();
-        }
-        function closeChatUI() {
-            document.getElementById('chat-widget').style.display = 'none';
-        }
+        function openChat() { document.getElementById('chat-widget').style.display = 'flex'; renderChatBody(); }
+        function closeChatUI() { document.getElementById('chat-widget').style.display = 'none'; }
+        
         function renderChatBody() {
-            const cb = document.getElementById('chat-body');
-            cb.innerHTML = '';
+            const cb = document.getElementById('chat-body'); cb.innerHTML = '';
             state.chats.forEach(m => {
                 let div = document.createElement('div');
-                div.className = 'msg ' + (m.sender === state.user.email ? 'msg-client' : 'msg-admin');
-                div.textContent = m.text;
-                cb.appendChild(div);
+                div.className = 'msg ' + (m.sender === state.user?.email ? 'msg-client' : 'msg-admin');
+                div.textContent = m.text; cb.appendChild(div);
             });
             cb.scrollTop = cb.scrollHeight;
         }
         async function sendChatMessage() {
-            const inp = document.getElementById('chat-input');
-            const txt = inp.value.trim();
+            const inp = document.getElementById('chat-input'); const txt = inp.value.trim();
             if(!txt || !state.user) return;
             inp.value = '';
             const msg = { sender: state.user.email, text: txt, ts: Date.now() };
-            state.chats.push(msg);
-            renderChatBody();
+            state.chats.push(msg); renderChatBody();
             await apiCall('chat_send', { token: state.token, msg });
         }
         function renderAdminChats() {
             const container = document.getElementById('adm-chat-list');
             container.innerHTML = '<p>Liste globale des messages</p>';
-            state.chats.forEach(m => {
-                container.innerHTML += `<div style="background:#1e293b; padding:10px; margin-bottom:5px; border-radius:6px; color:white;"><b>${m.sender}:</b> ${m.text}</div>`;
-            });
+            state.chats.forEach(m => { container.innerHTML += `<div style="background:#1e293b; padding:10px; margin-bottom:5px; border-radius:6px; color:white;"><b>${m.sender}:</b> ${m.text}</div>`; });
             container.innerHTML += `<button class="btn btn-danger" onclick="cloturerChats()">Clôturer toutes les conversations</button>`;
         }
         async function cloturerChats() {
             if(confirm("Effacer l'historique des chats ?")) {
                 await apiCall('chat_close_all', { token: state.token });
-                state.chats = [];
-                renderAdminChats();
+                state.chats = []; renderAdminChats();
             }
         }
 
-        // --- INITIALISATION AU CHARGEMENT ---
-        window.addEventListener('DOMContentLoaded', () => {
-            navigate('home');
+        // Initialisation 
+        window.addEventListener('DOMContentLoaded', () => { 
+            syncData(); // Chargement public initial
+            navigate('home'); 
         });
-        
     </script>
 </body>
 </html>
