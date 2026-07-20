@@ -19,13 +19,13 @@
             background-position: center; background-attachment: fixed;
             min-height: 100vh; color: var(--text);
         }
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 33, 87, 0.8); z-index: -1; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 33, 87, 0.85); z-index: -1; }
         
         /* Navbar */
-        nav { background: var(--primary); color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.4); position: sticky; top: 0; z-index: 100; }
+        nav { background: var(--primary); color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.4); position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 15px;}
         .nav-brand { font-size: 20px; font-weight: bold; letter-spacing: 1px; }
-        .nav-links { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;}
-        .nav-links a { color: #cbd5e1; text-decoration: none; cursor: pointer; font-weight: 600; font-size: 14px; padding: 8px 12px; border-radius: 6px; transition: 0.2s; }
+        .nav-links { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; flex: 1;}
+        .nav-links a { color: #cbd5e1; text-decoration: none; cursor: pointer; font-weight: 600; font-size: 13.5px; padding: 8px 12px; border-radius: 6px; transition: 0.2s; white-space: nowrap;}
         .nav-links a:hover, .nav-links a.active { background: rgba(255,255,255,0.1); color: white; }
         .nav-right { display: flex; align-items: center; gap: 15px; }
         
@@ -34,28 +34,28 @@
         .bell-wrapper:hover { background: rgba(255,255,255,0.1); }
         .bell-icon { width: 22px; height: 22px; fill: white; }
         .bell-badge { position: absolute; top: 2px; right: 2px; background: var(--error); color: white; font-size: 10px; font-weight: bold; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-        .notif-dropdown { position: absolute; top: 45px; right: 0; background: var(--dark-surface); border: 1px solid var(--dark-border); width: 300px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: none; flex-direction: column; overflow: hidden; z-index: 200;}
+        .notif-dropdown { position: absolute; top: 45px; right: 0; background: var(--dark-surface); border: 1px solid var(--dark-border); width: 320px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: none; flex-direction: column; overflow: hidden; z-index: 200;}
         .notif-header { padding: 10px 15px; background: var(--dark-input); font-weight: bold; color: white; border-bottom: 1px solid var(--dark-border); font-size: 13px;}
-        .notif-item { padding: 12px 15px; border-bottom: 1px solid var(--dark-border); font-size: 12px; color: #cbd5e1; transition: 0.2s; }
-        .notif-item:hover { background: rgba(255,255,255,0.05); }
-        .notif-item:last-child { border-bottom: none; }
+        .notif-item { padding: 12px 15px; border-bottom: 1px solid var(--dark-border); font-size: 12px; color: #cbd5e1; transition: 0.2s; cursor: pointer;}
+        .notif-item:hover { background: rgba(255,255,255,0.05); color: white;}
 
         .btn-nav { background: var(--secondary); color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; }
         .btn-nav-icon { background: transparent; padding: 6px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         
-        .container { max-width: 1100px; margin: 40px auto; padding: 20px; }
-        .card { background: var(--surface); border-radius: 12px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); margin-bottom: 20px; }
+        .container { max-width: 1200px; margin: 40px auto; padding: 20px; }
+        .card { background: var(--surface); border-radius: 12px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); margin-bottom: 20px; overflow: hidden;}
         .card-dark { background: var(--dark-surface); color: white; border: 1px solid var(--dark-border); }
         .view { display: none; animation: fadeIn 0.3s; }
         .view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        h1, h2, h3 { color: var(--primary); margin-top: 0; }
-        .card-dark h1, .card-dark h2, .card-dark h3 { color: white; }
+        h1, h2, h3, h4 { color: var(--primary); margin-top: 0; }
+        .card-dark h1, .card-dark h2, .card-dark h3, .card-dark h4 { color: white; }
         .form-group { margin-bottom: 15px; position: relative;}
         .form-group label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px; }
         .form-control { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; }
         .card-dark .form-control { background: var(--dark-input); border: 1px solid var(--dark-border); color: white; }
+        .card-dark .form-control:focus { outline: none; border-color: var(--secondary); }
         .pwd-toggle { position: absolute; right: 15px; top: 38px; cursor: pointer; fill: #888; width: 20px; height: 20px; }
         
         .btn { width: 100%; padding: 14px; border: none; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: pointer; transition: 0.2s; }
@@ -66,39 +66,64 @@
         
         .row { display: flex; gap: 15px; flex-wrap: wrap; }
         .col { flex: 1; min-width: 200px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
+        .table-responsive { width: 100%; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; min-width: 600px;}
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
         .card-dark th, .card-dark td { border-bottom: 1px solid var(--dark-border); }
         .badge { padding: 5px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; display: inline-block;}
+        .badge-success { background: #d4edda; color: #155724; }
+        .badge-warning { background: #fff3cd; color: #856404; }
+        .badge-danger { background: #f8d7da; color: #721c24; }
         
         .phone-input-wrapper { display: flex; gap: 10px; }
         .phone-code-select { flex: 0 0 160px; }
 
-        .loader { border: 3px solid transparent; border-top: 3px solid white; border-radius: 50%; width: 18px; height: 18px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; }
+        .loader { border: 3px solid transparent; border-top: 3px solid white; border-radius: 50%; width: 18px; height: 18px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-left:10px; display: none;}
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* Calendars */
         .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 10px; }
-        .cal-day { padding: 15px 5px; text-align: center; background: #f0f4f8; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; color: #ccc; position: relative;}
+        .cal-day { padding: 15px 5px; text-align: center; background: #f0f4f8; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; color: #ccc; position: relative; transition: 0.2s;}
         .cal-day.available { background: #fff; border: 1px solid var(--secondary); color: var(--primary); }
-        .cal-day.selected { background: var(--primary); color: white; border-color: var(--primary); }
-        .cal-day.selected-admin { background: var(--secondary); color: white; border-color: var(--secondary); transform: scale(1.05); z-index: 2;}
+        .cal-day.available:hover { background: #e6f7fa; }
+        .cal-day.selected { background: var(--primary); color: white; border-color: var(--primary); transform: scale(1.05); z-index: 2; box-shadow: 0 4px 10px rgba(0,0,0,0.2);}
+        .cal-day.selected-admin { background: var(--secondary) !important; color: white !important; border-color: var(--secondary) !important; transform: scale(1.1); z-index: 2; box-shadow: 0 4px 10px rgba(0,0,0,0.4);}
         .card-dark .cal-day { background: #0f172a; border-color: var(--dark-border); color: #475569; }
         .card-dark .cal-day.available { background: #1e293b; color: white; border-color: #3b82f6; }
         .empty-day { aspect-ratio: 1; }
         
         .time-dot-container { display: flex; gap: 3px; position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%); font-size: 9px; color: #666; font-weight: bold; width: 100%; justify-content: center;}
-        .card-dark .time-dot-container { color: #94a3b8; }
+        .time-dot { width: 6px; height: 6px; border-radius: 50%; }
+        .time-dot.matin { background: #f6ad55; }
+        .time-dot.apresmidi { background: #4fd1c5; }
+        .cal-day.selected-admin .time-dot, .cal-day.selected .time-dot { background: #fff; }
         
         .calendar-wrapper { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 20px; }
         .month-container { flex: 1; min-width: 300px; background: var(--dark-input); border: 1px solid var(--dark-border); border-radius: 8px; padding: 15px; }
         .month-header { text-align: center; font-weight: bold; color: white; margin-bottom: 15px; text-transform: uppercase; font-size: 14px;}
         .weekdays { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-weight: bold; font-size: 12px; color: #94a3b8; margin-bottom: 10px; }
 
-        .stat-box { background: var(--dark-input); border: 1px solid var(--dark-border); border-radius: 8px; padding: 20px; text-align: center; flex: 1; min-width: 150px;}
-        .stat-box h3 { font-size: 32px; color: var(--secondary); margin: 10px 0 0 0;}
+        /* Stats */
+        .stat-box { background: var(--dark-input); border: 1px solid var(--dark-border); border-radius: 8px; padding: 20px; text-align: center; flex: 1; min-width: 200px;}
+        .stat-box h3 { font-size: 28px; color: var(--secondary); margin: 10px 0 5px 0;}
+        .stat-box p { margin: 0; color: #cbd5e1; font-size: 14px;}
+        .stat-sub { font-size: 12px; color: #94a3b8; }
         
         .maintenance-msg { text-align: center; padding: 40px; font-size: 18px; color: var(--warning); font-weight: bold; background: var(--dark-input); border-radius: 8px; border: 1px dashed var(--warning); }
+        .inline-alert { padding: 10px; border-radius: 6px; font-size: 14px; font-weight: bold; margin-bottom: 15px; display: none; text-align: center; }
+        .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert-error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        
+        /* Chat */
+        #chat-widget { position: fixed; bottom: 20px; right: 20px; width: 350px; background: white; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); display: none; flex-direction: column; z-index: 1000; overflow: hidden; }
+        #chat-header { background: var(--primary); color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        #chat-body { height: 300px; overflow-y: auto; padding: 15px; background: #f9f9f9; display: flex; flex-direction: column; gap: 10px; }
+        #chat-input-area { display: flex; padding: 10px; background: white; border-top: 1px solid #eee; }
+        #chat-input-area input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 20px; outline: none; }
+        #chat-input-area button { background: var(--secondary); color: white; border: none; padding: 10px 15px; border-radius: 20px; margin-left: 10px; cursor: pointer; }
+        .msg { max-width: 80%; padding: 10px 15px; border-radius: 15px; font-size: 14px; }
+        .msg-client { background: var(--secondary); color: white; align-self: flex-end; border-bottom-right-radius: 0; }
+        .msg-admin { background: #e0e0e0; color: var(--text); align-self: flex-start; border-bottom-left-radius: 0; }
     </style>
 </head>
 <body>
@@ -107,7 +132,7 @@
     <nav>
         <div class="nav-brand">AB MOTORS</div>
         <div class="nav-links" id="main-nav-links">
-            <!-- Rempli dynamiquement selon le rôle -->
+            <!-- Rempli dynamiquement -->
         </div>
         <div class="nav-right">
             <button class="btn-nav" id="btn-login-nav" onclick="navigate('login')">Se connecter</button>
@@ -149,20 +174,20 @@
                 <button onclick="toggleAuthMode('register')" id="tab-register" style="flex:1; padding:10px; background:transparent; color:#94a3b8; border:none; border-bottom: 2px solid transparent; cursor:pointer; font-weight:bold;">Inscription</button>
             </div>
 
+            <div id="auth-inline-alert" class="inline-alert"></div>
+
             <div id="form-login-box">
+                <div class="form-group"><label>Adresse e-mail</label><input type="text" id="login-email" class="form-control" placeholder="Entrez votre email"></div>
                 <div class="form-group">
-                    <label>Adresse e-mail</label>
-                    <input type="text" id="login-email" class="form-control" placeholder="Entrez votre email">
-                </div>
-                <div class="form-group">
-                    <label>Mot de passe</label>
-                    <input type="password" id="login-pwd" class="form-control" placeholder="Votre mot de passe">
+                    <label>Mot de passe</label><input type="password" id="login-pwd" class="form-control" placeholder="Votre mot de passe">
                     <svg class="pwd-toggle" onclick="togglePwd('login-pwd')" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
                 </div>
-                <div style="text-align: right; margin-bottom: 15px;">
-                    <a href="#" style="color: var(--secondary); font-size: 12px; text-decoration: none;" onclick="requestUnban()">Mot de passe oublié / Compte désactivé ?</a>
+                <button class="btn btn-primary" onclick="doLogin()">Se connecter <span class="loader" id="loader-login"></span></button>
+                
+                <div style="display:flex; justify-content: space-between; margin-top: 15px; font-size: 12px;">
+                    <a href="javascript:void(0)" style="color: var(--secondary); text-decoration: none;" onclick="showRecovery('pwd')">Mot de passe oublié ?</a>
+                    <a href="javascript:void(0)" style="color: var(--warning); text-decoration: none;" onclick="showRecovery('unban')">Compte désactivé ?</a>
                 </div>
-                <button class="btn btn-primary" onclick="doLogin()">Se connecter <span class="loader" id="loader-login" style="display:none;"></span></button>
             </div>
 
             <div id="form-register-box" style="display:none;">
@@ -176,25 +201,34 @@
                     </div>
                 </div>
                 <div class="form-group"><label>Mot de passe (Min 6)</label><input type="password" id="reg-pwd" class="form-control" autocomplete="off"></div>
-                <button class="btn btn-primary" onclick="doRegister()" style="background: var(--success);">Créer mon compte <span class="loader" id="loader-reg" style="display:none;"></span></button>
+                <button class="btn btn-primary" onclick="doRegister()" style="background: var(--success);">Créer mon compte <span class="loader" id="loader-reg"></span></button>
             </div>
-            <div id="auth-msg" style="margin-top: 15px; text-align: center; font-size: 14px; font-weight: bold;"></div>
+
+            <!-- Recovery Box (Inline) -->
+            <div id="form-recovery-box" style="display:none; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--dark-border);">
+                <h4 id="recovery-title" style="margin-bottom:10px;">Récupération</h4>
+                <div class="form-group"><input type="email" id="recovery-email" class="form-control" placeholder="Votre adresse e-mail"></div>
+                <button class="btn btn-secondary" style="background:#475569; color:white; margin-bottom:5px;" onclick="processRecovery()">Envoyer la demande <span class="loader" id="loader-rec"></span></button>
+                <button class="btn" style="background:transparent; color:#94a3b8; font-size:12px;" onclick="hideRecovery()">Annuler</button>
+            </div>
         </div>
 
         <!-- VIEW: CLIENT ACCOUNT -->
         <div id="view-account-client" class="view card card-dark">
             <h2>Paramètres du compte</h2>
-            <p style="color:#cbd5e1; font-size:14px; margin-bottom: 20px;">Gérez vos accès. Note : L'archivage de votre compte efface vos données actives mais conserve votre email libéré.</p>
+            <p style="color:#cbd5e1; font-size:14px; margin-bottom: 20px;">L'archivage de votre compte efface vos données actives mais conserve votre email libéré. Vous serez déconnecté.</p>
+            <div id="client-acc-alert" class="inline-alert"></div>
             <div class="form-group"><label>Mot de passe actuel (Requis pour supprimer)</label><input type="password" id="del-pwd" class="form-control"></div>
-            <button class="btn btn-danger" onclick="archiveClientAccount()">Archiver mon compte définitivement</button>
+            <button class="btn btn-danger" style="width: auto;" onclick="archiveClientAccount()">Archiver mon compte définitivement <span class="loader" id="loader-del"></span></button>
         </div>
 
         <!-- VIEW: ADMIN ACCOUNT (Manage Clients) -->
         <div id="view-account-admin" class="view card card-dark">
             <h2>Gestion des Comptes Clients</h2>
+            <div id="admin-acc-alert" class="inline-alert"></div>
             
-            <h3 style="margin-top: 30px; font-size: 16px;">Comptes Actifs</h3>
-            <div style="overflow-x: auto; margin-bottom: 30px;">
+            <h3 style="margin-top: 20px; font-size: 16px;">Comptes Actifs</h3>
+            <div class="table-responsive" style="margin-bottom: 30px;">
                 <table id="adm-table-clients">
                     <thead><tr><th>Client</th><th>Contact</th><th>Action</th></tr></thead>
                     <tbody></tbody>
@@ -202,7 +236,7 @@
             </div>
 
             <h3 style="font-size: 16px; color: var(--warning);">Comptes Désactivés / Archivés</h3>
-            <div style="overflow-x: auto;">
+            <div class="table-responsive">
                 <table id="adm-table-banned">
                     <thead><tr><th>Client</th><th>Contact</th><th>Statut</th><th>Action</th></tr></thead>
                     <tbody></tbody>
@@ -219,28 +253,29 @@
                 <div class="col"><div class="form-group"><label>Adultes</label><input type="number" id="book-adults" class="form-control" value="1" min="1" onchange="calcTotal()"></div></div>
                 <div class="col"><div class="form-group"><label>Enfants (-13 ans)</label><input type="number" id="book-children" class="form-control" value="0" min="0" onchange="calcTotal()"></div></div>
             </div>
-            <div class="form-group" id="bagage-section" style="display:none; background: #f8f9fa; padding: 15px; border-radius: 6px;"><label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin: 0;"><input type="checkbox" id="book-bagages" onchange="calcTotal()"> Voyage avec bagages (+<span id="price-bag">3</span>€)</label></div>
+            <div class="form-group" id="bagage-section" style="display:none; background: #f8f9fa; padding: 15px; border-radius: 6px;"><label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin: 0;"><input type="checkbox" id="book-bagages" onchange="calcTotal()"> Voyage avec bagages (+<span id="price-bag"></span>)</label></div>
             <div class="form-group"><label>Sélectionnez une date disponible</label><div id="client-calendar" class="days-grid"></div></div>
             
             <div class="form-group" id="time-selection" style="display:none; background: #f0f4f8; padding: 15px; border-radius: 6px;">
                 <label style="margin-bottom: 10px;">Choisissez votre horaire exact :</label>
-                <div style="display: flex; gap: 10px;">
-                    <button id="btn-time-m" class="btn" style="background: white; color: #333; border: 1px solid #ccc;" onclick="selectTime('Matin')">Matin</button>
-                    <button id="btn-time-a" class="btn" style="background: white; color: #333; border: 1px solid #ccc;" onclick="selectTime('Après midi')">Après midi</button>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button id="btn-time-m" class="btn" style="background: white; color: #333; border: 1px solid #ccc; width:auto; padding:10px 20px;" onclick="selectTime('Matin')">Matin</button>
+                    <button id="btn-time-a" class="btn" style="background: white; color: #333; border: 1px solid #ccc; width:auto; padding:10px 20px;" onclick="selectTime('Après midi')">Après midi</button>
                 </div>
             </div>
 
             <div style="margin-top: 30px; border-top: 2px dashed #ccc; padding-top: 20px; text-align: right;">
-                <h3 style="margin-bottom: 10px;">Total estimé : <span id="book-total">0</span> €</h3>
-                <button class="btn btn-primary" style="width: auto; padding: 12px 30px;" onclick="submitBooking()">Confirmer la réservation <span class="loader" id="loader-book" style="display:none;"></span></button>
-                <div id="book-msg" style="margin-top: 10px; font-weight: bold;"></div>
+                <h3 style="margin-bottom: 10px;">Total estimé : <span id="book-total">0€ / 0 KMF</span></h3>
+                <div id="book-msg" class="inline-alert"></div>
+                <button class="btn btn-primary" style="width: auto; padding: 12px 30px;" onclick="submitBooking()">Confirmer la réservation <span class="loader" id="loader-book"></span></button>
             </div>
         </div>
 
         <!-- VIEW: MANAGE RESERVATIONS (CLIENT) -->
         <div id="view-manage" class="view card">
             <h2>Gérer mes réservations actives</h2>
-            <p>Vous pouvez annuler sans frais jusqu'à 2h avant le départ. Après, une pénalité de <span id="txt-penalty">10</span>€ s'applique.</p>
+            <p>Vous pouvez annuler sans frais jusqu'à 2h avant le départ. Après, une pénalité de <span id="txt-penalty"></span> s'applique.</p>
+            <div id="manage-msg" class="inline-alert"></div>
             <div id="client-bookings-list"></div>
         </div>
 
@@ -253,11 +288,12 @@
             </div>
         </div>
 
-        <!-- ADMIN VIEWS (Séparées selon la nav admin) -->
+        <!-- ADMIN VIEWS -->
         
         <!-- ADMIN: CONFIG -->
         <div id="view-admin-config" class="view card card-dark">
             <h2>Configuration Globale</h2>
+            <div id="cfg-msg" class="inline-alert"></div>
             <div class="row">
                 <div class="col"><div class="form-group"><label>Tarif Adulte (€)</label><input type="number" id="cfg-adulte" class="form-control"></div></div>
                 <div class="col"><div class="form-group"><label>Tarif Enfant (€)</label><input type="number" id="cfg-enfant" class="form-control"></div></div>
@@ -271,13 +307,13 @@
             <label style="display: block; margin-bottom: 10px;"><input type="checkbox" id="cfg-page-book"> Activer la page de Réservation</label>
             <label style="display: block; margin-bottom: 10px;"><input type="checkbox" id="cfg-page-manage"> Activer la gestion des réservations</label>
             <label style="display: block; margin-bottom: 20px;"><input type="checkbox" id="cfg-page-help"> Activer la FAQ / Support</label>
-            <button class="btn btn-success" onclick="saveAdminConfig()">Sauvegarder les paramètres</button>
+            <button class="btn btn-success" style="width:auto;" onclick="saveAdminConfig()">Sauvegarder les paramètres <span class="loader" id="loader-cfg"></span></button>
         </div>
 
         <!-- ADMIN: DISPONIBILITÉS & HEURES -->
         <div id="view-admin-dates" class="view card card-dark">
             <h2>Disponibilités & Heures</h2>
-            <p style="color:#cbd5e1; font-size: 14px;">Sélectionnez une ou plusieurs dates. Définissez les heures exactes puis cliquez sur Publier.</p>
+            <p style="color:#cbd5e1; font-size: 14px;">Sélectionnez une ou plusieurs dates, définissez les heures exactes puis cliquez sur Publier.</p>
             
             <div style="display:flex; justify-content:flex-end; margin-bottom:15px; gap:10px;">
                 <button class="btn btn-secondary btn-small" style="background:#334155; color:white;" onclick="changeAdminMonth(-1)">&larr; Précédent</button>
@@ -287,20 +323,20 @@
             <div id="admin-cal-edit-wrapper" class="calendar-wrapper"></div>
             
             <div id="bulk-panel" class="inline-editor" style="display:none; flex-direction: column; align-items: stretch;">
-                <div style="font-size: 16px;"><b style="color:var(--secondary);" id="bulk-count">0</b> date(s) en attente de publication.</div>
+                <div style="font-size: 16px;"><b style="color:var(--secondary);" id="bulk-count">0</b> date(s) sélectionnée(s).</div>
                 <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 10px;">
-                    <div style="flex:1; background: var(--dark-surface); padding: 15px; border-radius: 6px;">
+                    <div style="flex:1; background: var(--dark-surface); padding: 15px; border-radius: 6px; border: 1px solid var(--dark-border);">
                         <label style="display:flex; align-items:center; gap:8px; font-weight:bold; margin-bottom:10px;"><input type="checkbox" id="bulk-matin" checked> Ouvert le Matin</label>
                         <input type="time" id="time-val-m" class="form-control" value="08:00">
                     </div>
-                    <div style="flex:1; background: var(--dark-surface); padding: 15px; border-radius: 6px;">
+                    <div style="flex:1; background: var(--dark-surface); padding: 15px; border-radius: 6px; border: 1px solid var(--dark-border);">
                         <label style="display:flex; align-items:center; gap:8px; font-weight:bold; margin-bottom:10px;"><input type="checkbox" id="bulk-apresmidi"> Ouvert l'Après midi</label>
                         <input type="time" id="time-val-a" class="form-control" value="14:30">
                     </div>
                 </div>
                 <div style="display: flex; gap: 10px; margin-top: 15px;">
-                    <button id="bulk-btn" class="btn btn-success" onclick="applyBulkDispo()">Publier ces horaires</button>
-                    <button class="btn btn-danger" style="width: 150px;" onclick="clearSelection()">Annuler</button>
+                    <button id="bulk-btn" class="btn btn-success" style="width:auto;" onclick="applyBulkDispo()">Publier ces horaires</button>
+                    <button class="btn btn-danger" style="width: auto;" onclick="clearSelection()">Annuler</button>
                 </div>
             </div>
         </div>
@@ -308,8 +344,8 @@
         <!-- ADMIN: DATES DISPO SUMMARY -->
         <div id="view-admin-summary" class="view card card-dark">
             <h2>Résumé des Dates Actives</h2>
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
-                <div style="display:flex; gap:15px; font-size:12px; color:#cbd5e1;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px; flex-wrap:wrap; gap:15px;">
+                <div style="display:flex; gap:15px; font-size:13px; color:#cbd5e1; font-weight:bold;">
                     <div style="display:flex; align-items:center; gap:5px;"><span class="time-dot matin" style="position:static;"></span> Matin</div>
                     <div style="display:flex; align-items:center; gap:5px;"><span class="time-dot apresmidi" style="position:static;"></span> Après midi</div>
                 </div>
@@ -323,10 +359,11 @@
 
         <!-- ADMIN: RESERVATIONS -->
         <div id="view-admin-bookings" class="view card card-dark">
-            <h2>Suivi des Réservations</h2>
-            <div style="overflow-x: auto;">
+            <h2>Gestion des Réservations</h2>
+            <div id="adm-res-alert" class="inline-alert"></div>
+            <div class="table-responsive">
                 <table id="adm-table-bookings">
-                    <thead><tr><th>ID</th><th>Client</th><th>Trajet & Date</th><th>Pax</th><th>Total</th><th>Statut</th><th style="min-width: 140px;">Action</th></tr></thead>
+                    <thead><tr><th>ID</th><th>Client</th><th>Trajet & Date</th><th>Pax</th><th>Total</th><th>Statut</th><th style="min-width: 150px;">Action</th></tr></thead>
                     <tbody></tbody>
                 </table>
             </div>
@@ -334,17 +371,38 @@
 
         <!-- ADMIN: STATS -->
         <div id="view-admin-stats" class="view card card-dark">
-            <h2>Statistiques et Rapports</h2>
+            <h2>Statistiques de Réservation</h2>
+            <p style="color:#cbd5e1; font-size:13px; margin-bottom: 20px;">Basé uniquement sur les réservations validées et payées.</p>
+            
             <div class="row" style="margin-bottom: 30px;">
-                <div class="stat-box"><p>Aujourd'hui</p><h3 id="stat-day">0</h3></div>
-                <div class="stat-box"><p>Cette Semaine</p><h3 id="stat-week">0</h3></div>
-                <div class="stat-box"><p>Ce Mois-ci</p><h3 id="stat-month">0</h3></div>
-                <div class="stat-box"><p>Cette Année</p><h3 id="stat-year">0</h3></div>
+                <div class="stat-box">
+                    <p id="label-stat-day">Aujourd'hui</p>
+                    <h3 id="stat-day-val">0€ / 0 KMF</h3>
+                    <div class="stat-sub"><span id="stat-day-voy">0</span> voyage(s) | <span id="stat-day-ad">0</span> Ad. | <span id="stat-day-en">0</span> Enf.</div>
+                </div>
+                <div class="stat-box">
+                    <p id="label-stat-week">Cette Semaine</p>
+                    <h3 id="stat-week-val">0€ / 0 KMF</h3>
+                    <div class="stat-sub"><span id="stat-week-voy">0</span> voyage(s) | <span id="stat-week-ad">0</span> Ad. | <span id="stat-week-en">0</span> Enf.</div>
+                </div>
             </div>
-            <h3>Liste des départs de la semaine</h3>
-            <div style="overflow-x: auto;">
+            <div class="row" style="margin-bottom: 40px;">
+                <div class="stat-box">
+                    <p id="label-stat-month">Ce Mois-ci</p>
+                    <h3 id="stat-month-val">0€ / 0 KMF</h3>
+                    <div class="stat-sub"><span id="stat-month-voy">0</span> voyage(s) | <span id="stat-month-ad">0</span> Ad. | <span id="stat-month-en">0</span> Enf.</div>
+                </div>
+                <div class="stat-box">
+                    <p id="label-stat-year">Cette Année</p>
+                    <h3 id="stat-year-val">0€ / 0 KMF</h3>
+                    <div class="stat-sub"><span id="stat-year-voy">0</span> voyage(s) | <span id="stat-year-ad">0</span> Ad. | <span id="stat-year-en">0</span> Enf.</div>
+                </div>
+            </div>
+            
+            <h3>Liste des 10 dernières journées actives</h3>
+            <div class="table-responsive">
                 <table id="adm-table-stats">
-                    <thead><tr><th>Date</th><th>Réservations</th><th>Passagers</th><th>Revenus</th></tr></thead>
+                    <thead><tr><th>Date</th><th>Voyages</th><th>Adultes</th><th>Enfants</th><th>Revenus</th></tr></thead>
                     <tbody></tbody>
                 </table>
             </div>
@@ -353,13 +411,14 @@
         <!-- ADMIN: FAQ -->
         <div id="view-admin-faq" class="view card card-dark">
             <h2>Gestion de la FAQ</h2>
-            <div style="background: var(--dark-input); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+            <div id="adm-faq-alert" class="inline-alert"></div>
+            <div style="background: var(--dark-input); padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid var(--dark-border);">
                 <div class="form-group"><label>Question</label><input type="text" id="adm-faq-q" class="form-control"></div>
                 <div class="form-group"><label>Réponse</label><textarea id="adm-faq-a" class="form-control" rows="2"></textarea></div>
                 <button class="btn btn-secondary" style="background:#475569; color:white; width: auto;" onclick="addAdminFAQ()">Ajouter à la liste</button>
             </div>
             <div id="adm-faq-list"></div>
-            <button class="btn btn-success" style="margin-top:15px;" onclick="saveAdminFAQ()">Enregistrer la FAQ en ligne</button>
+            <button class="btn btn-success" style="margin-top:15px; width:auto;" onclick="saveAdminFAQ()">Enregistrer la FAQ en ligne <span class="loader" id="loader-faq"></span></button>
         </div>
 
         <!-- ADMIN: CHAT -->
@@ -384,7 +443,9 @@
         // === LIEN GOOGLE SCRIPT ===
         const API_URL = 'https://script.google.com/macros/s/AKfycbzWQieP3ZJXAdAtZze7EU0l-xue14EOj9gOvpgWaMNvIg10YeU9EmBn9ZEPP8JH0vA/exec'; 
         
-        // INDICATIFS TELEPHONIQUES SANS EMOJI
+        // FORMATAGE DEVISES KMF (SANS PARENTHESES)
+        function formatPrice(eur) { return `${eur}€ / ${eur * 500} KMF`; }
+
         const PHONE_CODES = [
             ['+269','Comores'], ['+262','Mayotte'], ['+33','France'], ['---','──────────'],
             ['+213','Algérie'],['+49','Allemagne'],['+32','Belgique'],['+1','Canada'],
@@ -403,41 +464,38 @@
 
         const monthsNames = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
 
-        // Routage par Hash
-        window.addEventListener('hashchange', () => { handleRouting(); });
+        function showMsg(id, type, text) {
+            const el = document.getElementById(id); if(!el) return;
+            el.className = `inline-alert alert-${type}`; el.textContent = text; el.style.display = 'block';
+            setTimeout(() => { el.style.display = 'none'; }, 5000);
+        }
 
-        function navigate(path) { window.location.hash = '/' + path; }
-
-        function handleRouting() {
-            let path = window.location.hash.replace('#/', '');
-            if(!path) path = 'home';
+        // --- GESTION DES VUES (SANS HASH DANS L'URL) ---
+        function navigate(viewId) {
+            // Sécurités et redirections
+            if(!state.user && !['home', 'help', 'login'].includes(viewId)) viewId = 'login';
+            if(state.user && state.user.role !== 'admin' && viewId.startsWith('admin')) viewId = 'home';
             
-            // Sécurité : Redirection si non connecté ou non admin
-            if(!state.user && !['home', 'help', 'login'].includes(path)) { path = 'login'; window.location.hash = '/login'; return; }
-            if(state.user && state.user.role !== 'admin' && path.startsWith('admin')) { path = 'home'; window.location.hash = '/home'; return; }
-            
-            // Maintenance check pour clients
+            // Maintenance check
             if(state.user?.role !== 'admin') {
-                if(path === 'home' && !state.config.pageBook) path = 'maintenance';
-                if(path === 'manage' && !state.config.pageManage) path = 'maintenance';
-                if(path === 'help' && !state.config.pageHelp) path = 'maintenance';
+                if(viewId === 'home' && !state.config.pageBook) viewId = 'maintenance';
+                if(viewId === 'manage' && !state.config.pageManage) viewId = 'maintenance';
+                if(viewId === 'help' && !state.config.pageHelp) viewId = 'maintenance';
             }
 
-            // Gestion de l'affichage des Vues
             document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
-            const targetView = document.getElementById('view-' + path.replace('/', '-'));
+            const targetView = document.getElementById('view-' + viewId.replace('/', '-'));
             if(targetView) targetView.classList.add('active'); else document.getElementById('view-home').classList.add('active');
             
-            // MAJ Navbar active states
             document.querySelectorAll('.nav-links a').forEach(el => el.classList.remove('active'));
-            const navLink = document.getElementById('nav-' + path.replace('/', '-'));
+            const navLink = document.getElementById('nav-' + viewId.replace('/', '-'));
             if(navLink) navLink.classList.add('active');
 
-            // Initialisations spécifiques
-            if(path === 'home') renderCalendar();
-            if(path === 'manage') renderMyBookings();
-            if(path === 'help') renderFAQ();
-            if(path === 'account') {
+            // Render spécifiques
+            if(viewId === 'home') renderCalendar();
+            if(viewId === 'manage') renderMyBookings();
+            if(viewId === 'help') renderFAQ();
+            if(viewId === 'account') {
                 if(state.user.role === 'admin') {
                     document.getElementById('view-account-client').style.display = 'none';
                     document.getElementById('view-account-admin').style.display = 'block';
@@ -447,16 +505,13 @@
                     document.getElementById('view-account-client').style.display = 'block';
                 }
             }
-            
-            // Admin Init
-            if(path.startsWith('admin')) {
-                if(path === 'admin/config') fillAdminConfig();
-                if(path === 'admin/dates') renderAdminCalendarEdit();
-                if(path === 'admin/summary') renderAdminCalendarSummary();
-                if(path === 'admin/bookings') renderAdminBookings();
-                if(path === 'admin/stats') renderAdminStats();
-                if(path === 'admin/faq') renderAdminFAQList();
-                if(path === 'admin/chat') renderAdminChats();
+            if(viewId.startsWith('admin')) {
+                if(viewId === 'admin/config') fillAdminConfig();
+                if(viewId === 'admin/dates') renderAdminCalendarEdit();
+                if(viewId === 'admin/summary') renderAdminCalendarSummary();
+                if(viewId === 'admin/bookings') renderAdminBookings();
+                if(viewId === 'admin/stats') renderAdminStats();
+                if(viewId === 'admin/faq') renderAdminFAQList();
             }
         }
 
@@ -476,14 +531,39 @@
         function toggleAuthMode(mode) {
             document.getElementById('form-login-box').style.display = mode === 'login' ? 'block' : 'none';
             document.getElementById('form-register-box').style.display = mode === 'register' ? 'block' : 'none';
+            document.getElementById('form-recovery-box').style.display = 'none';
             document.getElementById('tab-login').style.borderBottomColor = mode === 'login' ? 'var(--secondary)' : 'transparent';
             document.getElementById('tab-login').style.color = mode === 'login' ? 'white' : '#94a3b8';
             document.getElementById('tab-register').style.borderBottomColor = mode === 'register' ? 'var(--secondary)' : 'transparent';
             document.getElementById('tab-register').style.color = mode === 'register' ? 'white' : '#94a3b8';
-            document.getElementById('auth-msg').textContent = '';
         }
 
         function togglePwd(id) { const el = document.getElementById(id); el.type = el.type === 'password' ? 'text' : 'password'; }
+
+        // --- RECOVERY ---
+        let recoveryMode = '';
+        function showRecovery(mode) {
+            recoveryMode = mode;
+            document.getElementById('form-login-box').style.display = 'none';
+            document.getElementById('form-recovery-box').style.display = 'block';
+            document.getElementById('recovery-title').innerText = mode === 'pwd' ? 'Mot de passe oublié' : 'Demande de débannissement';
+        }
+        function hideRecovery() {
+            document.getElementById('form-recovery-box').style.display = 'none';
+            document.getElementById('form-login-box').style.display = 'block';
+        }
+        async function processRecovery() {
+            const email = document.getElementById('recovery-email').value.trim().toLowerCase();
+            if(!email) { showMsg('auth-inline-alert', 'error', 'Email requis.'); return; }
+            document.getElementById('loader-rec').style.display = 'inline-block';
+            
+            const act = recoveryMode === 'pwd' ? 'reset_pwd' : 'request_unban';
+            const res = await apiCall(act, { email });
+            document.getElementById('loader-rec').style.display = 'none';
+            
+            if(res.success) { showMsg('auth-inline-alert', 'success', 'Demande envoyée. Vérifiez vos emails.'); hideRecovery(); } 
+            else { showMsg('auth-inline-alert', 'error', res.error); }
+        }
 
         async function apiCall(action, payload) {
             try {
@@ -495,19 +575,20 @@
         async function doLogin() {
             const email = document.getElementById('login-email').value.trim().toLowerCase();
             const pwd = document.getElementById('login-pwd').value;
-            const msg = document.getElementById('auth-msg');
-            if(!email || !pwd) { msg.style.color = 'var(--error)'; msg.textContent = 'Champs requis.'; return; }
+            if(!email || !pwd) { showMsg('auth-inline-alert', 'error', 'Champs requis.'); return; }
             
-            document.getElementById('loader-login').style.display = 'inline-block'; msg.textContent = '';
+            document.getElementById('loader-login').style.display = 'inline-block';
             const hash = await hashPassword(pwd);
-            
-            // Bypass spécial frontend pour ne transmettre que le hash au backend
             const tokenStr = btoa(email + ":" + hash);
             const res = await apiCall('login', { token: tokenStr });
             document.getElementById('loader-login').style.display = 'none';
             
-            if(res.success) { state.user = res.user; state.token = tokenStr; updateNav(); syncData(true); navigate(state.user.role === 'admin' ? 'admin/bookings' : 'home'); } 
-            else { msg.style.color = 'var(--error)'; msg.textContent = res.error; }
+            if(res.success) { 
+                state.user = res.user; state.token = tokenStr; 
+                localStorage.setItem('abm_session', JSON.stringify({token: state.token, user: state.user}));
+                updateNav(); syncData(true); 
+                navigate(state.user.role === 'admin' ? 'admin/bookings' : 'home'); 
+            } else { showMsg('auth-inline-alert', 'error', res.error); }
         }
 
         async function doRegister() {
@@ -515,27 +596,21 @@
             const email = document.getElementById('reg-email').value.trim().toLowerCase();
             const phone = document.getElementById('reg-phone-code').value + " " + document.getElementById('reg-phone').value;
             const pwd = document.getElementById('reg-pwd').value;
-            const msg = document.getElementById('auth-msg');
             
-            if(!name || !email || pwd.length < 6) { msg.style.color = 'var(--error)'; msg.textContent = 'Champs incorrects (mdp min 6 car).'; return; }
+            if(!name || !email || pwd.length < 6) { showMsg('auth-inline-alert', 'error', 'Champs incorrects (mdp min 6 car).'); return; }
             document.getElementById('loader-reg').style.display = 'inline-block';
             const hash = await hashPassword(pwd);
             const res = await apiCall('register', { name, email, phone, hash });
             document.getElementById('loader-reg').style.display = 'none';
             
-            if(res.success) { msg.style.color = 'var(--success)'; msg.textContent = 'Compte créé !'; setTimeout(() => toggleAuthMode('login'), 2000); } 
-            else { msg.style.color = 'var(--error)'; msg.textContent = res.error; }
+            if(res.success) { showMsg('auth-inline-alert', 'success', 'Compte créé/réactivé !'); setTimeout(() => toggleAuthMode('login'), 2000); } 
+            else { showMsg('auth-inline-alert', 'error', res.error); }
         }
 
-        async function requestUnban() {
-            const email = prompt("Veuillez entrer votre adresse e-mail pour demander la réactivation :");
-            if(email) {
-                alert("Demande envoyée. Un administrateur va traiter votre requête.");
-                apiCall('request_unban', { email: email.trim().toLowerCase() });
-            }
+        function logout() { 
+            state.user = null; state.token = null; localStorage.removeItem('abm_session'); 
+            updateNav(); navigate('login'); 
         }
-
-        function logout() { state.user = null; state.token = null; updateNav(); navigate('login'); }
 
         function updateNav() {
             const navLinks = document.getElementById('main-nav-links');
@@ -544,7 +619,6 @@
             const btnAcc = document.getElementById('btn-account-nav');
             const bell = document.getElementById('notif-bell');
 
-            navLinks.innerHTML = '';
             if(state.user && state.user.role === 'admin') {
                 navLinks.innerHTML = `
                     <a id="nav-admin-config" onclick="navigate('admin/config')">Configuration</a>
@@ -552,7 +626,6 @@
                     <a id="nav-admin-summary" onclick="navigate('admin/summary')">Dates Dispo</a>
                     <a id="nav-admin-faq" onclick="navigate('admin/faq')">Gestion FAQ</a>
                     <a id="nav-admin-bookings" onclick="navigate('admin/bookings')">Réservations</a>
-                    <a id="nav-admin-chat" onclick="navigate('admin/chat')">Messages Clients</a>
                     <a id="nav-admin-stats" onclick="navigate('admin/stats')">Statistiques</a>`;
                 bell.style.display = 'flex';
                 btnAcc.style.display = 'flex'; btnLog.style.display = 'none'; btnOut.style.display = 'block';
@@ -565,10 +638,8 @@
                 if(state.user) { btnAcc.style.display = 'flex'; btnLog.style.display = 'none'; btnOut.style.display = 'block'; }
                 else { btnAcc.style.display = 'none'; btnLog.style.display = 'block'; btnOut.style.display = 'none'; }
             }
-            handleRouting();
         }
 
-        // --- BACKGROUND SYNC & NOTIFS ---
         async function syncData(initial = false) {
             const res = await apiCall('sync', { token: state.token || 'public' });
             if(res.success) {
@@ -576,38 +647,37 @@
                 state.faqs = res.data.faqs || [];
                 
                 if (state.user) {
-                    const oldBookingsLength = state.bookings.length;
                     state.bookings = res.data.bookings || [];
                     state.chats = res.data.chats || [];
                     if(state.user.role === 'admin') state.usersList = res.data.users || [];
                     
-                    // Notifs Admin
                     if(!initial && state.user.role === 'admin') {
                         const newB = state.bookings.filter(b => b.id > state.lastSeenBookingId);
                         if(newB.length > 0) {
                             state.unreadNotifs += newB.length;
-                            newB.forEach(b => state.notifications.unshift(`Nouvelle résa. ID: ${b.id} (${b.total}€)`));
-                            if(state.notifications.length > 5) state.notifications.pop();
+                            newB.forEach(b => state.notifications.unshift(`Réservation ${b.id} (${b.total}€)`));
+                            if(state.notifications.length > 5) state.notifications.length = 5;
                             updateBell();
                         }
                     }
                     if(state.bookings.length > 0) state.lastSeenBookingId = Math.max(...state.bookings.map(b=>b.id));
                 }
-                
                 applyConfigUI();
                 
-                // Actualisation silencieuse des vues si déjà ouvertes
-                const path = window.location.hash.replace('#/', '');
-                if(path === 'home') renderCalendar();
-                if(path === 'manage') renderMyBookings();
-                if(path === 'help') renderFAQ();
-                if(path === 'account' && state.user?.role === 'admin') renderAdminClients();
-                if(path === 'admin/bookings') renderAdminBookings();
-                if(path === 'admin/stats') renderAdminStats();
-                if(path === 'admin/chat') renderAdminChats();
+                // Actualisation des vues courantes
+                const activeViews = document.querySelectorAll('.view.active');
+                if(activeViews.length > 0) {
+                    const vId = activeViews[0].id.replace('view-', '');
+                    if(vId === 'home') renderCalendar();
+                    if(vId === 'manage') renderMyBookings();
+                    if(vId === 'help') renderFAQ();
+                    if(vId === 'account-admin') renderAdminClients();
+                    if(vId === 'admin-bookings') renderAdminBookings();
+                    if(vId === 'admin-stats') renderAdminStats();
+                }
             }
         }
-        setInterval(() => { syncData(); }, 20000); // Tâche de fond silencieuse
+        setInterval(() => { syncData(); }, 15000);
 
         function updateBell() {
             const badge = document.getElementById('notif-badge');
@@ -620,13 +690,13 @@
             else { 
                 drop.style.display = 'flex'; state.unreadNotifs = 0; updateBell(); 
                 const list = document.getElementById('notif-list');
-                list.innerHTML = state.notifications.length === 0 ? '<div class="notif-item">Aucune notification</div>' : state.notifications.map(n => `<div class="notif-item">${n}</div>`).join('');
+                list.innerHTML = state.notifications.length === 0 ? '<div class="notif-item">Aucune notification</div>' : state.notifications.map(n => `<div class="notif-item" onclick="navigate('admin/bookings'); toggleNotifs();">${n}</div>`).join('');
             }
         }
 
         function applyConfigUI() {
-            document.getElementById('txt-penalty').textContent = state.config.penalty;
-            document.getElementById('price-bag').textContent = state.config.priceBag;
+            document.getElementById('txt-penalty').textContent = formatPrice(state.config.penalty);
+            document.getElementById('price-bag').textContent = formatPrice(state.config.priceBag);
             document.getElementById('bagage-section').style.display = state.config.featBag ? 'block' : 'none';
             calcTotal();
         }
@@ -634,12 +704,12 @@
         // --- COMPTE CLIENT (ARCHIVAGE) ---
         async function archiveClientAccount() {
             const pwd = document.getElementById('del-pwd').value;
-            if(!pwd) { alert("Mot de passe requis."); return; }
-            if(confirm("Voulez-vous vraiment archiver votre compte ? Vous serez déconnecté.")) {
-                const hash = await hashPassword(pwd);
-                const res = await apiCall('archive_account', { token: state.token, hash: hash });
-                if(res.success) { alert("Compte archivé."); logout(); } else { alert(res.error); }
-            }
+            if(!pwd) { showMsg('client-acc-alert', 'error', 'Mot de passe requis.'); return; }
+            document.getElementById('loader-del').style.display = 'inline-block';
+            const hash = await hashPassword(pwd);
+            const res = await apiCall('archive_account', { token: state.token, hash: hash });
+            document.getElementById('loader-del').style.display = 'none';
+            if(res.success) { alert("Compte archivé. Vous êtes déconnecté."); logout(); } else { showMsg('client-acc-alert', 'error', res.error); }
         }
 
         // --- HOME CLIENT ---
@@ -673,11 +743,11 @@
             const bag = document.getElementById('book-bagages').checked && state.config.featBag;
             let tot = (ad * state.config.priceAdult) + (ch * state.config.priceChild);
             if(bag) tot += state.config.priceBag;
-            document.getElementById('book-total').textContent = tot; return tot;
+            document.getElementById('book-total').textContent = formatPrice(tot); return tot;
         }
 
         async function submitBooking() {
-            if(!state.selectedDate || !state.selectedTime) { alert("Sélectionnez date et heure."); return; }
+            if(!state.selectedDate || !state.selectedTime) { showMsg('book-msg', 'error', 'Sélectionnez date et heure.'); return; }
             document.getElementById('loader-book').style.display = 'inline-block';
             
             const exactTime = state.selectedTime === 'Matin' ? state.dates[state.selectedDate].m_time : state.dates[state.selectedDate].a_time;
@@ -692,29 +762,28 @@
             const res = await apiCall('book', { token: state.token, booking });
             document.getElementById('loader-book').style.display = 'none';
             if(res.success) {
-                document.getElementById('book-msg').style.color = 'var(--success)';
-                document.getElementById('book-msg').textContent = 'Réservation confirmée !';
-                setTimeout(() => { document.getElementById('book-msg').textContent = ''; syncData(); navigate('manage'); }, 2000);
+                showMsg('book-msg', 'success', 'Réservation confirmée ! Redirection...');
+                setTimeout(() => { document.getElementById('book-msg').style.display='none'; syncData(); navigate('manage'); }, 2000);
             }
         }
 
         function renderMyBookings() {
             const container = document.getElementById('client-bookings-list'); if(!state.user) return;
             const myb = state.bookings.filter(b => b.client === state.user.email && !b.status.includes('Annulée'));
-            container.innerHTML = myb.length === 0 ? '<p>Aucune réservation active.</p>' : myb.map(b => {
+            container.innerHTML = myb.length === 0 ? '<p style="color:#666;">Aucune réservation active.</p>' : myb.map(b => {
                 let cancelBtn = '';
-                if(!b.status.includes('Annulée')) cancelBtn = `<button class="btn btn-danger" style="padding: 6px 12px; width: auto; font-size: 13px;" onclick="cancelBooking(${b.id})">Annuler</button>`;
+                if(!b.status.includes('Annulée')) cancelBtn = `<button class="btn btn-danger btn-small" onclick="cancelBooking(${b.id})">Annuler</button>`;
                 return `<div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #ccc;">
-                    <div style="display:flex; justify-content: space-between; align-items: center;">
-                        <div><strong style="color:var(--primary);">${b.route}</strong> - ${b.date} (${b.time})<br><small>${b.pax} | Total : <b>${b.total}€</b></small><br><span class="badge ${b.status.includes('payée')?'badge-success':'badge-warning'}">${b.status}</span></div>
+                    <div style="display:flex; justify-content: space-between; align-items: center; flex-wrap:wrap; gap:10px;">
+                        <div><strong style="color:var(--primary);">${b.route}</strong> - ${b.date} ${b.time}<br><small>${b.pax} | Total : <b>${formatPrice(b.total)}</b></small><br><span class="badge ${b.status.includes('payé')?'badge-success':'badge-warning'}">${b.status}</span></div>
                         <div>${cancelBtn}</div>
                     </div></div>`;
             }).join('');
         }
         async function cancelBooking(id) {
-            if(confirm("Confirmer l'annulation ? Pénalité possible selon le délai.")) {
-                await apiCall('cancel', { token: state.token, id }); syncData();
-            }
+            showMsg('manage-msg', 'warning', 'Annulation en cours...');
+            const res = await apiCall('cancel', { token: state.token, id });
+            if(res.success) { showMsg('manage-msg', 'success', 'Réservation annulée.'); syncData(); }
         }
         function renderFAQ() {
             const container = document.getElementById('faq-container'); container.innerHTML = '';
@@ -736,13 +805,16 @@
             document.getElementById('cfg-page-help').checked = state.config.pageHelp;
         }
         async function saveAdminConfig() {
+            document.getElementById('loader-cfg').style.display='inline-block';
             const c = {
                 priceAdult: parseFloat(document.getElementById('cfg-adulte').value)||0, priceChild: parseFloat(document.getElementById('cfg-enfant').value)||0,
                 priceBag: parseFloat(document.getElementById('cfg-bagage').value)||0, penalty: parseFloat(document.getElementById('cfg-penalty').value)||0,
                 featBag: document.getElementById('cfg-feat-bag').checked,
                 pageBook: document.getElementById('cfg-page-book').checked, pageManage: document.getElementById('cfg-page-manage').checked, pageHelp: document.getElementById('cfg-page-help').checked
             };
-            await apiCall('admin_config', { token: state.token, config: c }); syncData(); alert('Configuration sauvegardée.');
+            const res = await apiCall('admin_config', { token: state.token, config: c });
+            document.getElementById('loader-cfg').style.display='none';
+            if(res.success) { showMsg('cfg-msg', 'success', 'Configuration sauvegardée.'); syncData(); }
         }
 
         // --- ADMIN: GESTION COMPTES ---
@@ -753,15 +825,15 @@
             state.usersList.forEach(u => {
                 const isArchived = u.archived || u.banned;
                 const actions = isArchived 
-                    ? `<button class="btn btn-success btn-small" onclick="adminToggleUser('${u.email}', false)">Réactiver</button>`
-                    : `<button class="btn btn-danger btn-small" onclick="adminToggleUser('${u.email}', true)">Archiver/Désactiver</button>`;
-                const tr = `<tr><td>${u.name}</td><td>${u.email}<br><small>${u.phone}</small></td><td>${isArchived ? (u.banned ? 'Désactivé' : 'Archivé') : 'Actif'}</td><td>${actions}</td></tr>`;
-                
+                    ? `<button class="btn btn-success btn-small" onclick="adminToggleUser('${u.email}', false)">Débannir / Réactiver</button>`
+                    : `<button class="btn btn-danger btn-small" onclick="adminToggleUser('${u.email}', true)">Désactiver</button>`;
+                const tr = `<tr><td>${u.name}</td><td>${u.email}<br><small>${u.phone}</small></td>${isArchived ? `<td><span class="badge ${u.banned?'badge-danger':'badge-warning'}">${u.banned ? 'Banni' : 'Archivé'}</span></td>`:''}<td>${actions}</td></tr>`;
                 if(isArchived) tBan.innerHTML += tr; else tActif.innerHTML += tr;
             });
         }
         async function adminToggleUser(email, banStatus) {
-            await apiCall('admin_toggle_user', { token: state.token, userEmail: email, ban: banStatus }); syncData();
+            const res = await apiCall('admin_toggle_user', { token: state.token, userEmail: email, ban: banStatus });
+            if(res.success) { showMsg('admin-acc-alert', 'success', 'Statut du compte mis à jour.'); syncData(); }
         }
 
         // --- ADMIN: CALENDARS ---
@@ -837,22 +909,48 @@
         }
 
         // --- ADMIN: RESERVATIONS ---
+        const loadImage = (url) => new Promise((resolve) => { const img = new Image(); img.crossOrigin = 'Anonymous'; img.onload = () => resolve(img); img.onerror = () => resolve(null); img.src = url; });
+
         async function validerRes(id, paymentStatus) {
+            showMsg('adm-res-alert', 'warning', 'Génération du PDF et envoi en cours...');
             const booking = state.bookings.find(b => b.id == id); if (!booking) return;
             const fullStatus = paymentStatus === 'payé' ? 'Validé et payé' : 'Confirmée (Non payé)';
             
-            // Generate PDF Simple
             const { jsPDF } = window.jspdf; const doc = new jsPDF({ unit: 'mm', format: 'a4' });
-            doc.setFontSize(16); doc.text("FACTURE - AB MOTORS", 105, 20, { align: 'center' });
-            doc.setFontSize(11);
-            doc.text(`N° Réservation : ${booking.id}`, 20, 40); doc.text(`Client : ${booking.name}`, 20, 50);
-            doc.text(`Trajet : ${booking.route} le ${booking.date} à ${booking.time}`, 20, 60);
-            doc.text(`Passagers : ${booking.pax}`, 20, 70); doc.text(`Total : ${booking.total} EUR`, 20, 80);
-            doc.text(`Statut : ${paymentStatus.toUpperCase()}`, 20, 90);
+            const pageW = 210; const leftX = 15; const rightX = 110;
+            const imgLogo = await loadImage('unnammmed.png');
+            if (imgLogo) { const logoW = 38; const ratio = imgLogo.naturalHeight / imgLogo.naturalWidth; const logoH = Math.min(logoW * ratio, 38); doc.addImage(imgLogo, 'PNG', 5, 5, logoW, logoH); }
             
+            let y = 48; doc.setFontSize(14); doc.setFont("helvetica", "bold"); doc.text("Votre reçu d'achat de services / Booking Receipt", pageW / 2, y, { align: 'center' });
+            y += 14; doc.setFontSize(10);
+            doc.text("Numéro de réservation / Booking Ref :", leftX, y); doc.setFont("helvetica", "normal"); doc.text(String(booking.id), leftX + 65, y);
+            doc.setFont("helvetica", "bold"); doc.text("Agence émettrice / Issuing office :", rightX, y); doc.setFont("helvetica", "normal"); doc.text("AB MOTORS", rightX + 58, y);
+            
+            y += 7; doc.setFont("helvetica", "bold"); doc.text("Passager / Passenger :", leftX, y); doc.setFont("helvetica", "normal"); doc.text(booking.name || '', leftX + 40, y); doc.text("(+269) 3315118", rightX, y);
+            y += 7; doc.setFont("helvetica", "bold"); doc.text("Téléphone :", leftX, y); doc.setFont("helvetica", "normal"); doc.text(booking.phone || '', leftX + 21, y); doc.text("(+269) 4350423", rightX, y);
+            y += 7; doc.setFont("helvetica", "bold"); doc.text("Date d'émission / Date of Issuance :", rightX, y); doc.setFont("helvetica", "normal"); doc.text(new Date().toLocaleDateString('fr-FR'), rightX + 61, y);
+
+            y += 14; doc.setFillColor(230, 230, 230); doc.rect(leftX, y, 180, 10, 'F');
+            doc.setFont("helvetica", "bold"); doc.text("Trajet / Route", leftX + 3, y + 7); doc.text("Dates / Horaires", leftX + 58, y + 7); doc.text("Statut", leftX + 118, y + 7); doc.text("Passagers", leftX + 153, y + 7);
+            
+            y += 10; doc.setFont("helvetica", "normal");
+            doc.text(booking.route, leftX + 3, y + 8); doc.text(`${booking.date} (${booking.time})`, leftX + 58, y + 8); doc.text("Confirmé", leftX + 118, y + 8); doc.text(booking.pax.split(',')[0], leftX + 158, y + 8);
+            doc.setDrawColor(200); doc.line(leftX, y + 12, 195, y + 12); y += 22;
+
+            y += 14; doc.setFont("helvetica", "bold"); doc.setFontSize(11); doc.text("Détails paiement / Payment Details", leftX, y);
+            y += 10; doc.setFontSize(10); doc.text(`Tarif total / Total Fare : ${formatPrice(booking.total)}`, leftX, y);
+            y += 10;
+            if (paymentStatus === 'payé') { doc.setTextColor(40, 167, 69); doc.text("Statut du paiement : PAYÉ", leftX, y); } 
+            else { doc.setTextColor(220, 53, 69); doc.text("Statut du paiement : RESTE À PAYER SUR PLACE", leftX, y); }
+            
+            y += 15; const imgBas = await loadImage('Gemini_Generabbted_Image_.png');
+            if (imgBas) { doc.addImage(imgBas, 'PNG', 150, y, 45, 45); }
+            y += 50; doc.setTextColor(100, 100, 100); doc.setFontSize(9); doc.text("Mentions légales / Notice", pageW / 2, y, { align: 'center' }); y += 6;
+            doc.setFont("helvetica", "normal"); doc.text("Lorsque ce document est délivré pour le transport, des conditions particulières s'appliquent. AB MOTORS.", pageW / 2, y, { maxWidth: 180, align: 'center' });
+
             const pdfBase64 = doc.output('datauristring').split(',')[1];
-            await apiCall('validate_booking', { token: state.token, id: booking.id, email: booking.client, contact: booking.name, pdfBase64, newStatus: fullStatus });
-            alert("Facture envoyée au client !"); syncData();
+            const res = await apiCall('validate_booking', { token: state.token, id: booking.id, email: booking.client, contact: booking.name, pdfBase64, newStatus: fullStatus });
+            if(res.success) { showMsg('adm-res-alert', 'success', 'Statut mis à jour et PDF envoyé !'); syncData(); }
         }
 
         async function renvoyerFacture(id) { await validerRes(id, 'payé'); }
@@ -867,23 +965,30 @@
                 
                 if(st === 'en attente') {
                     actions += `<button class="btn btn-success btn-small" style="margin-bottom:5px;" onclick="validerRes(${b.id}, 'payé')">Validé et payé</button>`;
+                    actions += `<button class="btn btn-warning btn-small" style="background:#f59e0b; margin-bottom:5px;" onclick="validerRes(${b.id}, 'non payé')">Validé (Non Payé)</button>`;
                     actions += `<button class="btn btn-danger btn-small" style="margin-bottom:5px;" onclick="supprRes(${b.id})">Annuler</button>`;
                 } else if(st.includes('non payé')) {
                     actions += `<button class="btn btn-success btn-small" style="margin-bottom:5px;" onclick="validerRes(${b.id}, 'payé')">Marquer Payé</button>`;
+                    actions += `<button class="btn btn-danger btn-small" style="margin-bottom:5px;" onclick="supprRes(${b.id})">Annuler</button>`;
                 } else if(st.includes('payé')) {
                     actions += `<button class="btn btn-secondary btn-small" style="background:#475569;color:white;" onclick="renvoyerFacture(${b.id})">Renvoyer Facture</button>`;
                 }
 
-                // Clean routing text display
-                const cleanRoute = `${b.route} | ${b.date} (${b.time})`;
-                tr.innerHTML = `<td>${b.id}</td><td>${b.name}<br><small>${b.phone}<br>${b.client}</small></td><td><span style="font-size:12px;">${cleanRoute}</span></td><td>${b.pax}</td><td>${b.total}€</td><td><span class="badge badge-warning">${b.status}</span></td><td>${actions}</td>`;
+                tr.innerHTML = `<td>${b.id}</td><td>${b.name}<br><small>${b.phone}<br>${b.client}</small></td><td><span style="font-size:12px;">${b.route}<br>${b.date} ${b.time}</span></td><td>${b.pax}</td><td>${formatPrice(b.total)}</td><td><span class="badge ${st.includes('payé')?'badge-success':(st.includes('annulé')?'badge-danger':'badge-warning')}">${b.status}</span></td><td>${actions}</td>`;
                 tbody.appendChild(tr);
             });
         }
 
         // --- ADMIN: STATS ---
+        function getWeekStr(d) {
+            const date = new Date(d); const day = date.getDay() || 7; date.setHours(-24 * (day - 1));
+            const start = new Date(date); date.setHours(24 * 6); const end = new Date(date);
+            return `Semaine du ${start.toLocaleDateString('fr-FR')} au ${end.toLocaleDateString('fr-FR')}`;
+        }
+        function getMonthStr(d) { return new Date(d).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }); }
+        
         function renderAdminStats() {
-            let today=0, week=0, month=0, year=0;
+            let today = { r:0, v:0, a:0, e:0 }, week = { r:0, v:0, a:0, e:0 }, month = { r:0, v:0, a:0, e:0 }, year = { r:0, v:0, a:0, e:0 };
             const now = new Date();
             const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
             const startOfWeek = startOfDay - (now.getDay() || 7 - 1) * 86400000;
@@ -891,27 +996,44 @@
             const startOfYear = new Date(now.getFullYear(), 0, 1).getTime();
 
             const tbody = document.querySelector('#adm-table-stats tbody'); tbody.innerHTML = '';
-            let statsMap = {}; // Agrégation par date
+            let statsMap = {};
 
-            state.bookings.forEach(b => {
+            // Uniquement les Validés et Payés
+            state.bookings.filter(b => b.status.toLowerCase().includes('payé') || b.status.toLowerCase().includes('confirmée')).forEach(b => {
                 const ts = b.id; 
-                if(ts >= startOfDay) today += b.total;
-                if(ts >= startOfWeek) week += b.total;
-                if(ts >= startOfMonth) month += b.total;
-                if(ts >= startOfYear) year += b.total;
+                let ad = 0, en = 0;
+                const mAd = b.pax.match(/(\d+)\s*Adulte/); if(mAd) ad = parseInt(mAd[1]);
+                const mEn = b.pax.match(/(\d+)\s*Enfant/); if(mEn) en = parseInt(mEn[1]);
 
-                if(!statsMap[b.date]) statsMap[b.date] = { count: 0, pax: 0, rev: 0 };
-                statsMap[b.date].count++; statsMap[b.date].rev += b.total;
-                statsMap[b.date].pax += parseInt(b.pax.charAt(0)) || 1; // Simplification pour le demo
+                if(ts >= startOfDay) { today.r += b.total; today.v++; today.a += ad; today.e += en; }
+                if(ts >= startOfWeek) { week.r += b.total; week.v++; week.a += ad; week.e += en; }
+                if(ts >= startOfMonth) { month.r += b.total; month.v++; month.a += ad; month.e += en; }
+                if(ts >= startOfYear) { year.r += b.total; year.v++; year.a += ad; year.e += en; }
+
+                // Groupement par Jour pour le tableau
+                const dStr = new Date(ts).toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                if(!statsMap[dStr]) statsMap[dStr] = { ts: ts, count: 0, a: 0, e: 0, rev: 0 };
+                statsMap[dStr].count++; statsMap[dStr].rev += b.total; statsMap[dStr].a += ad; statsMap[dStr].e += en;
             });
 
-            document.getElementById('stat-day').textContent = today + '€';
-            document.getElementById('stat-week').textContent = week + '€';
-            document.getElementById('stat-month').textContent = month + '€';
-            document.getElementById('stat-year').textContent = year + '€';
+            document.getElementById('label-stat-day').textContent = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year:'numeric' });
+            document.getElementById('stat-day-val').textContent = formatPrice(today.r);
+            document.getElementById('stat-day-voy').textContent = today.v; document.getElementById('stat-day-ad').textContent = today.a; document.getElementById('stat-day-en').textContent = today.e;
 
-            Object.keys(statsMap).sort().reverse().slice(0, 10).forEach(d => {
-                tbody.innerHTML += `<tr><td>${d}</td><td>${statsMap[d].count}</td><td>~${statsMap[d].pax}</td><td>${statsMap[d].rev}€</td></tr>`;
+            document.getElementById('label-stat-week').textContent = getWeekStr(now);
+            document.getElementById('stat-week-val').textContent = formatPrice(week.r);
+            document.getElementById('stat-week-voy').textContent = week.v; document.getElementById('stat-week-ad').textContent = week.a; document.getElementById('stat-week-en').textContent = week.e;
+
+            document.getElementById('label-stat-month').textContent = getMonthStr(now);
+            document.getElementById('stat-month-val').textContent = formatPrice(month.r);
+            document.getElementById('stat-month-voy').textContent = month.v; document.getElementById('stat-month-ad').textContent = month.a; document.getElementById('stat-month-en').textContent = month.e;
+
+            document.getElementById('label-stat-year').textContent = now.getFullYear();
+            document.getElementById('stat-year-val').textContent = formatPrice(year.r);
+            document.getElementById('stat-year-voy').textContent = year.v; document.getElementById('stat-year-ad').textContent = year.a; document.getElementById('stat-year-en').textContent = year.e;
+
+            Object.keys(statsMap).sort((a,b)=> statsMap[b].ts - statsMap[a].ts).slice(0, 10).forEach(d => {
+                tbody.innerHTML += `<tr><td style="text-transform:capitalize;">${d}</td><td>${statsMap[d].count}</td><td>${statsMap[d].a} Ad. / ${statsMap[d].e} Enf.</td><td>${formatPrice(statsMap[d].rev)}</td></tr>`;
             });
         }
 
@@ -922,7 +1044,7 @@
         }
         function addAdminFAQ() { const q = document.getElementById('adm-faq-q').value; const a = document.getElementById('adm-faq-a').value; if(q && a) { state.faqs.push({q, a}); renderAdminFAQList(); document.getElementById('adm-faq-q').value=''; document.getElementById('adm-faq-a').value=''; } }
         function removeAdminFAQ(index) { state.faqs.splice(index, 1); renderAdminFAQList(); }
-        async function saveAdminFAQ() { await apiCall('admin_faq', { token: state.token, faqs: state.faqs }); alert('FAQ Enregistrée !'); syncData(); }
+        async function saveAdminFAQ() { document.getElementById('loader-faq').style.display='inline-block'; await apiCall('admin_faq', { token: state.token, faqs: state.faqs }); document.getElementById('loader-faq').style.display='none'; showMsg('adm-faq-alert', 'success', 'FAQ Enregistrée !'); syncData(); }
 
         function openChat() { document.getElementById('chat-widget').style.display = 'flex'; renderChatBody(); }
         function closeChatUI() { document.getElementById('chat-widget').style.display = 'none'; }
@@ -937,7 +1059,12 @@
             await apiCall('chat_send', { token: state.token, msg });
         }
 
-        window.addEventListener('DOMContentLoaded', () => { initPhoneSelects(); syncData(true); handleRouting(); });
+        window.addEventListener('DOMContentLoaded', () => { 
+            initPhoneSelects(); 
+            const session = localStorage.getItem('abm_session');
+            if(session) { const s = JSON.parse(session); state.token = s.token; state.user = s.user; }
+            updateNav(); syncData(true); 
+        });
     </script>
 </body>
 </html>
