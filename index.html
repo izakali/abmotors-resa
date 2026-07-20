@@ -125,7 +125,6 @@
         <div class="nav-right">
             <button class="btn-nav" id="btn-login-nav" onclick="navigate('login')">Se connecter</button>
             
-            <!-- Icone Mon Compte (Masqué si non connecté) -->
             <button class="btn-nav-icon" id="btn-account-nav" onclick="navigate('account')" style="display:none;" title="Mon Compte">
                 <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 4c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm0 14c-2.03 0-4.43-.82-6.14-2.88a9.947 9.947 0 0 1 12.28 0C16.43 19.18 14.03 20 12 20z"/></svg>
             </button>
@@ -383,12 +382,12 @@
     </div>
 
     <script>
-        // === URL DU SCRIPT GOOGLE APPS SCRIPT ===
-        const API_URL = 'https://script.google.com/macros/s/AKfycbzWQieP3ZJXAdAtZze7EU0l-xue14EOj9gOvpgWaMNvIg10YeU9EmBn9ZEPP8JH0vA/exec';
+        // === METTRE TON NOUVEAU LIEN DE DEPLOIEMENT ICI ===
+        const API_URL = 'https://script.google.com/macros/s/AKfycbzWQieP3ZJXAdAtZze7EU0l-xue14EOj9gOvpgWaMNvIg10YeU9EmBn9ZEPP8JH0vA/exec'; 
         
         let state = {
-            user: null, // null = non connecté
-            token: null, // Token crypté ultra sécurisé (généré coté front, verifié coté GAS)
+            user: null, 
+            token: null, 
             dates: {},
             bookings: [],
             faqs: [],
@@ -405,7 +404,6 @@
             return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
-        // --- NAVIGATION ---
         function navigate(viewId) {
             if(viewId !== 'login' && !state.user && viewId !== 'home' && viewId !== 'help') {
                 viewId = 'login';
@@ -443,18 +441,19 @@
             el.type = el.type === 'password' ? 'text' : 'password';
         }
 
-        // --- VRAIE COMMUNICATION API (SÉCURISÉE) ---
+        // --- COMMUNICATION API ---
         async function apiCall(action, payload) {
             try {
+                // Utilisation de text/plain pour éviter les problèmes CORS preflight avec Google Apps Script
                 const response = await fetch(API_URL, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // Évite les problèmes de preflight CORS
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify({ action, ...payload })
                 });
                 return await response.json();
             } catch(e) {
                 console.error(e);
-                return { success: false, error: "Erreur de connexion avec le serveur sécurisé." };
+                return { success: false, error: "Erreur de communication avec le serveur." };
             }
         }
 
@@ -468,7 +467,6 @@
             msg.textContent = '';
             
             const hash = await hashPassword(pwd);
-            // Génération du token de session frontend (vérifié de manière rigide par le backend)
             const pseudoToken = btoa(email + ":" + hash);
             
             const res = await apiCall('login', { token: pseudoToken });
@@ -565,7 +563,6 @@
             if(res.success) {
                 msg.style.color = 'var(--success)';
                 msg.textContent = 'Profil mis à jour !';
-                // Si l'email ou le mdp change, on doit regenerer le token frontend
                 state.user.email = newEmail || state.user.email;
                 if(newHash) state.token = btoa(state.user.email + ":" + newHash);
                 else if (newEmail) state.token = btoa(state.user.email + ":" + atob(state.token).split(':')[1]);
@@ -574,9 +571,7 @@
             }
         }
 
-        // --- SYNC & AUTO REFRESH ---
         async function syncData() {
-            // L'appel sync fonctionne même sans compte pour récupérer config, dates, faq
             const res = await apiCall('sync', { token: state.token || 'public' });
             if(res.success) {
                 state.dates = res.data.dates || {};
@@ -609,7 +604,6 @@
             calcTotal();
         }
 
-        // --- CLIENT UI RENDERERS ---
         function renderCalendar() {
             const grid = document.getElementById('client-calendar');
             grid.innerHTML = '';
@@ -643,7 +637,6 @@
             bm.style.background = '#eee'; bm.style.color = '#333';
             ba.style.background = '#eee'; ba.style.color = '#333';
             
-            // Affichage de l'heure fixée par l'admin si existante
             bm.textContent = "Matin" + (dispo.m_time ? ` (${dispo.m_time})` : "");
             ba.textContent = "Après midi" + (dispo.a_time ? ` (${dispo.a_time})` : "");
             
@@ -669,7 +662,6 @@
             
             document.getElementById('loader-book').style.display = 'inline-block';
             
-            // Récupérer l'heure exacte si définie
             let exactTime = "";
             let dispo = state.dates[state.selectedDate];
             if(state.selectedTime === 'Matin' && dispo && dispo.m_time) exactTime = ` (${dispo.m_time})`;
@@ -698,7 +690,6 @@
             }
         }
 
-        // --- HISTORIQUE & GESTION ---
         function generateBookingHTML(b, allowCancel) {
             let cancelBtn = '';
             if(allowCancel) {
@@ -737,7 +728,6 @@
             const container = document.getElementById('client-history-list');
             if(!state.user) return;
             const myb = state.bookings.filter(b => b.client === state.user.email);
-            // Dans l'historique on ne met pas de bouton annuler
             container.innerHTML = myb.length === 0 ? '<p style="color:#cbd5e1;">Aucun historique.</p>' : myb.map(b => generateBookingHTML(b, false)).reverse().join('');
         }
 
@@ -750,7 +740,6 @@
             }
         }
 
-        // --- FAQ ---
         function renderFAQ() {
             const container = document.getElementById('faq-container');
             container.innerHTML = '';
@@ -770,7 +759,6 @@
             });
         }
 
-        // --- ADMIN UI ---
         function switchAdminTab(tab) {
             document.querySelectorAll('.admin-nav button').forEach(b => b.classList.remove('active'));
             document.getElementById('adm-tab-' + tab).classList.add('active');
@@ -818,7 +806,6 @@
             alert('Date et heures mises à jour.'); syncData();
         }
 
-        // Admin FAQ
         function renderAdminFAQList() {
             const list = document.getElementById('adm-faq-list');
             list.innerHTML = '';
@@ -853,7 +840,6 @@
             });
         }
 
-        // --- CHAT SYSTEM ---
         function openChat() { document.getElementById('chat-widget').style.display = 'flex'; renderChatBody(); }
         function closeChatUI() { document.getElementById('chat-widget').style.display = 'none'; }
         
@@ -887,9 +873,8 @@
             }
         }
 
-        // Initialisation 
         window.addEventListener('DOMContentLoaded', () => { 
-            syncData(); // Chargement public initial
+            syncData(); 
             navigate('home'); 
         });
     </script>
