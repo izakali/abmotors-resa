@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AB MOTORS - Réservation Maritime</title>
-    <!-- Importation de jsPDF pour la génération des reçus -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         :root {
@@ -552,7 +551,7 @@
         }
 
         async function doLogin() {
-            const email = document.getElementById('login-email').value.trim();
+            const email = document.getElementById('login-email').value.trim().toLowerCase();
             const pwd = document.getElementById('login-pwd').value;
             const msg = document.getElementById('auth-msg');
             if(!email || !pwd) { msg.style.color = 'var(--error)'; msg.textContent = 'Remplissez tous les champs.'; return; }
@@ -569,7 +568,7 @@
 
         async function doRegister() {
             const name = document.getElementById('reg-name').value;
-            const email = document.getElementById('reg-email').value;
+            const email = document.getElementById('reg-email').value.trim().toLowerCase();
             const phone = document.getElementById('reg-phone-code').value + " " + document.getElementById('reg-phone').value;
             const pwd = document.getElementById('reg-pwd').value;
             const msg = document.getElementById('auth-msg');
@@ -608,7 +607,7 @@
         }
 
         async function updateProfile() {
-            const newEmail = document.getElementById('acc-email').value.trim();
+            const newEmail = document.getElementById('acc-email').value.trim().toLowerCase();
             const newPhone = document.getElementById('acc-phone-code').value + " " + document.getElementById('acc-phone').value.trim();
             const newPwd = document.getElementById('acc-pwd').value;
             const msg = document.getElementById('acc-msg');
