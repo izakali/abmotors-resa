@@ -3,495 +3,941 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AB Motors</title>
+    <title>AB MOTORS - Réservation Maritime</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         :root {
-            --bg-dark: #0f172a;
-            --bg-panel: #1e293b;
-            --text-light: #f8fafc;
-            --text-muted: #94a3b8;
-            --accent-blue: #0ea5e9;
-            --accent-green: #22c55e;
-            --accent-red: #ef4444;
-            --border-color: #334155;
+            --primary: #002157; --secondary: #00a8cc; --success: #28a745; --warning: #f59e0b;
+            --surface: #ffffff; --text: #333333; --error: #dc3545;
+            --dark-surface: #0f172a; --dark-input: #1e293b; --dark-border: #334155;
+            --font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        * { box-sizing: border-box; font-family: var(--font); }
+        body { 
+            margin: 0; padding: 0; background-color: var(--primary);
+            background-image: url('bateau.PNG'); background-size: cover;
+            background-position: center; background-attachment: fixed;
+            min-height: 100vh; color: var(--text);
         }
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-            background-image: url('https://raw.githubusercontent.com/ton-repo/bateau.PNG');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-        .overlay {
-            background: rgba(15, 23, 42, 0.85);
-            min-height: 100vh;
-            width: 100%;
-        }
-        /* Navbar Responsive */
-        nav {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 2rem;
-            background: rgba(15, 23, 42, 0.95);
-            border-bottom: 1px solid var(--border-color);
-        }
-        .nav-links {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            align-items: center;
-        }
-        nav a {
-            color: var(--text-light);
-            text-decoration: none;
-            font-size: 0.9rem;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        nav a:hover, nav a.active {
-            background: rgba(255, 255, 255, 0.1);
-        }
-        .nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        .icon-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.2rem;
-            cursor: pointer;
-        }
-        .btn-danger { background: var(--accent-red); color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; }
-        .btn-success { background: var(--accent-green); color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; }
-        .btn-primary { background: var(--accent-blue); color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; width: 100%; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 33, 87, 0.8); z-index: -1; }
         
-        /* Conteneurs */
-        .container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-        .panel {
-            background: var(--bg-panel);
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            margin-bottom: 2rem;
-        }
+        /* Navbar */
+        nav { background: var(--primary); color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.4); position: sticky; top: 0; z-index: 100; }
+        .nav-brand { font-size: 20px; font-weight: bold; letter-spacing: 1px; }
+        .nav-links { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;}
+        .nav-links a { color: #cbd5e1; text-decoration: none; cursor: pointer; font-weight: 600; font-size: 14px; padding: 8px 12px; border-radius: 6px; transition: 0.2s; }
+        .nav-links a:hover, .nav-links a.active { background: rgba(255,255,255,0.1); color: white; }
+        .nav-right { display: flex; align-items: center; gap: 15px; }
         
-        /* Formulaires & Tables */
-        input, select {
-            width: 100%;
-            padding: 0.75rem;
-            background: rgba(0,0,0,0.2);
-            border: 1px solid var(--border-color);
-            color: white;
-            border-radius: 6px;
-            margin-bottom: 1rem;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
-        th, td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-        }
-        
-        /* Dates visuelles */
-        .date-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 5px;
-            margin-bottom: 1rem;
-        }
-        .date-cell {
-            background: rgba(0,0,0,0.3);
-            padding: 10px;
-            text-align: center;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .date-cell.selected {
-            background: var(--accent-green);
-            color: white;
-            font-weight: bold;
-        }
-        
-        /* Login Split Buttons */
-        .login-helpers {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 1rem;
-            font-size: 0.85rem;
-        }
-        .login-helpers a {
-            color: var(--accent-blue);
-            text-decoration: none;
-            cursor: pointer;
-        }
+        /* Notification Bell */
+        .bell-wrapper { position: relative; cursor: pointer; display: none; align-items: center; justify-content: center; padding: 8px; border-radius: 50%; transition: 0.3s; }
+        .bell-wrapper:hover { background: rgba(255,255,255,0.1); }
+        .bell-icon { width: 22px; height: 22px; fill: white; }
+        .bell-badge { position: absolute; top: 2px; right: 2px; background: var(--error); color: white; font-size: 10px; font-weight: bold; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .notif-dropdown { position: absolute; top: 45px; right: 0; background: var(--dark-surface); border: 1px solid var(--dark-border); width: 300px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: none; flex-direction: column; overflow: hidden; z-index: 200;}
+        .notif-header { padding: 10px 15px; background: var(--dark-input); font-weight: bold; color: white; border-bottom: 1px solid var(--dark-border); font-size: 13px;}
+        .notif-item { padding: 12px 15px; border-bottom: 1px solid var(--dark-border); font-size: 12px; color: #cbd5e1; transition: 0.2s; }
+        .notif-item:hover { background: rgba(255,255,255,0.05); }
+        .notif-item:last-child { border-bottom: none; }
 
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        .stat-card {
-            background: rgba(0,0,0,0.3);
-            padding: 1.5rem;
-            border-radius: 8px;
-            text-align: center;
-        }
-        .stat-card h3 { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.5rem; }
-        .stat-card .value { font-size: 1.5rem; font-weight: bold; color: var(--accent-blue); }
-
-        /* Suppression de toutes popups */
-        .popup, .modal { display: none !important; }
+        .btn-nav { background: var(--secondary); color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .btn-nav-icon { background: transparent; padding: 6px; border-radius: 50%; border: 2px solid white; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         
-        @media (max-width: 768px) {
-            nav { flex-direction: column; gap: 1rem; }
-            .nav-links { justify-content: center; }
-            .stats-grid { grid-template-columns: 1fr 1fr; }
-        }
+        .container { max-width: 1100px; margin: 40px auto; padding: 20px; }
+        .card { background: var(--surface); border-radius: 12px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); margin-bottom: 20px; }
+        .card-dark { background: var(--dark-surface); color: white; border: 1px solid var(--dark-border); }
+        .view { display: none; animation: fadeIn 0.3s; }
+        .view.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        h1, h2, h3 { color: var(--primary); margin-top: 0; }
+        .card-dark h1, .card-dark h2, .card-dark h3 { color: white; }
+        .form-group { margin-bottom: 15px; position: relative;}
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px; }
+        .form-control { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; }
+        .card-dark .form-control { background: var(--dark-input); border: 1px solid var(--dark-border); color: white; }
+        .pwd-toggle { position: absolute; right: 15px; top: 38px; cursor: pointer; fill: #888; width: 20px; height: 20px; }
+        
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-primary { background: var(--secondary); color: white; }
+        .btn-danger { background: var(--error); color: white; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-small { padding: 8px 12px; font-size: 13px; width: auto; }
+        
+        .row { display: flex; gap: 15px; flex-wrap: wrap; }
+        .col { flex: 1; min-width: 200px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        .card-dark th, .card-dark td { border-bottom: 1px solid var(--dark-border); }
+        .badge { padding: 5px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; display: inline-block;}
+        
+        .phone-input-wrapper { display: flex; gap: 10px; }
+        .phone-code-select { flex: 0 0 160px; }
+
+        .loader { border: 3px solid transparent; border-top: 3px solid white; border-radius: 50%; width: 18px; height: 18px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Calendars */
+        .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 10px; }
+        .cal-day { padding: 15px 5px; text-align: center; background: #f0f4f8; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; color: #ccc; position: relative;}
+        .cal-day.available { background: #fff; border: 1px solid var(--secondary); color: var(--primary); }
+        .cal-day.selected { background: var(--primary); color: white; border-color: var(--primary); }
+        .cal-day.selected-admin { background: var(--secondary); color: white; border-color: var(--secondary); transform: scale(1.05); z-index: 2;}
+        .card-dark .cal-day { background: #0f172a; border-color: var(--dark-border); color: #475569; }
+        .card-dark .cal-day.available { background: #1e293b; color: white; border-color: #3b82f6; }
+        .empty-day { aspect-ratio: 1; }
+        
+        .time-dot-container { display: flex; gap: 3px; position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%); font-size: 9px; color: #666; font-weight: bold; width: 100%; justify-content: center;}
+        .card-dark .time-dot-container { color: #94a3b8; }
+        
+        .calendar-wrapper { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 20px; }
+        .month-container { flex: 1; min-width: 300px; background: var(--dark-input); border: 1px solid var(--dark-border); border-radius: 8px; padding: 15px; }
+        .month-header { text-align: center; font-weight: bold; color: white; margin-bottom: 15px; text-transform: uppercase; font-size: 14px;}
+        .weekdays { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-weight: bold; font-size: 12px; color: #94a3b8; margin-bottom: 10px; }
+
+        .stat-box { background: var(--dark-input); border: 1px solid var(--dark-border); border-radius: 8px; padding: 20px; text-align: center; flex: 1; min-width: 150px;}
+        .stat-box h3 { font-size: 32px; color: var(--secondary); margin: 10px 0 0 0;}
+        
+        .maintenance-msg { text-align: center; padding: 40px; font-size: 18px; color: var(--warning); font-weight: bold; background: var(--dark-input); border-radius: 8px; border: 1px dashed var(--warning); }
     </style>
 </head>
 <body>
-    <div class="overlay" id="app"></div>
+    <div class="overlay"></div>
+    
+    <nav>
+        <div class="nav-brand">AB MOTORS</div>
+        <div class="nav-links" id="main-nav-links">
+            <!-- Rempli dynamiquement selon le rôle -->
+        </div>
+        <div class="nav-right">
+            <button class="btn-nav" id="btn-login-nav" onclick="navigate('login')">Se connecter</button>
+            
+            <div class="bell-wrapper" id="notif-bell" onclick="toggleNotifs()">
+                <svg class="bell-icon" viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"/></svg>
+                <div class="bell-badge" id="notif-badge" style="display:none;">0</div>
+                <div class="notif-dropdown" id="notif-dropdown">
+                    <div class="notif-header">Dernières Activités</div>
+                    <div id="notif-list"></div>
+                </div>
+            </div>
+
+            <button class="btn-nav-icon" id="btn-account-nav" onclick="navigate('account')" style="display:none;" title="Profil">
+                <svg style="width:20px;height:20px;fill:white;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 4c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm0 14c-2.03 0-4.43-.82-6.14-2.88a9.947 9.947 0 0 1 12.28 0C16.43 19.18 14.03 20 12 20z"/></svg>
+            </button>
+            <button class="btn-nav" id="btn-logout-nav" onclick="logout()" style="display:none; background: var(--error);">Déconnexion</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- MAINTENANCE VIEW -->
+        <div id="view-maintenance" class="view card card-dark">
+            <div class="maintenance-msg">
+                <span style="font-size: 40px; display: block; margin-bottom: 10px;">🛠️</span>
+                Cette fonctionnalité est temporairement désactivée par l'administrateur.
+            </div>
+        </div>
+
+        <!-- VIEW: LOGIN & REGISTER -->
+        <div id="view-login" class="view card card-dark" style="max-width: 500px; margin: 0 auto;">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h2 style="color: white; margin-bottom: 5px;">Espace Sécurisé</h2>
+                <p style="color: #94a3b8; font-size: 14px;">Connectez-vous à votre compte.</p>
+            </div>
+
+            <div style="display:flex; margin-bottom: 20px; border-bottom: 1px solid var(--dark-border);">
+                <button onclick="toggleAuthMode('login')" id="tab-login" style="flex:1; padding:10px; background:transparent; color:white; border:none; border-bottom: 2px solid var(--secondary); cursor:pointer; font-weight:bold;">Connexion</button>
+                <button onclick="toggleAuthMode('register')" id="tab-register" style="flex:1; padding:10px; background:transparent; color:#94a3b8; border:none; border-bottom: 2px solid transparent; cursor:pointer; font-weight:bold;">Inscription</button>
+            </div>
+
+            <div id="form-login-box">
+                <div class="form-group">
+                    <label>Adresse e-mail</label>
+                    <input type="text" id="login-email" class="form-control" placeholder="Entrez votre email">
+                </div>
+                <div class="form-group">
+                    <label>Mot de passe</label>
+                    <input type="password" id="login-pwd" class="form-control" placeholder="Votre mot de passe">
+                    <svg class="pwd-toggle" onclick="togglePwd('login-pwd')" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                </div>
+                <div style="text-align: right; margin-bottom: 15px;">
+                    <a href="#" style="color: var(--secondary); font-size: 12px; text-decoration: none;" onclick="requestUnban()">Mot de passe oublié / Compte désactivé ?</a>
+                </div>
+                <button class="btn btn-primary" onclick="doLogin()">Se connecter <span class="loader" id="loader-login" style="display:none;"></span></button>
+            </div>
+
+            <div id="form-register-box" style="display:none;">
+                <div class="form-group"><label>Nom complet</label><input type="text" id="reg-name" class="form-control" autocomplete="off"></div>
+                <div class="form-group"><label>Adresse e-mail</label><input type="email" id="reg-email" class="form-control" autocomplete="off"></div>
+                <div class="form-group">
+                    <label>Téléphone</label>
+                    <div class="phone-input-wrapper">
+                        <select id="reg-phone-code" class="form-control phone-code-select"></select>
+                        <input type="tel" id="reg-phone" class="form-control" autocomplete="off">
+                    </div>
+                </div>
+                <div class="form-group"><label>Mot de passe (Min 6)</label><input type="password" id="reg-pwd" class="form-control" autocomplete="off"></div>
+                <button class="btn btn-primary" onclick="doRegister()" style="background: var(--success);">Créer mon compte <span class="loader" id="loader-reg" style="display:none;"></span></button>
+            </div>
+            <div id="auth-msg" style="margin-top: 15px; text-align: center; font-size: 14px; font-weight: bold;"></div>
+        </div>
+
+        <!-- VIEW: CLIENT ACCOUNT -->
+        <div id="view-account-client" class="view card card-dark">
+            <h2>Paramètres du compte</h2>
+            <p style="color:#cbd5e1; font-size:14px; margin-bottom: 20px;">Gérez vos accès. Note : L'archivage de votre compte efface vos données actives mais conserve votre email libéré.</p>
+            <div class="form-group"><label>Mot de passe actuel (Requis pour supprimer)</label><input type="password" id="del-pwd" class="form-control"></div>
+            <button class="btn btn-danger" onclick="archiveClientAccount()">Archiver mon compte définitivement</button>
+        </div>
+
+        <!-- VIEW: ADMIN ACCOUNT (Manage Clients) -->
+        <div id="view-account-admin" class="view card card-dark">
+            <h2>Gestion des Comptes Clients</h2>
+            
+            <h3 style="margin-top: 30px; font-size: 16px;">Comptes Actifs</h3>
+            <div style="overflow-x: auto; margin-bottom: 30px;">
+                <table id="adm-table-clients">
+                    <thead><tr><th>Client</th><th>Contact</th><th>Action</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <h3 style="font-size: 16px; color: var(--warning);">Comptes Désactivés / Archivés</h3>
+            <div style="overflow-x: auto;">
+                <table id="adm-table-banned">
+                    <thead><tr><th>Client</th><th>Contact</th><th>Statut</th><th>Action</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- VIEW: HOME (BOOKING) -->
+        <div id="view-home" class="view card">
+            <h2>Réserver votre traversée</h2>
+            <p>Sélectionnez vos dates et options.</p>
+            <div class="row">
+                <div class="col"><div class="form-group"><label>Trajet</label><select id="book-route" class="form-control"><option value="Anjouan -> Moheli">Anjouan vers Moheli</option><option value="Moheli -> Anjouan">Moheli vers Anjouan</option></select></div></div>
+                <div class="col"><div class="form-group"><label>Adultes</label><input type="number" id="book-adults" class="form-control" value="1" min="1" onchange="calcTotal()"></div></div>
+                <div class="col"><div class="form-group"><label>Enfants (-13 ans)</label><input type="number" id="book-children" class="form-control" value="0" min="0" onchange="calcTotal()"></div></div>
+            </div>
+            <div class="form-group" id="bagage-section" style="display:none; background: #f8f9fa; padding: 15px; border-radius: 6px;"><label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin: 0;"><input type="checkbox" id="book-bagages" onchange="calcTotal()"> Voyage avec bagages (+<span id="price-bag">3</span>€)</label></div>
+            <div class="form-group"><label>Sélectionnez une date disponible</label><div id="client-calendar" class="days-grid"></div></div>
+            
+            <div class="form-group" id="time-selection" style="display:none; background: #f0f4f8; padding: 15px; border-radius: 6px;">
+                <label style="margin-bottom: 10px;">Choisissez votre horaire exact :</label>
+                <div style="display: flex; gap: 10px;">
+                    <button id="btn-time-m" class="btn" style="background: white; color: #333; border: 1px solid #ccc;" onclick="selectTime('Matin')">Matin</button>
+                    <button id="btn-time-a" class="btn" style="background: white; color: #333; border: 1px solid #ccc;" onclick="selectTime('Après midi')">Après midi</button>
+                </div>
+            </div>
+
+            <div style="margin-top: 30px; border-top: 2px dashed #ccc; padding-top: 20px; text-align: right;">
+                <h3 style="margin-bottom: 10px;">Total estimé : <span id="book-total">0</span> €</h3>
+                <button class="btn btn-primary" style="width: auto; padding: 12px 30px;" onclick="submitBooking()">Confirmer la réservation <span class="loader" id="loader-book" style="display:none;"></span></button>
+                <div id="book-msg" style="margin-top: 10px; font-weight: bold;"></div>
+            </div>
+        </div>
+
+        <!-- VIEW: MANAGE RESERVATIONS (CLIENT) -->
+        <div id="view-manage" class="view card">
+            <h2>Gérer mes réservations actives</h2>
+            <p>Vous pouvez annuler sans frais jusqu'à 2h avant le départ. Après, une pénalité de <span id="txt-penalty">10</span>€ s'applique.</p>
+            <div id="client-bookings-list"></div>
+        </div>
+
+        <!-- VIEW: HELP / FAQ (CLIENT) -->
+        <div id="view-help" class="view card card-dark">
+            <h2>Questions fréquentes & Support</h2>
+            <div id="faq-container"></div>
+            <div style="margin-top: 30px; border-top: 1px solid var(--dark-border); padding-top: 20px;">
+                <button class="btn btn-primary" style="width: auto;" onclick="openChat()">Discuter avec le support</button>
+            </div>
+        </div>
+
+        <!-- ADMIN VIEWS (Séparées selon la nav admin) -->
+        
+        <!-- ADMIN: CONFIG -->
+        <div id="view-admin-config" class="view card card-dark">
+            <h2>Configuration Globale</h2>
+            <div class="row">
+                <div class="col"><div class="form-group"><label>Tarif Adulte (€)</label><input type="number" id="cfg-adulte" class="form-control"></div></div>
+                <div class="col"><div class="form-group"><label>Tarif Enfant (€)</label><input type="number" id="cfg-enfant" class="form-control"></div></div>
+            </div>
+            <div class="row">
+                <div class="col"><div class="form-group"><label>Prix Bagages (€)</label><input type="number" id="cfg-bagage" class="form-control"></div></div>
+                <div class="col"><div class="form-group"><label>Pénalité Annulation (€)</label><input type="number" id="cfg-penalty" class="form-control"></div></div>
+            </div>
+            <h3 style="margin-top: 20px; font-size: 16px;">Contrôle de l'Espace Client</h3>
+            <label style="display: block; margin-bottom: 10px;"><input type="checkbox" id="cfg-feat-bag"> Activer l'option Bagages</label>
+            <label style="display: block; margin-bottom: 10px;"><input type="checkbox" id="cfg-page-book"> Activer la page de Réservation</label>
+            <label style="display: block; margin-bottom: 10px;"><input type="checkbox" id="cfg-page-manage"> Activer la gestion des réservations</label>
+            <label style="display: block; margin-bottom: 20px;"><input type="checkbox" id="cfg-page-help"> Activer la FAQ / Support</label>
+            <button class="btn btn-success" onclick="saveAdminConfig()">Sauvegarder les paramètres</button>
+        </div>
+
+        <!-- ADMIN: DISPONIBILITÉS & HEURES -->
+        <div id="view-admin-dates" class="view card card-dark">
+            <h2>Disponibilités & Heures</h2>
+            <p style="color:#cbd5e1; font-size: 14px;">Sélectionnez une ou plusieurs dates. Définissez les heures exactes puis cliquez sur Publier.</p>
+            
+            <div style="display:flex; justify-content:flex-end; margin-bottom:15px; gap:10px;">
+                <button class="btn btn-secondary btn-small" style="background:#334155; color:white;" onclick="changeAdminMonth(-1)">&larr; Précédent</button>
+                <button class="btn btn-secondary btn-small" style="background:#334155; color:white;" onclick="changeAdminMonth(1)">Suivant &rarr;</button>
+            </div>
+            
+            <div id="admin-cal-edit-wrapper" class="calendar-wrapper"></div>
+            
+            <div id="bulk-panel" class="inline-editor" style="display:none; flex-direction: column; align-items: stretch;">
+                <div style="font-size: 16px;"><b style="color:var(--secondary);" id="bulk-count">0</b> date(s) en attente de publication.</div>
+                <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 10px;">
+                    <div style="flex:1; background: var(--dark-surface); padding: 15px; border-radius: 6px;">
+                        <label style="display:flex; align-items:center; gap:8px; font-weight:bold; margin-bottom:10px;"><input type="checkbox" id="bulk-matin" checked> Ouvert le Matin</label>
+                        <input type="time" id="time-val-m" class="form-control" value="08:00">
+                    </div>
+                    <div style="flex:1; background: var(--dark-surface); padding: 15px; border-radius: 6px;">
+                        <label style="display:flex; align-items:center; gap:8px; font-weight:bold; margin-bottom:10px;"><input type="checkbox" id="bulk-apresmidi"> Ouvert l'Après midi</label>
+                        <input type="time" id="time-val-a" class="form-control" value="14:30">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 15px;">
+                    <button id="bulk-btn" class="btn btn-success" onclick="applyBulkDispo()">Publier ces horaires</button>
+                    <button class="btn btn-danger" style="width: 150px;" onclick="clearSelection()">Annuler</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADMIN: DATES DISPO SUMMARY -->
+        <div id="view-admin-summary" class="view card card-dark">
+            <h2>Résumé des Dates Actives</h2>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
+                <div style="display:flex; gap:15px; font-size:12px; color:#cbd5e1;">
+                    <div style="display:flex; align-items:center; gap:5px;"><span class="time-dot matin" style="position:static;"></span> Matin</div>
+                    <div style="display:flex; align-items:center; gap:5px;"><span class="time-dot apresmidi" style="position:static;"></span> Après midi</div>
+                </div>
+                <div style="display:flex;gap:10px;">
+                    <button class="btn btn-secondary btn-small" style="background:#334155; color:white;" onclick="changeAdminSummaryMonth(-1)">&larr;</button>
+                    <button class="btn btn-secondary btn-small" style="background:#334155; color:white;" onclick="changeAdminSummaryMonth(1)">&rarr;</button>
+                </div>
+            </div>
+            <div id="admin-cal-summary-wrapper" class="calendar-wrapper"></div>
+        </div>
+
+        <!-- ADMIN: RESERVATIONS -->
+        <div id="view-admin-bookings" class="view card card-dark">
+            <h2>Suivi des Réservations</h2>
+            <div style="overflow-x: auto;">
+                <table id="adm-table-bookings">
+                    <thead><tr><th>ID</th><th>Client</th><th>Trajet & Date</th><th>Pax</th><th>Total</th><th>Statut</th><th style="min-width: 140px;">Action</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ADMIN: STATS -->
+        <div id="view-admin-stats" class="view card card-dark">
+            <h2>Statistiques et Rapports</h2>
+            <div class="row" style="margin-bottom: 30px;">
+                <div class="stat-box"><p>Aujourd'hui</p><h3 id="stat-day">0</h3></div>
+                <div class="stat-box"><p>Cette Semaine</p><h3 id="stat-week">0</h3></div>
+                <div class="stat-box"><p>Ce Mois-ci</p><h3 id="stat-month">0</h3></div>
+                <div class="stat-box"><p>Cette Année</p><h3 id="stat-year">0</h3></div>
+            </div>
+            <h3>Liste des départs de la semaine</h3>
+            <div style="overflow-x: auto;">
+                <table id="adm-table-stats">
+                    <thead><tr><th>Date</th><th>Réservations</th><th>Passagers</th><th>Revenus</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ADMIN: FAQ -->
+        <div id="view-admin-faq" class="view card card-dark">
+            <h2>Gestion de la FAQ</h2>
+            <div style="background: var(--dark-input); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <div class="form-group"><label>Question</label><input type="text" id="adm-faq-q" class="form-control"></div>
+                <div class="form-group"><label>Réponse</label><textarea id="adm-faq-a" class="form-control" rows="2"></textarea></div>
+                <button class="btn btn-secondary" style="background:#475569; color:white; width: auto;" onclick="addAdminFAQ()">Ajouter à la liste</button>
+            </div>
+            <div id="adm-faq-list"></div>
+            <button class="btn btn-success" style="margin-top:15px;" onclick="saveAdminFAQ()">Enregistrer la FAQ en ligne</button>
+        </div>
+
+        <!-- ADMIN: CHAT -->
+        <div id="view-admin-chat" class="view card card-dark">
+            <h2>Messages du Support</h2>
+            <div id="adm-chat-list"></div>
+        </div>
+
+    </div>
+
+    <!-- CHAT WIDGET -->
+    <div id="chat-widget">
+        <div id="chat-header"><span>Service Client</span><span style="cursor:pointer;" onclick="closeChatUI()">[X]</span></div>
+        <div id="chat-body"></div>
+        <div id="chat-input-area">
+            <input type="text" id="chat-input" placeholder="Votre message...">
+            <button onclick="sendChatMessage()">Envoyer</button>
+        </div>
+    </div>
 
     <script>
-        // --- ETAT GLOBAL ---
-        const state = {
-            user: JSON.parse(localStorage.getItem('abmotors_user')) || null,
-            route: window.location.pathname === '/' ? '/login' : window.location.pathname,
-            data: { reservations: [], users: [] }
-        };
-
-        // --- UTILITAIRES ---
-        const convertToKMF = (euros) => (euros * 500) + ' KMF';
+        // === LIEN GOOGLE SCRIPT ===
+        const API_URL = 'https://script.google.com/macros/s/AKfycbzWQieP3ZJXAdAtZze7EU0l-xue14EOj9gOvpgWaMNvIg10YeU9EmBn9ZEPP8JH0vA/exec'; 
         
-        const cleanText = (str) => {
-            if (!str) return '';
-            return str.replace(/\(|\)/g, '').replace(/aprem/gi, 'apres midi');
+        // INDICATIFS TELEPHONIQUES SANS EMOJI
+        const PHONE_CODES = [
+            ['+269','Comores'], ['+262','Mayotte'], ['+33','France'], ['---','──────────'],
+            ['+213','Algérie'],['+49','Allemagne'],['+32','Belgique'],['+1','Canada'],
+            ['+34','Espagne'],['+1','États-Unis'],['+39','Italie'],['+261','Madagascar'],
+            ['+212','Maroc'],['+44','Royaume-Uni'],['+41','Suisse'],['+216','Tunisie']
+        ];
+
+        let state = {
+            user: null, token: null, 
+            dates: {}, bookings: [], faqs: [], chats: [], usersList: [],
+            config: { priceAdult: 30, priceChild: 15, priceBag: 3, penalty: 10, featBag: true, pageBook: true, pageManage: true, pageHelp: true },
+            selectedDate: null, selectedTime: null,
+            adminMonthOffsetEdit: 0, adminMonthOffsetSummary: 0, adminSelectedDates: new Set(),
+            notifications: [], unreadNotifs: 0, lastSeenBookingId: 0
         };
 
-        // --- NAVIGATION SANS HASH ---
-        function navigate(path) {
-            window.history.pushState({}, '', path);
-            state.route = path;
-            render();
-        }
+        const monthsNames = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
 
-        window.addEventListener('popstate', () => {
-            state.route = window.location.pathname;
-            render();
-        });
+        // Routage par Hash
+        window.addEventListener('hashchange', () => { handleRouting(); });
 
-        // --- SYNCHRONISATION DONNEES ---
-        function loadData() {
-            if (!state.user || state.user.role !== 'Admin') return;
-            google.script.run.withSuccessHandler(res => {
-                state.data = res;
-                render();
-            }).getDashboardData();
-        }
+        function navigate(path) { window.location.hash = '/' + path; }
 
-        // --- ACTIONS ---
-        function handleLogin(e) {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+        function handleRouting() {
+            let path = window.location.hash.replace('#/', '');
+            if(!path) path = 'home';
             
-            google.script.run.withSuccessHandler(res => {
-                if(res.success) {
-                    state.user = res.user;
-                    localStorage.setItem('abmotors_user', JSON.stringify(res.user));
-                    navigate(res.user.role === 'Admin' ? '/admin/stats' : '/client/book');
+            // Sécurité : Redirection si non connecté ou non admin
+            if(!state.user && !['home', 'help', 'login'].includes(path)) { path = 'login'; window.location.hash = '/login'; return; }
+            if(state.user && state.user.role !== 'admin' && path.startsWith('admin')) { path = 'home'; window.location.hash = '/home'; return; }
+            
+            // Maintenance check pour clients
+            if(state.user?.role !== 'admin') {
+                if(path === 'home' && !state.config.pageBook) path = 'maintenance';
+                if(path === 'manage' && !state.config.pageManage) path = 'maintenance';
+                if(path === 'help' && !state.config.pageHelp) path = 'maintenance';
+            }
+
+            // Gestion de l'affichage des Vues
+            document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+            const targetView = document.getElementById('view-' + path.replace('/', '-'));
+            if(targetView) targetView.classList.add('active'); else document.getElementById('view-home').classList.add('active');
+            
+            // MAJ Navbar active states
+            document.querySelectorAll('.nav-links a').forEach(el => el.classList.remove('active'));
+            const navLink = document.getElementById('nav-' + path.replace('/', '-'));
+            if(navLink) navLink.classList.add('active');
+
+            // Initialisations spécifiques
+            if(path === 'home') renderCalendar();
+            if(path === 'manage') renderMyBookings();
+            if(path === 'help') renderFAQ();
+            if(path === 'account') {
+                if(state.user.role === 'admin') {
+                    document.getElementById('view-account-client').style.display = 'none';
+                    document.getElementById('view-account-admin').style.display = 'block';
+                    renderAdminClients();
                 } else {
-                    document.getElementById('login-error').innerText = cleanText(res.message);
+                    document.getElementById('view-account-admin').style.display = 'none';
+                    document.getElementById('view-account-client').style.display = 'block';
                 }
-            }).loginUser(email, password);
+            }
+            
+            // Admin Init
+            if(path.startsWith('admin')) {
+                if(path === 'admin/config') fillAdminConfig();
+                if(path === 'admin/dates') renderAdminCalendarEdit();
+                if(path === 'admin/summary') renderAdminCalendarSummary();
+                if(path === 'admin/bookings') renderAdminBookings();
+                if(path === 'admin/stats') renderAdminStats();
+                if(path === 'admin/faq') renderAdminFAQList();
+                if(path === 'admin/chat') renderAdminChats();
+            }
         }
 
-        function logout() {
-            state.user = null;
-            localStorage.removeItem('abmotors_user');
-            navigate('/login');
+        async function hashPassword(pwd) {
+            const msgBuffer = new TextEncoder().encode(pwd);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
-        function toggleDateSelection(element) {
-            element.classList.toggle('selected');
+        function initPhoneSelects() {
+            const opts = PHONE_CODES.map(([val, name]) => val === '---' ? `<option value="" disabled>──────────</option>` : `<option value="${val}">${val} ${name}</option>`).join('');
+            document.getElementById('reg-phone-code').innerHTML = opts;
+            document.getElementById('reg-phone-code').value = '+269';
         }
 
-        function archiveUser(userId) {
-            google.script.run.withSuccessHandler(res => {
-                if(res.success) loadData();
-            }).archiveAccount(userId);
+        function toggleAuthMode(mode) {
+            document.getElementById('form-login-box').style.display = mode === 'login' ? 'block' : 'none';
+            document.getElementById('form-register-box').style.display = mode === 'register' ? 'block' : 'none';
+            document.getElementById('tab-login').style.borderBottomColor = mode === 'login' ? 'var(--secondary)' : 'transparent';
+            document.getElementById('tab-login').style.color = mode === 'login' ? 'white' : '#94a3b8';
+            document.getElementById('tab-register').style.borderBottomColor = mode === 'register' ? 'var(--secondary)' : 'transparent';
+            document.getElementById('tab-register').style.color = mode === 'register' ? 'white' : '#94a3b8';
+            document.getElementById('auth-msg').textContent = '';
         }
 
-        // --- MOTEUR DE RENDU ---
-        function render() {
-            const app = document.getElementById('app');
-            let html = '';
+        function togglePwd(id) { const el = document.getElementById(id); el.type = el.type === 'password' ? 'text' : 'password'; }
 
-            // Si non connecté, forcer page login
-            if (!state.user) {
-                html = renderLoginView();
-            } else if (state.user.role === 'Admin') {
-                html = renderAdminNav() + renderAdminContent();
+        async function apiCall(action, payload) {
+            try {
+                const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action, ...payload }) });
+                return await response.json();
+            } catch(e) { return { success: false, error: "Erreur de connexion serveur." }; }
+        }
+
+        async function doLogin() {
+            const email = document.getElementById('login-email').value.trim().toLowerCase();
+            const pwd = document.getElementById('login-pwd').value;
+            const msg = document.getElementById('auth-msg');
+            if(!email || !pwd) { msg.style.color = 'var(--error)'; msg.textContent = 'Champs requis.'; return; }
+            
+            document.getElementById('loader-login').style.display = 'inline-block'; msg.textContent = '';
+            const hash = await hashPassword(pwd);
+            
+            // Bypass spécial frontend pour ne transmettre que le hash au backend
+            const tokenStr = btoa(email + ":" + hash);
+            const res = await apiCall('login', { token: tokenStr });
+            document.getElementById('loader-login').style.display = 'none';
+            
+            if(res.success) { state.user = res.user; state.token = tokenStr; updateNav(); syncData(true); navigate(state.user.role === 'admin' ? 'admin/bookings' : 'home'); } 
+            else { msg.style.color = 'var(--error)'; msg.textContent = res.error; }
+        }
+
+        async function doRegister() {
+            const name = document.getElementById('reg-name').value;
+            const email = document.getElementById('reg-email').value.trim().toLowerCase();
+            const phone = document.getElementById('reg-phone-code').value + " " + document.getElementById('reg-phone').value;
+            const pwd = document.getElementById('reg-pwd').value;
+            const msg = document.getElementById('auth-msg');
+            
+            if(!name || !email || pwd.length < 6) { msg.style.color = 'var(--error)'; msg.textContent = 'Champs incorrects (mdp min 6 car).'; return; }
+            document.getElementById('loader-reg').style.display = 'inline-block';
+            const hash = await hashPassword(pwd);
+            const res = await apiCall('register', { name, email, phone, hash });
+            document.getElementById('loader-reg').style.display = 'none';
+            
+            if(res.success) { msg.style.color = 'var(--success)'; msg.textContent = 'Compte créé !'; setTimeout(() => toggleAuthMode('login'), 2000); } 
+            else { msg.style.color = 'var(--error)'; msg.textContent = res.error; }
+        }
+
+        async function requestUnban() {
+            const email = prompt("Veuillez entrer votre adresse e-mail pour demander la réactivation :");
+            if(email) {
+                alert("Demande envoyée. Un administrateur va traiter votre requête.");
+                apiCall('request_unban', { email: email.trim().toLowerCase() });
+            }
+        }
+
+        function logout() { state.user = null; state.token = null; updateNav(); navigate('login'); }
+
+        function updateNav() {
+            const navLinks = document.getElementById('main-nav-links');
+            const btnLog = document.getElementById('btn-login-nav');
+            const btnOut = document.getElementById('btn-logout-nav');
+            const btnAcc = document.getElementById('btn-account-nav');
+            const bell = document.getElementById('notif-bell');
+
+            navLinks.innerHTML = '';
+            if(state.user && state.user.role === 'admin') {
+                navLinks.innerHTML = `
+                    <a id="nav-admin-config" onclick="navigate('admin/config')">Configuration</a>
+                    <a id="nav-admin-dates" onclick="navigate('admin/dates')">Disponibilités & Heures</a>
+                    <a id="nav-admin-summary" onclick="navigate('admin/summary')">Dates Dispo</a>
+                    <a id="nav-admin-faq" onclick="navigate('admin/faq')">Gestion FAQ</a>
+                    <a id="nav-admin-bookings" onclick="navigate('admin/bookings')">Réservations</a>
+                    <a id="nav-admin-chat" onclick="navigate('admin/chat')">Messages Clients</a>
+                    <a id="nav-admin-stats" onclick="navigate('admin/stats')">Statistiques</a>`;
+                bell.style.display = 'flex';
+                btnAcc.style.display = 'flex'; btnLog.style.display = 'none'; btnOut.style.display = 'block';
             } else {
-                html = renderClientNav() + renderClientContent();
+                navLinks.innerHTML = `
+                    <a id="nav-home" onclick="navigate('home')">Réserver</a>
+                    <a id="nav-manage" onclick="navigate('manage')">Gérer ma réservation</a>
+                    <a id="nav-help" onclick="navigate('help')">Aide</a>`;
+                bell.style.display = 'none';
+                if(state.user) { btnAcc.style.display = 'flex'; btnLog.style.display = 'none'; btnOut.style.display = 'block'; }
+                else { btnAcc.style.display = 'none'; btnLog.style.display = 'block'; btnOut.style.display = 'none'; }
             }
-
-            app.innerHTML = cleanText(html);
-            
-            // Attacher événements spécifiques après rendu
-            if(document.getElementById('login-form')) {
-                document.getElementById('login-form').addEventListener('submit', handleLogin);
-            }
+            handleRouting();
         }
 
-        // --- VUES ---
-        function renderLoginView() {
-            return `
-            <div class="container" style="max-width: 400px; margin-top: 10vh;">
-                <div class="panel">
-                    <h2 style="text-align: center; margin-bottom: 2rem;">Espace Sécurisé</h2>
-                    <div id="login-error" style="color: var(--accent-red); margin-bottom: 1rem; text-align: center;"></div>
-                    <form id="login-form">
-                        <label>Adresse e-mail</label>
-                        <input type="email" id="email" required>
-                        <label>Mot de passe</label>
-                        <input type="password" id="password" required>
-                        <button type="submit" class="btn-primary">Se connecter</button>
-                    </form>
-                    <div class="login-helpers">
-                        <a onclick="navigate('/forgot-password')">Mot de passe oublié ?</a>
-                        <a onclick="navigate('/banned-appeal')">Compte désactivé ?</a>
-                    </div>
-                </div>
-            </div>`;
-        }
-
-        function renderAdminNav() {
-            return `
-            <nav>
-                <h2>AB MOTORS</h2>
-                <div class="nav-links">
-                    <a class="${state.route === '/admin/config' ? 'active' : ''}" onclick="navigate('/admin/config')">Configuration</a>
-                    <a class="${state.route === '/admin/dates' ? 'active' : ''}" onclick="navigate('/admin/dates')">Dates Dispo</a>
-                    <a class="${state.route === '/admin/bookings' ? 'active' : ''}" onclick="navigate('/admin/bookings')">Réservations</a>
-                    <a class="${state.route === '/admin/messages' ? 'active' : ''}" onclick="navigate('/admin/messages')">Messages Clients</a>
-                    <a class="${state.route === '/admin/stats' ? 'active' : ''}" onclick="navigate('/admin/stats')">Statistiques</a>
-                    <a class="${state.route === '/admin/accounts' ? 'active' : ''}" onclick="navigate('/admin/accounts')">Comptes</a>
-                </div>
-                <div class="nav-actions">
-                    <button class="icon-btn" onclick="navigate('/admin/messages')">🔔</button>
-                    <button class="icon-btn" onclick="navigate('/admin/accounts')">👤</button>
-                    <button class="btn-danger" onclick="logout()">Déconnexion</button>
-                </div>
-            </nav>`;
-        }
-
-        function renderClientNav() {
-            return `
-            <nav>
-                <h2>AB MOTORS</h2>
-                <div class="nav-actions">
-                    <span style="margin-right: 1rem;">${state.user.name}</span>
-                    <button class="btn-danger" onclick="logout()">Déconnexion</button>
-                </div>
-            </nav>`;
-        }
-
-        function renderAdminContent() {
-            if (state.route === '/admin/stats') return renderStats();
-            if (state.route === '/admin/bookings') return renderBookings();
-            if (state.route === '/admin/accounts') return renderAccounts();
-            if (state.route === '/admin/dates') return renderDatesSetup();
-            return `<div class="container"><div class="panel">Sélectionnez une rubrique dans le menu.</div></div>`;
-        }
-
-        function renderClientContent() {
-            // Vue client par défaut (toutes options activées comme demandé)
-            return `
-            <div class="container">
-                <div class="panel">
-                    <h2>Réserver votre traversée</h2>
-                    <br>
-                    <div style="display:flex; gap:1rem;">
-                        <div style="flex:1;">
-                            <label>Trajet</label>
-                            <select><option>Anjouan vers Moheli</option><option>Moheli vers Anjouan</option></select>
-                        </div>
-                        <div style="flex:1;">
-                            <label>Adultes</label>
-                            <input type="number" value="1" min="1">
-                        </div>
-                        <div style="flex:1;">
-                            <label>Enfants -13 ans</label>
-                            <input type="number" value="0" min="0">
-                        </div>
-                    </div>
-                    <button class="btn-success">Confirmer la réservation</button>
-                </div>
-            </div>`;
-        }
-
-        // --- VUES ADMIN DETAILLEES ---
-
-        function renderStats() {
-            // Filtrer uniquement les payés
-            const validOrders = state.data.reservations.filter(r => r.Statut === 'Validé et payé');
-            
-            // Logique de calcul des stats (Jour, Semaine, Mois, Année) par montants et passagers
-            let revToday = 0, revWeek = 0, revMonth = 0, revYear = 0;
-            let paxToday = {a:0, e:0}, paxWeek = {a:0, e:0}, paxMonth = {a:0, e:0}, paxYear = {a:0, e:0};
-            
-            const now = new Date();
-            validOrders.forEach(o => {
-                const d = new Date(o.Date);
-                const amt = parseFloat(o.Montant) || 0;
-                const ad = parseInt(o.Adultes) || 0;
-                const enf = parseInt(o.Enfants) || 0;
-
-                // Simple check pour l'année et le mois
-                if (d.getFullYear() === now.getFullYear()) {
-                    revYear += amt; paxYear.a += ad; paxYear.e += enf;
-                    if (d.getMonth() === now.getMonth()) {
-                        revMonth += amt; paxMonth.a += ad; paxMonth.e += enf;
-                        if (d.toDateString() === now.toDateString()) {
-                            revToday += amt; paxToday.a += ad; paxToday.e += enf;
+        // --- BACKGROUND SYNC & NOTIFS ---
+        async function syncData(initial = false) {
+            const res = await apiCall('sync', { token: state.token || 'public' });
+            if(res.success) {
+                state.dates = res.data.dates || {}; state.config = res.data.config || state.config;
+                state.faqs = res.data.faqs || [];
+                
+                if (state.user) {
+                    const oldBookingsLength = state.bookings.length;
+                    state.bookings = res.data.bookings || [];
+                    state.chats = res.data.chats || [];
+                    if(state.user.role === 'admin') state.usersList = res.data.users || [];
+                    
+                    // Notifs Admin
+                    if(!initial && state.user.role === 'admin') {
+                        const newB = state.bookings.filter(b => b.id > state.lastSeenBookingId);
+                        if(newB.length > 0) {
+                            state.unreadNotifs += newB.length;
+                            newB.forEach(b => state.notifications.unshift(`Nouvelle résa. ID: ${b.id} (${b.total}€)`));
+                            if(state.notifications.length > 5) state.notifications.pop();
+                            updateBell();
                         }
                     }
+                    if(state.bookings.length > 0) state.lastSeenBookingId = Math.max(...state.bookings.map(b=>b.id));
                 }
+                
+                applyConfigUI();
+                
+                // Actualisation silencieuse des vues si déjà ouvertes
+                const path = window.location.hash.replace('#/', '');
+                if(path === 'home') renderCalendar();
+                if(path === 'manage') renderMyBookings();
+                if(path === 'help') renderFAQ();
+                if(path === 'account' && state.user?.role === 'admin') renderAdminClients();
+                if(path === 'admin/bookings') renderAdminBookings();
+                if(path === 'admin/stats') renderAdminStats();
+                if(path === 'admin/chat') renderAdminChats();
+            }
+        }
+        setInterval(() => { syncData(); }, 20000); // Tâche de fond silencieuse
+
+        function updateBell() {
+            const badge = document.getElementById('notif-badge');
+            if(state.unreadNotifs > 0) { badge.style.display = 'flex'; badge.textContent = state.unreadNotifs; } 
+            else { badge.style.display = 'none'; }
+        }
+        function toggleNotifs() {
+            const drop = document.getElementById('notif-dropdown');
+            if(drop.style.display === 'flex') { drop.style.display = 'none'; } 
+            else { 
+                drop.style.display = 'flex'; state.unreadNotifs = 0; updateBell(); 
+                const list = document.getElementById('notif-list');
+                list.innerHTML = state.notifications.length === 0 ? '<div class="notif-item">Aucune notification</div>' : state.notifications.map(n => `<div class="notif-item">${n}</div>`).join('');
+            }
+        }
+
+        function applyConfigUI() {
+            document.getElementById('txt-penalty').textContent = state.config.penalty;
+            document.getElementById('price-bag').textContent = state.config.priceBag;
+            document.getElementById('bagage-section').style.display = state.config.featBag ? 'block' : 'none';
+            calcTotal();
+        }
+
+        // --- COMPTE CLIENT (ARCHIVAGE) ---
+        async function archiveClientAccount() {
+            const pwd = document.getElementById('del-pwd').value;
+            if(!pwd) { alert("Mot de passe requis."); return; }
+            if(confirm("Voulez-vous vraiment archiver votre compte ? Vous serez déconnecté.")) {
+                const hash = await hashPassword(pwd);
+                const res = await apiCall('archive_account', { token: state.token, hash: hash });
+                if(res.success) { alert("Compte archivé."); logout(); } else { alert(res.error); }
+            }
+        }
+
+        // --- HOME CLIENT ---
+        function renderCalendar() {
+            const grid = document.getElementById('client-calendar'); grid.innerHTML = '';
+            let d = new Date(); d.setDate(d.getDate() + 1);
+            for(let i=0; i<14; i++) {
+                let dStr = d.toISOString().split('T')[0];
+                let dispo = state.dates[dStr];
+                let div = document.createElement('div');
+                div.className = 'cal-day ' + (dispo && (dispo.m || dispo.a) ? 'available' : '');
+                if(state.selectedDate === dStr) div.classList.add('selected');
+                div.innerHTML = d.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' });
+                if(dispo && (dispo.m || dispo.a)) { div.onclick = () => { state.selectedDate = dStr; state.selectedTime = null; renderCalendar(); showTimeSelection(dispo); }; }
+                grid.appendChild(div); d.setDate(d.getDate() + 1);
+            }
+        }
+        function showTimeSelection(dispo) {
+            document.getElementById('time-selection').style.display = 'block';
+            const bm = document.getElementById('btn-time-m'); const ba = document.getElementById('btn-time-a');
+            bm.style.display = dispo.m ? 'inline-block' : 'none'; ba.style.display = dispo.a ? 'inline-block' : 'none';
+            bm.textContent = `Matin (${dispo.m_time || '08:00'})`; ba.textContent = `Après midi (${dispo.a_time || '14:30'})`;
+            bm.style.background = state.selectedTime === 'Matin' ? 'var(--primary)' : 'white'; bm.style.color = state.selectedTime === 'Matin' ? 'white' : '#333';
+            ba.style.background = state.selectedTime === 'Après midi' ? 'var(--primary)' : 'white'; ba.style.color = state.selectedTime === 'Après midi' ? 'white' : '#333';
+        }
+        function selectTime(t) { state.selectedTime = t; showTimeSelection(state.dates[state.selectedDate]); }
+
+        function calcTotal() {
+            const ad = parseInt(document.getElementById('book-adults').value) || 0;
+            const ch = parseInt(document.getElementById('book-children').value) || 0;
+            const bag = document.getElementById('book-bagages').checked && state.config.featBag;
+            let tot = (ad * state.config.priceAdult) + (ch * state.config.priceChild);
+            if(bag) tot += state.config.priceBag;
+            document.getElementById('book-total').textContent = tot; return tot;
+        }
+
+        async function submitBooking() {
+            if(!state.selectedDate || !state.selectedTime) { alert("Sélectionnez date et heure."); return; }
+            document.getElementById('loader-book').style.display = 'inline-block';
+            
+            const exactTime = state.selectedTime === 'Matin' ? state.dates[state.selectedDate].m_time : state.dates[state.selectedDate].a_time;
+            const paxStr = `${document.getElementById('book-adults').value} Adulte(s), ${document.getElementById('book-children').value} Enfant(s)`;
+            
+            const booking = {
+                id: Date.now(), client: state.user.email, name: state.user.name, phone: state.user.phone,
+                route: document.getElementById('book-route').value, date: state.selectedDate,
+                time: `${state.selectedTime} (${exactTime||''})`, pax: paxStr, bagage: document.getElementById('book-bagages').checked,
+                total: calcTotal(), status: 'En attente'
+            };
+            const res = await apiCall('book', { token: state.token, booking });
+            document.getElementById('loader-book').style.display = 'none';
+            if(res.success) {
+                document.getElementById('book-msg').style.color = 'var(--success)';
+                document.getElementById('book-msg').textContent = 'Réservation confirmée !';
+                setTimeout(() => { document.getElementById('book-msg').textContent = ''; syncData(); navigate('manage'); }, 2000);
+            }
+        }
+
+        function renderMyBookings() {
+            const container = document.getElementById('client-bookings-list'); if(!state.user) return;
+            const myb = state.bookings.filter(b => b.client === state.user.email && !b.status.includes('Annulée'));
+            container.innerHTML = myb.length === 0 ? '<p>Aucune réservation active.</p>' : myb.map(b => {
+                let cancelBtn = '';
+                if(!b.status.includes('Annulée')) cancelBtn = `<button class="btn btn-danger" style="padding: 6px 12px; width: auto; font-size: 13px;" onclick="cancelBooking(${b.id})">Annuler</button>`;
+                return `<div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #ccc;">
+                    <div style="display:flex; justify-content: space-between; align-items: center;">
+                        <div><strong style="color:var(--primary);">${b.route}</strong> - ${b.date} (${b.time})<br><small>${b.pax} | Total : <b>${b.total}€</b></small><br><span class="badge ${b.status.includes('payée')?'badge-success':'badge-warning'}">${b.status}</span></div>
+                        <div>${cancelBtn}</div>
+                    </div></div>`;
+            }).join('');
+        }
+        async function cancelBooking(id) {
+            if(confirm("Confirmer l'annulation ? Pénalité possible selon le délai.")) {
+                await apiCall('cancel', { token: state.token, id }); syncData();
+            }
+        }
+        function renderFAQ() {
+            const container = document.getElementById('faq-container'); container.innerHTML = '';
+            if(state.faqs.length === 0) { container.innerHTML = '<p style="color:#cbd5e1;">Aucune question disponible.</p>'; return; }
+            state.faqs.forEach((faq) => {
+                const div = document.createElement('div'); div.className = 'faq-item';
+                div.innerHTML = `<div class="faq-question" onclick="this.parentElement.classList.toggle('open')">${faq.q}<span>[+]</span></div><div class="faq-answer">${faq.a}</div>`;
+                container.appendChild(div);
+            });
+        }
+
+        // --- ADMIN: CONFIG ---
+        function fillAdminConfig() {
+            document.getElementById('cfg-adulte').value = state.config.priceAdult; document.getElementById('cfg-enfant').value = state.config.priceChild;
+            document.getElementById('cfg-bagage').value = state.config.priceBag; document.getElementById('cfg-penalty').value = state.config.penalty;
+            document.getElementById('cfg-feat-bag').checked = state.config.featBag;
+            document.getElementById('cfg-page-book').checked = state.config.pageBook;
+            document.getElementById('cfg-page-manage').checked = state.config.pageManage;
+            document.getElementById('cfg-page-help').checked = state.config.pageHelp;
+        }
+        async function saveAdminConfig() {
+            const c = {
+                priceAdult: parseFloat(document.getElementById('cfg-adulte').value)||0, priceChild: parseFloat(document.getElementById('cfg-enfant').value)||0,
+                priceBag: parseFloat(document.getElementById('cfg-bagage').value)||0, penalty: parseFloat(document.getElementById('cfg-penalty').value)||0,
+                featBag: document.getElementById('cfg-feat-bag').checked,
+                pageBook: document.getElementById('cfg-page-book').checked, pageManage: document.getElementById('cfg-page-manage').checked, pageHelp: document.getElementById('cfg-page-help').checked
+            };
+            await apiCall('admin_config', { token: state.token, config: c }); syncData(); alert('Configuration sauvegardée.');
+        }
+
+        // --- ADMIN: GESTION COMPTES ---
+        function renderAdminClients() {
+            const tActif = document.querySelector('#adm-table-clients tbody'); tActif.innerHTML = '';
+            const tBan = document.querySelector('#adm-table-banned tbody'); tBan.innerHTML = '';
+            
+            state.usersList.forEach(u => {
+                const isArchived = u.archived || u.banned;
+                const actions = isArchived 
+                    ? `<button class="btn btn-success btn-small" onclick="adminToggleUser('${u.email}', false)">Réactiver</button>`
+                    : `<button class="btn btn-danger btn-small" onclick="adminToggleUser('${u.email}', true)">Archiver/Désactiver</button>`;
+                const tr = `<tr><td>${u.name}</td><td>${u.email}<br><small>${u.phone}</small></td><td>${isArchived ? (u.banned ? 'Désactivé' : 'Archivé') : 'Actif'}</td><td>${actions}</td></tr>`;
+                
+                if(isArchived) tBan.innerHTML += tr; else tActif.innerHTML += tr;
+            });
+        }
+        async function adminToggleUser(email, banStatus) {
+            await apiCall('admin_toggle_user', { token: state.token, userEmail: email, ban: banStatus }); syncData();
+        }
+
+        // --- ADMIN: CALENDARS ---
+        function renderAdminMonth(year, month, isEditMode) {
+            let html = `<div class="month-container"><div class="month-header">${monthsNames[month]} ${year}</div>`;
+            html += `<div class="weekdays"><div>L</div><div>M</div><div>M</div><div>J</div><div>V</div><div>S</div><div>D</div></div><div class="days-grid">`;
+            let firstDay = new Date(year, month, 1).getDay(); firstDay = firstDay === 0 ? 6 : firstDay - 1;
+            let daysInMonth = new Date(year, month + 1, 0).getDate();
+            for(let i=0;i<firstDay;i++) html += `<div class="empty-day"></div>`;
+            const todayStr = new Date().toISOString().split('T')[0];
+            
+            for(let d=1;d<=daysInMonth;d++) {
+                let dStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+                let dispo = state.dates[dStr];
+                let isAvail = dispo && (dispo.m || dispo.a);
+                let isSelected = state.adminSelectedDates.has(dStr);
+                
+                let cssClass = '';
+                if(isEditMode) {
+                    if (dStr < todayStr) cssClass = 'past';
+                    else cssClass = (isAvail ? 'available ' : '') + (isSelected ? 'selected-admin' : '');
+                } else { cssClass = isAvail ? 'available' : ''; }
+
+                let dotsHTML = '';
+                if(isAvail && (!isSelected || !isEditMode)) {
+                    dotsHTML = `<div class="time-dot-container">`;
+                    if(dispo.m) dotsHTML += `<div class="time-dot matin"></div>`;
+                    if(dispo.a) dotsHTML += `<div class="time-dot apresmidi"></div>`;
+                    dotsHTML += `</div>`;
+                }
+                let onClick = (isEditMode && dStr >= todayStr) ? `onclick="toggleAdminDate('${dStr}')"` : '';
+                html += `<div class="cal-day ${cssClass}" ${onClick}>${d}${dotsHTML}</div>`;
+            }
+            return html + `</div></div>`;
+        }
+
+        function changeAdminMonth(dir) { state.adminMonthOffsetEdit += dir; renderAdminCalendarEdit(); }
+        function changeAdminSummaryMonth(dir) { state.adminMonthOffsetSummary += dir; renderAdminCalendarSummary(); }
+
+        function renderAdminCalendarEdit() {
+            const wrapper = document.getElementById('admin-cal-edit-wrapper'); if(!wrapper) return;
+            const d = new Date(); d.setMonth(d.getMonth() + state.adminMonthOffsetEdit);
+            let nextM = d.getMonth() + 1, nextY = d.getFullYear(); if (nextM > 11) { nextM = 0; nextY++; }
+            wrapper.innerHTML = renderAdminMonth(d.getFullYear(), d.getMonth(), true) + renderAdminMonth(nextY, nextM, true);
+            
+            const panel = document.getElementById('bulk-panel');
+            if(state.adminSelectedDates.size > 0) {
+                panel.style.display = 'flex'; document.getElementById('bulk-count').textContent = state.adminSelectedDates.size;
+            } else { panel.style.display = 'none'; }
+        }
+
+        function renderAdminCalendarSummary() {
+            const wrapper = document.getElementById('admin-cal-summary-wrapper'); if(!wrapper) return;
+            const d = new Date(); d.setMonth(d.getMonth() + state.adminMonthOffsetSummary);
+            let nextM = d.getMonth() + 1, nextY = d.getFullYear(); if (nextM > 11) { nextM = 0; nextY++; }
+            wrapper.innerHTML = renderAdminMonth(d.getFullYear(), d.getMonth(), false) + renderAdminMonth(nextY, nextM, false);
+        }
+
+        function toggleAdminDate(dStr) { if(state.adminSelectedDates.has(dStr)) state.adminSelectedDates.delete(dStr); else state.adminSelectedDates.add(dStr); renderAdminCalendarEdit(); }
+        function clearSelection() { state.adminSelectedDates.clear(); renderAdminCalendarEdit(); }
+
+        async function applyBulkDispo() {
+            if (state.adminSelectedDates.size === 0) return;
+            const isM = document.getElementById('bulk-matin').checked; const tm = document.getElementById('time-val-m').value;
+            const isA = document.getElementById('bulk-apresmidi').checked; const ta = document.getElementById('time-val-a').value;
+            const newDispo = (isM || isA) ? {m: isM, m_time: tm, a: isA, a_time: ta} : null;
+            document.getElementById('bulk-btn').disabled = true; document.getElementById('bulk-btn').innerText = 'Patientez...';
+            
+            const promises = [...state.adminSelectedDates].map(dStr => apiCall('admin_date', { token: state.token, date: dStr, dispo: newDispo }));
+            await Promise.all(promises);
+            state.adminSelectedDates.clear(); document.getElementById('bulk-btn').disabled = false; document.getElementById('bulk-btn').innerText = 'Publier ces horaires';
+            syncData();
+        }
+
+        // --- ADMIN: RESERVATIONS ---
+        async function validerRes(id, paymentStatus) {
+            const booking = state.bookings.find(b => b.id == id); if (!booking) return;
+            const fullStatus = paymentStatus === 'payé' ? 'Validé et payé' : 'Confirmée (Non payé)';
+            
+            // Generate PDF Simple
+            const { jsPDF } = window.jspdf; const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+            doc.setFontSize(16); doc.text("FACTURE - AB MOTORS", 105, 20, { align: 'center' });
+            doc.setFontSize(11);
+            doc.text(`N° Réservation : ${booking.id}`, 20, 40); doc.text(`Client : ${booking.name}`, 20, 50);
+            doc.text(`Trajet : ${booking.route} le ${booking.date} à ${booking.time}`, 20, 60);
+            doc.text(`Passagers : ${booking.pax}`, 20, 70); doc.text(`Total : ${booking.total} EUR`, 20, 80);
+            doc.text(`Statut : ${paymentStatus.toUpperCase()}`, 20, 90);
+            
+            const pdfBase64 = doc.output('datauristring').split(',')[1];
+            await apiCall('validate_booking', { token: state.token, id: booking.id, email: booking.client, contact: booking.name, pdfBase64, newStatus: fullStatus });
+            alert("Facture envoyée au client !"); syncData();
+        }
+
+        async function renvoyerFacture(id) { await validerRes(id, 'payé'); }
+        async function supprRes(id) { if(confirm('Annuler cette réservation ?')) { await apiCall('cancel', { token: state.token, id, penalty: 0 }); syncData(); } }
+
+        function renderAdminBookings() {
+            const tbody = document.querySelector('#adm-table-bookings tbody'); tbody.innerHTML = '';
+            state.bookings.slice().reverse().forEach(b => {
+                let tr = document.createElement('tr');
+                let actions = '';
+                const st = b.status.toLowerCase();
+                
+                if(st === 'en attente') {
+                    actions += `<button class="btn btn-success btn-small" style="margin-bottom:5px;" onclick="validerRes(${b.id}, 'payé')">Validé et payé</button>`;
+                    actions += `<button class="btn btn-danger btn-small" style="margin-bottom:5px;" onclick="supprRes(${b.id})">Annuler</button>`;
+                } else if(st.includes('non payé')) {
+                    actions += `<button class="btn btn-success btn-small" style="margin-bottom:5px;" onclick="validerRes(${b.id}, 'payé')">Marquer Payé</button>`;
+                } else if(st.includes('payé')) {
+                    actions += `<button class="btn btn-secondary btn-small" style="background:#475569;color:white;" onclick="renvoyerFacture(${b.id})">Renvoyer Facture</button>`;
+                }
+
+                // Clean routing text display
+                const cleanRoute = `${b.route} | ${b.date} (${b.time})`;
+                tr.innerHTML = `<td>${b.id}</td><td>${b.name}<br><small>${b.phone}<br>${b.client}</small></td><td><span style="font-size:12px;">${cleanRoute}</span></td><td>${b.pax}</td><td>${b.total}€</td><td><span class="badge badge-warning">${b.status}</span></td><td>${actions}</td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // --- ADMIN: STATS ---
+        function renderAdminStats() {
+            let today=0, week=0, month=0, year=0;
+            const now = new Date();
+            const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+            const startOfWeek = startOfDay - (now.getDay() || 7 - 1) * 86400000;
+            const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+            const startOfYear = new Date(now.getFullYear(), 0, 1).getTime();
+
+            const tbody = document.querySelector('#adm-table-stats tbody'); tbody.innerHTML = '';
+            let statsMap = {}; // Agrégation par date
+
+            state.bookings.forEach(b => {
+                const ts = b.id; 
+                if(ts >= startOfDay) today += b.total;
+                if(ts >= startOfWeek) week += b.total;
+                if(ts >= startOfMonth) month += b.total;
+                if(ts >= startOfYear) year += b.total;
+
+                if(!statsMap[b.date]) statsMap[b.date] = { count: 0, pax: 0, rev: 0 };
+                statsMap[b.date].count++; statsMap[b.date].rev += b.total;
+                statsMap[b.date].pax += parseInt(b.pax.charAt(0)) || 1; // Simplification pour le demo
             });
 
-            return `
-            <div class="container">
-                <div class="panel">
-                    <h2>Statistiques et Rapports (Validés)</h2>
-                    <br>
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <h3>Aujourd'hui ${now.toLocaleDateString()}</h3>
-                            <div class="value">${convertToKMF(revToday)}</div>
-                            <small>${paxToday.a} Adultes, ${paxToday.e} Enfants</small>
-                        </div>
-                        <div class="stat-card">
-                            <h3>Ce Mois-ci</h3>
-                            <div class="value">${convertToKMF(revMonth)}</div>
-                            <small>${paxMonth.a} Adultes, ${paxMonth.e} Enfants</small>
-                        </div>
-                        <div class="stat-card">
-                            <h3>Cette Année ${now.getFullYear()}</h3>
-                            <div class="value">${convertToKMF(revYear)}</div>
-                            <small>${paxYear.a} Adultes, ${paxYear.e} Enfants</small>
-                        </div>
-                    </div>
-                </div>
-            </div>`;
+            document.getElementById('stat-day').textContent = today + '€';
+            document.getElementById('stat-week').textContent = week + '€';
+            document.getElementById('stat-month').textContent = month + '€';
+            document.getElementById('stat-year').textContent = year + '€';
+
+            Object.keys(statsMap).sort().reverse().slice(0, 10).forEach(d => {
+                tbody.innerHTML += `<tr><td>${d}</td><td>${statsMap[d].count}</td><td>~${statsMap[d].pax}</td><td>${statsMap[d].rev}€</td></tr>`;
+            });
         }
 
-        function renderBookings() {
-            let trs = state.data.reservations.map(r => `
-                <tr>
-                    <td>${r.Id}</td>
-                    <td>${r.Client}</td>
-                    <td>${r.Trajet} | ${r.Date}</td>
-                    <td>${r.Adultes} Adulte, ${r.Enfants} Enfant</td>
-                    <td>${convertToKMF(r.Montant)}</td>
-                    <td>${r.Statut}</td>
-                    <td><button class="btn-success">Renvoiyer Facture PDF</button></td>
-                </tr>
-            `).join('');
+        // --- ADMIN: FAQ & CHAT ---
+        function renderAdminFAQList() {
+            const list = document.getElementById('adm-faq-list'); list.innerHTML = '';
+            state.faqs.forEach((f, i) => { list.innerHTML += `<div style="background:#334155; padding:10px; margin-bottom:5px; border-radius:4px; display:flex; justify-content:space-between;"><div><b>${f.q}</b><br><small>${f.a}</small></div><button class="btn btn-danger btn-small" onclick="removeAdminFAQ(${i})">X</button></div>`; });
+        }
+        function addAdminFAQ() { const q = document.getElementById('adm-faq-q').value; const a = document.getElementById('adm-faq-a').value; if(q && a) { state.faqs.push({q, a}); renderAdminFAQList(); document.getElementById('adm-faq-q').value=''; document.getElementById('adm-faq-a').value=''; } }
+        function removeAdminFAQ(index) { state.faqs.splice(index, 1); renderAdminFAQList(); }
+        async function saveAdminFAQ() { await apiCall('admin_faq', { token: state.token, faqs: state.faqs }); alert('FAQ Enregistrée !'); syncData(); }
 
-            return `
-            <div class="container">
-                <div class="panel">
-                    <h2>Suivi des Réservations</h2>
-                    <table>
-                        <thead><tr><th>ID</th><th>Client</th><th>Trajet & Date</th><th>Pax</th><th>Total</th><th>Statut</th><th>Action</th></tr></thead>
-                        <tbody>${trs}</tbody>
-                    </table>
-                </div>
-            </div>`;
+        function openChat() { document.getElementById('chat-widget').style.display = 'flex'; renderChatBody(); }
+        function closeChatUI() { document.getElementById('chat-widget').style.display = 'none'; }
+        function renderChatBody() {
+            const cb = document.getElementById('chat-body'); cb.innerHTML = '';
+            state.chats.forEach(m => { let div = document.createElement('div'); div.className = 'msg ' + (m.sender === state.user?.email ? 'msg-client' : 'msg-admin'); div.textContent = m.text; cb.appendChild(div); });
+            cb.scrollTop = cb.scrollHeight;
+        }
+        async function sendChatMessage() {
+            const inp = document.getElementById('chat-input'); const txt = inp.value.trim(); if(!txt || !state.user) return; inp.value = '';
+            const msg = { sender: state.user.email, text: txt, ts: Date.now() }; state.chats.push(msg); renderChatBody();
+            await apiCall('chat_send', { token: state.token, msg });
         }
 
-        function renderAccounts() {
-            const activeUsers = state.data.users.filter(u => u.Status !== 'Archived');
-            const archivedUsers = state.data.users.filter(u => u.Status === 'Archived');
-
-            let activeTrs = activeUsers.map(u => `<tr><td>${u.Name}</td><td>${u.Email}</td><td>Actif</td><td><button class="btn-danger" onclick="archiveUser('${u.Id}')">Archiver/Désactiver</button></td></tr>`).join('');
-            let archivedTrs = archivedUsers.map(u => `<tr><td>${u.Name}</td><td>${u.Email}</td><td>Archivé</td><td>Aucune action possible</td></tr>`).join('');
-
-            return `
-            <div class="container">
-                <div class="panel">
-                    <h2>Gestion des Comptes Clients</h2>
-                    <br>
-                    <h3>Comptes Actifs</h3>
-                    <table>
-                        <thead><tr><th>Client</th><th>Contact</th><th>Statut</th><th>Action</th></tr></thead>
-                        <tbody>${activeTrs}</tbody>
-                    </table>
-                    <br><br>
-                    <h3 style="color: var(--accent-red);">Comptes Désactivés / Archivés</h3>
-                    <table>
-                        <thead><tr><th>Client</th><th>Contact</th><th>Statut</th><th>Action</th></tr></thead>
-                        <tbody>${archivedTrs}</tbody>
-                    </table>
-                </div>
-            </div>`;
-        }
-
-        function renderDatesSetup() {
-            return `
-            <div class="container">
-                <div class="panel">
-                    <h2>Disponibilités & Heures</h2>
-                    <p style="color: var(--text-muted); margin-bottom: 1rem;">Sélectionnez une ou plusieurs dates (cliquez pour marquer visuellement).</p>
-                    <div class="date-grid">
-                        <div class="date-cell" onclick="toggleDateSelection(this)">1</div>
-                        <div class="date-cell" onclick="toggleDateSelection(this)">2</div>
-                        <div class="date-cell" onclick="toggleDateSelection(this)">3</div>
-                        <div class="date-cell" onclick="toggleDateSelection(this)">4</div>
-                        <div class="date-cell" onclick="toggleDateSelection(this)">5</div>
-                        <div class="date-cell" onclick="toggleDateSelection(this)">6</div>
-                        <div class="date-cell" onclick="toggleDateSelection(this)">7</div>
-                    </div>
-                    <div style="display:flex; gap: 1rem; margin-top: 1rem;">
-                        <label><input type="checkbox" checked> Ouvert le Matin (08:00)</label>
-                        <label><input type="checkbox"> Ouvert l'Après midi (14:30)</label>
-                    </div>
-                    <br>
-                    <button class="btn-success">Publier ces horaires</button>
-                </div>
-            </div>`;
-        }
-
-        // Lancement de l'application
-        render();
-        if (state.user && state.user.role === 'Admin') loadData();
+        window.addEventListener('DOMContentLoaded', () => { initPhoneSelects(); syncData(true); handleRouting(); });
     </script>
 </body>
 </html>
